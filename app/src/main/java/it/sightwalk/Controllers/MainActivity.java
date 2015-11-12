@@ -1,7 +1,9 @@
-package it.sightwalk;
+package it.sightwalk.Controllers;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import it.sightwalk.R;
 
 public class MainActivity extends AppCompatActivity {
 
