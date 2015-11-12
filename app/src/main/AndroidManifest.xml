@@ -10,7 +10,7 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name=".Controllers.SplashActivity"
-            android:theme="@style/SplashTheme">
+            android:theme="@style/SplashTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,6 +22,16 @@
         <activity android:name=".Controllers.LoginActivity" >
         </activity>
         <activity android:name=".Controllers.RegisterActivity" >
+        </activity>
+        <activity android:name=".Controllers.DashboardActivity" >
+        </activity>
+        <activity android:name=".Controllers.ActivitiesActivity" >
+        </activity>
+        <activity android:name=".Controllers.StatsActivity" >
+        </activity>
+        <activity android:name=".Controllers.FavouritesActivity" >
+        </activity>
+        <activity android:name=".Controllers.SettingsActivity" >
         </activity>
     </application>
 
