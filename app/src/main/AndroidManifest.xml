@@ -8,12 +8,20 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <activity android:name=".Controllers.MainActivity" >
+        <activity
+            android:name=".Controllers.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".Controllers.MainActivity" >
+        </activity>
+        <activity android:name=".Controllers.LoginActivity" >
+        </activity>
+        <activity android:name=".Controllers.RegisterActivity" >
         </activity>
     </application>
 
