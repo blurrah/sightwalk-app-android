@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import it.sightwalk.Controllers.ActivitiesActivity;
-import it.sightwalk.Controllers.FavouritesActivity;
-import it.sightwalk.Controllers.StatsActivity;
+import it.sightwalk.Controllers.Dashboard.ActivitiesActivity;
+import it.sightwalk.Controllers.Dashboard.FavouritesActivity;
+import it.sightwalk.Controllers.Dashboard.StatsActivity;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;

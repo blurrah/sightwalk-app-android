@@ -1,4 +1,4 @@
-package it.sightwalk.Controllers;
+package it.sightwalk.Controllers.Dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import it.sightwalk.Controllers.SettingsActivity;
 import it.sightwalk.Helpers.PagerAdapter;
 import it.sightwalk.R;
 

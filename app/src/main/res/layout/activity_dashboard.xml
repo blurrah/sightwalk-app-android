@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="it.sightwalk.Controllers.DashboardActivity">
+    tools:context="it.sightwalk.Controllers.Dashboard.DashboardActivity">
 
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"

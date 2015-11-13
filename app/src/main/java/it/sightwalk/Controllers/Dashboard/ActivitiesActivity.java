@@ -1,4 +1,4 @@
-package it.sightwalk.Controllers;
+package it.sightwalk.Controllers.Dashboard;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

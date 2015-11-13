@@ -17,19 +17,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controllers.MainActivity" >
+        <activity android:name=".Controllers.Introduction.MainActivity" >
         </activity>
-        <activity android:name=".Controllers.LoginActivity" >
+        <activity android:name=".Controllers.Introduction.LoginActivity" >
         </activity>
-        <activity android:name=".Controllers.RegisterActivity" >
+        <activity android:name=".Controllers.Introduction.RegisterActivity" >
         </activity>
-        <activity android:name=".Controllers.DashboardActivity" >
+        <activity android:name=".Controllers.Dashboard.DashboardActivity" >
         </activity>
-        <activity android:name=".Controllers.ActivitiesActivity" >
+        <activity android:name=".Controllers.Dashboard.ActivitiesActivity" >
         </activity>
-        <activity android:name=".Controllers.StatsActivity" >
+        <activity android:name=".Controllers.Dashboard.StatsActivity" >
         </activity>
-        <activity android:name=".Controllers.FavouritesActivity" >
+        <activity android:name=".Controllers.Dashboard.FavouritesActivity" >
         </activity>
         <activity android:name=".Controllers.SettingsActivity" >
         </activity>
