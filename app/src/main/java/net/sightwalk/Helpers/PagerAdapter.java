@@ -4,9 +4,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import net.sightwalk.Controllers.Dashboard.ActivitiesActivity;
-import net.sightwalk.Controllers.Dashboard.FavouritesActivity;
-import net.sightwalk.Controllers.Dashboard.StatsActivity;
+import net.sightwalk.Controllers.Dashboard.ActivitiesFragment;
+import net.sightwalk.Controllers.Dashboard.FavouritesFragment;
+import net.sightwalk.Controllers.Dashboard.StatsFragment;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
     int mNumOfTabs;
@@ -21,13 +21,13 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                ActivitiesActivity tab1 = new ActivitiesActivity();
+                ActivitiesFragment tab1 = new ActivitiesFragment();
                 return tab1;
             case 1:
-                StatsActivity tab2 = new StatsActivity();
+                StatsFragment tab2 = new StatsFragment();
                 return tab2;
             case 2:
-                FavouritesActivity tab3 = new FavouritesActivity();
+                FavouritesFragment tab3 = new FavouritesFragment();
                 return tab3;
             default:
                 return null;
