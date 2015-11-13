@@ -1,4 +1,4 @@
-package it.sightwalk.Controllers.Introduction;
+package net.sightwalk.Controllers.Introduction;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import it.sightwalk.Controllers.Dashboard.DashboardActivity;
-import it.sightwalk.R;
+import net.sightwalk.Controllers.Dashboard.DashboardActivity;
+import net.sightwalk.R;
 
 public class LoginActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package it.sightwalk.Controllers.Dashboard;
+package net.sightwalk.Controllers.Dashboard;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -6,12 +6,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import it.sightwalk.R;
+import net.sightwalk.R;
 
-public class StatsActivity extends Fragment {
+public class ActivitiesActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.activity_stats, container, false);
+        return inflater.inflate(R.layout.activity_activities, container, false);
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="it.sightwalk" >
+    package="net.sightwalk" >
 
     <application
         android:allowBackup="true"
@@ -9,7 +9,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".Controllers.SplashActivity"
+            android:name="net.sightwalk.Controllers.SplashActivity"
             android:theme="@style/SplashTheme" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -17,21 +17,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controllers.Introduction.MainActivity" >
+        <activity android:name="net.sightwalk.Controllers.Introduction.MainActivity" >
         </activity>
-        <activity android:name=".Controllers.Introduction.LoginActivity" >
+        <activity android:name="net.sightwalk.Controllers.Introduction.LoginActivity" >
         </activity>
-        <activity android:name=".Controllers.Introduction.RegisterActivity" >
+        <activity android:name="net.sightwalk.Controllers.Introduction.RegisterActivity" >
         </activity>
-        <activity android:name=".Controllers.Dashboard.DashboardActivity" >
+        <activity android:name="net.sightwalk.Controllers.Dashboard.DashboardActivity" >
         </activity>
-        <activity android:name=".Controllers.Dashboard.ActivitiesActivity" >
+        <activity android:name="net.sightwalk.Controllers.Dashboard.ActivitiesActivity" >
         </activity>
-        <activity android:name=".Controllers.Dashboard.StatsActivity" >
+        <activity android:name="net.sightwalk.Controllers.Dashboard.StatsActivity" >
         </activity>
-        <activity android:name=".Controllers.Dashboard.FavouritesActivity" >
+        <activity android:name="net.sightwalk.Controllers.Dashboard.FavouritesActivity" >
         </activity>
-        <activity android:name=".Controllers.SettingsActivity" >
+        <activity android:name="net.sightwalk.Controllers.SettingsActivity" >
         </activity>
     </application>
 

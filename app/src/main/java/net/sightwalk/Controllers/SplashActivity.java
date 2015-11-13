@@ -1,10 +1,10 @@
-package it.sightwalk.Controllers;
+package net.sightwalk.Controllers;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import it.sightwalk.Controllers.Introduction.MainActivity;
+import net.sightwalk.Controllers.Introduction.MainActivity;
 
 public class SplashActivity extends AppCompatActivity {
 

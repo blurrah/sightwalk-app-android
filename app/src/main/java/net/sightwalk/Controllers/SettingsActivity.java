@@ -1,9 +1,9 @@
-package it.sightwalk.Controllers;
+package net.sightwalk.Controllers;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import it.sightwalk.R;
+import net.sightwalk.R;
 
 public class SettingsActivity extends AppCompatActivity {
 

@@ -1,4 +1,4 @@
-package it.sightwalk.Controllers.Introduction;
+package net.sightwalk.Controllers.Introduction;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
-import it.sightwalk.R;
+import net.sightwalk.R;
 
 public class RegisterActivity extends AppCompatActivity {
 

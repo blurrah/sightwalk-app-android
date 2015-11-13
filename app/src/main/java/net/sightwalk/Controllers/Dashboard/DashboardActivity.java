@@ -1,4 +1,4 @@
-package it.sightwalk.Controllers.Dashboard;
+package net.sightwalk.Controllers.Dashboard;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,9 +8,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import it.sightwalk.Controllers.SettingsActivity;
-import it.sightwalk.Helpers.PagerAdapter;
-import it.sightwalk.R;
+import net.sightwalk.Controllers.SettingsActivity;
+import net.sightwalk.Helpers.PagerAdapter;
+import net.sightwalk.R;
 
 public class DashboardActivity extends AppCompatActivity {
 
