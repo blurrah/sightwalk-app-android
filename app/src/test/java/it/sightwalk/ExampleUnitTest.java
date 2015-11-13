@@ -1,4 +1,4 @@
-package it.sightwalk;
+package net.sightwalk;
 
 import org.junit.Test;
 
