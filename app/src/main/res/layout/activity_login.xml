@@ -47,13 +47,27 @@
         android:layout_height="wrap_content"
         android:text="Inloggen"
         android:id="@+id/loginButton"
+        android:background="#27b764"
+        android:textColor="#FFFFFF"
+        android:layout_above="@+id/passwordForgottenButton"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="10dp" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wachtwoord vergeten"
+        android:id="@+id/passwordForgottenButton"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
+        android:layout_alignRight="@+id/loginButton"
+        android:layout_alignEnd="@+id/loginButton"
         android:background="#27b764"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="2dp" />
+        android:layout_marginBottom="2dp"
+        android:textColor="#ffffff" />
 
 </RelativeLayout>
