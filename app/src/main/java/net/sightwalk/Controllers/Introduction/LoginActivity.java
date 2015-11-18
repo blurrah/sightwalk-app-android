@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
-import net.sightwalk.Controllers.Tutorial.TutorialActivity;
 import net.sightwalk.R;
 
 public class LoginActivity extends AppCompatActivity {
@@ -24,8 +23,7 @@ public class LoginActivity extends AppCompatActivity {
     private class loginListener implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
-          //Intent i = new Intent(getApplicationContext(), DashboardActivity.class);
-            Intent i = new Intent(getApplicationContext(), TutorialActivity.class);
+            Intent i = new Intent(getApplicationContext(), DashboardActivity.class);
             startActivity(i);
         }
     }

@@ -9,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.sightwalk.Controllers.SettingsActivity;
+import net.sightwalk.Controllers.Tutorial.TutorialActivity;
 import net.sightwalk.Helpers.PagerAdapter;
 import net.sightwalk.R;
 
@@ -36,6 +37,18 @@ public class DashboardActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.setOnTabSelectedListener(new tabListener());
+
+        firstRun();
+    }
+
+    public void firstRun() {
+        Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("isFirstRun", true);
+
+        if (isFirstRun) {
+            Intent intent = new Intent(this, TutorialActivity.class);
+            startActivity(intent);
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("isFirstRun", false).commit();
+        }
     }
 
     @Override
