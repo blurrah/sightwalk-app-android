@@ -12,7 +12,6 @@ import net.sightwalk.R;
 public class TutorialAdapter extends FragmentStatePagerAdapter {
 
     int mNumOfTabs;
-    Context ctx;
 
     public TutorialAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
