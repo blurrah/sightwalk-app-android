@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
         if(loginToken != null){
             Intent i = new Intent(getApplicationContext(), DashboardActivity.class);
             startActivity(i);
+            finish();
         }
     }
 
