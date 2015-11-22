@@ -3,6 +3,7 @@ package net.sightwalk.Controllers.Introduction;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -42,6 +43,8 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         ButterKnife.bind(this);
 
         validator = new Validator(this);
@@ -49,6 +52,20 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
 
         Button rButton = (Button) findViewById(R.id.registerButton);
         rButton.setOnClickListener(new registerListener());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        switch (id) {
+            case android.R.id.home:
+                // app icon in action bar clicked; goto parent activity.
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private class registerListener implements Button.OnClickListener {
