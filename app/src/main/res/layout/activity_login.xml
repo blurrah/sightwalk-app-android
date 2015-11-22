@@ -17,7 +17,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/loginButton"
-        android:layout_alignEnd="@+id/loginButton" />
+        android:layout_alignEnd="@+id/loginButton"
+        android:singleLine="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -30,7 +31,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/usernameEditText"
-        android:layout_alignEnd="@+id/usernameEditText" />
+        android:layout_alignEnd="@+id/usernameEditText"
+        android:singleLine="true"
+        android:password="true" />
 
     <TextView
         android:layout_width="wrap_content"
