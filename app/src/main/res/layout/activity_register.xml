@@ -30,7 +30,8 @@
         android:layout_alignRight="@+id/ageEditText"
         android:layout_alignEnd="@+id/ageEditText"
         android:hint="Emailadres"
-        android:enabled="true" />
+        android:enabled="true"
+        android:singleLine="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -41,7 +42,8 @@
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/emailEditText"
         android:layout_alignEnd="@+id/emailEditText"
-        android:hint="Gebruikersnaam" />
+        android:hint="Gebruikersnaam"
+        android:singleLine="true" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -54,7 +56,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/usernameEditText"
         android:layout_alignEnd="@+id/usernameEditText"
-        android:hint="Wachtwoord" />
+        android:hint="Wachtwoord"
+        android:singleLine="true"
+        android:password="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -70,13 +74,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/ageEditText"
-        android:hint="Leeftijd"
+        android:hint="Geboortedatum"
 
         android:layout_above="@+id/weightEditText"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:singleLine="true"
+        android:inputType="date" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -87,7 +93,9 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignRight="@+id/ageEditText"
-        android:layout_alignEnd="@+id/ageEditText" />
+        android:layout_alignEnd="@+id/ageEditText"
+        android:singleLine="true"
+        android:inputType="numberDecimal" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -99,7 +107,9 @@
         android:layout_alignParentStart="true"
         android:layout_marginBottom="37dp"
         android:layout_alignRight="@+id/weightEditText"
-        android:layout_alignEnd="@+id/weightEditText" />
+        android:layout_alignEnd="@+id/weightEditText"
+        android:singleLine="true"
+        android:inputType="numberDecimal" />
 
     <Button
         android:layout_width="wrap_content"

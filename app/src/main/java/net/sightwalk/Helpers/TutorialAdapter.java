@@ -1,10 +1,8 @@
 package net.sightwalk.Helpers;
 
-import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.widget.TextView;
 
 import net.sightwalk.Controllers.Tutorial.TutorialFragment;
 import net.sightwalk.R;
@@ -12,12 +10,10 @@ import net.sightwalk.R;
 public class TutorialAdapter extends FragmentStatePagerAdapter {
 
     int mNumOfTabs;
-    Context ctx;
 
     public TutorialAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
         this.mNumOfTabs = NumOfTabs;
-
     }
 
     @Override
@@ -35,8 +31,6 @@ public class TutorialAdapter extends FragmentStatePagerAdapter {
             default:
                 return null;
         }
-
-
     }
 
     @Override

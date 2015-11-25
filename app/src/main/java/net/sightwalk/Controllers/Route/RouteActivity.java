@@ -1,13 +1,10 @@
 package net.sightwalk.Controllers.Route;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 
 import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.R;
