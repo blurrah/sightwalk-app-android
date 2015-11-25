@@ -1,6 +1,5 @@
 package net.sightwalk.Controllers.Introduction;
 
-import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -9,12 +8,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.iid.InstanceID;
 import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.*;
 
-import net.sightwalk.Controllers.Dashboard.DashboardActivity;
 import net.sightwalk.R;
+import net.sightwalk.Tasks.RegisterTask;
 
 import java.util.List;
 
@@ -24,6 +24,8 @@ import butterknife.ButterKnife;
 public class RegisterActivity extends AppCompatActivity implements Validator.ValidationListener {
 
     Validator validator;
+
+    String instanceId;
 
     @NotEmpty(message = "Verplicht veld")
     @Email(message = "Ongeldige email")
@@ -38,6 +40,10 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
     @Password(scheme = Password.Scheme.ANY, message = "Ongeldige wachtwoord")
     @Bind(R.id.passwordEditText) EditText password;
 
+    @Bind(R.id.ageEditText) EditText age;
+    @Bind(R.id.weightEditText) EditText weight;
+    @Bind(R.id.lengthEditText) EditText length;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +52,8 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         ButterKnife.bind(this);
+
+        instanceId = InstanceID.getInstance(this).getId();
 
         validator = new Validator(this);
         validator.setValidationListener(this);
@@ -71,15 +79,13 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
     private class registerListener implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
-
             validator.validate();
         }
     }
 
     @Override
     public void onValidationSucceeded() {
-        Intent i = new Intent(getApplicationContext(), DashboardActivity.class);
-        startActivity(i);
+        postRegister();
     }
 
     @Override
@@ -94,5 +100,21 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    public void postRegister(){
+        RegisterTask registerTask = new RegisterTask(
+                getApplicationContext(),
+                username.getText().toString(),
+                email.getText().toString(),
+                password.getText().toString(),
+                "",
+                "",
+                weight.getText().toString(),
+                length.getText().toString(),
+                age.getText().toString(),
+                instanceId);
+
+        registerTask.execute();
     }
 }

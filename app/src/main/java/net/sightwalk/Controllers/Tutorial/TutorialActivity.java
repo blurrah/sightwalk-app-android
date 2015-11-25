@@ -49,10 +49,8 @@ public class TutorialActivity extends AppCompatActivity {
         selectDot(0);
 
         skipBtn.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
-
                 Intent i = new Intent(TutorialActivity.this, DashboardActivity.class);
                 startActivity(i);
             }
