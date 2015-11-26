@@ -1,5 +1,6 @@
 package net.sightwalk.Controllers.Introduction;
 
+import android.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -32,6 +33,9 @@ public class LoginActivity extends AppCompatActivity {
 
         Button iButton = (Button) findViewById(R.id.loginButton);
         iButton.setOnClickListener(new loginListener());
+
+        Button pButton = (Button) findViewById(R.id.passwordForgottenButton);
+        pButton.setOnClickListener(new passwordListener());
     }
 
     @Override
@@ -52,6 +56,15 @@ public class LoginActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             postLogin();
+        }
+    }
+
+    private class passwordListener implements Button.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            FragmentManager fm = getFragmentManager();
+            PasswordDialogFragment dialogFragment = new PasswordDialogFragment();
+            dialogFragment.show(fm, "Sample Fragment");
         }
     }
 
