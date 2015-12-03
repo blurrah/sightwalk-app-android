@@ -20,6 +20,9 @@ public class NewRouteActivity extends AppCompatActivity {
 
         Button rButton = (Button) findViewById(R.id.routeButton);
         rButton.setOnClickListener(new routeListener());
+
+        Button cButton = (Button) findViewById(R.id.chooseRouteButton);
+        cButton.setOnClickListener(new chooseListener());
     }
 
     @Override
@@ -45,6 +48,14 @@ public class NewRouteActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), RouteActivity.class);
+            startActivity(i);
+        }
+    }
+
+    private class chooseListener implements Button.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            Intent i = new Intent(getApplicationContext(), ChooseRouteActivity.class);
             startActivity(i);
         }
     }
