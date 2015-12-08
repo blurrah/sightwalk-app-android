@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
+import net.sightwalk.Controllers.Introduction.MainActivity;
 import net.sightwalk.Helpers.TutorialAdapter;
 import net.sightwalk.R;
 
@@ -51,7 +52,7 @@ public class TutorialActivity extends AppCompatActivity {
         skipBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(TutorialActivity.this, DashboardActivity.class);
+                Intent i = new Intent(TutorialActivity.this, MainActivity.class);
                 startActivity(i);
             }
         });
