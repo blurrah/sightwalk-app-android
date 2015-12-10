@@ -1,12 +1,12 @@
 package net.sightwalk.Helpers;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import net.sightwalk.Models.Steps;
@@ -15,7 +15,7 @@ import net.sightwalk.R;
 import java.util.ArrayList;
 
 public class RouteAdapter extends ArrayAdapter {
-    
+
     public RouteAdapter(Context context, ArrayList<Steps> stepsArrayList) {
         super(context, R.layout.custom_row_route, stepsArrayList);
     }
@@ -27,6 +27,7 @@ public class RouteAdapter extends ArrayAdapter {
 
         Steps stepItem = (Steps) getItem(position);
         TextView steps = (TextView) customView.findViewById(R.id.routeTextView);
+        ImageView imageView = (ImageView) customView.findViewById(R.id.maneuverImageView);
 
         steps.setText(Html.fromHtml(stepItem.getHtml_instructions()));
 

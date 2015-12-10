@@ -2,7 +2,8 @@ package net.sightwalk.Tasks;
 
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
+
+import com.google.android.gms.maps.model.LatLng;
 
 import net.sightwalk.Models.Steps;
 
@@ -30,10 +31,21 @@ public class RouteTask extends AsyncTask<String, Void, String> {
 
     String poly;
 
+    private String origin;
+    private String destination;
+    private String waypoints;
+    private String mode;
+    private String language;
+
     private RetrievePolyline listener = null;
 
-    public RouteTask(RetrievePolyline listener) {
+    public RouteTask(RetrievePolyline listener, String origin, String destination, String waypoints, String mode, String language) {
         this.listener = listener;
+        this.origin = origin;
+        this.destination = destination;
+        this.waypoints = waypoints;
+        this.mode = mode;
+        this.language = language;
     }
 
     @Override
@@ -41,7 +53,7 @@ public class RouteTask extends AsyncTask<String, Void, String> {
         JSONObject jsonParam = new JSONObject();
 
         try {
-            url = new URL("https://maps.googleapis.com/maps/api/directions/json?origin=Etten-Leur,vijfkamp&destination=Breda-centrum&mode=walking&language=NL");
+            url = new URL("https://maps.googleapis.com/maps/api/directions/json?origin=" + origin + "&destination=" + destination + "&mode=" + mode + "&language=" + language + "");
 
             urlConn = (HttpURLConnection) url.openConnection();
             urlConn.setDoInput(true);
@@ -94,21 +106,43 @@ public class RouteTask extends AsyncTask<String, Void, String> {
 
                     JSONArray steps = stepsobject.getJSONArray("steps");
 
-                    for(int s = 0; s < steps.length(); s++) {
+                    for (int s = 0; s < steps.length(); s++) {
                         JSONObject route = steps.getJSONObject(s);
+
+                        String in = route.getString("html_instructions");
+
+                        String man = null;
+
+                        if(route.isNull("maneuver")) { }
+                        else {
+                            man = route.getString("maneuver");
+                        }
+
+                        String mode = route.getString("travel_mode");
 
                         JSONObject distance = route.getJSONObject("distance");
                         JSONObject duration = route.getJSONObject("duration");
-                        //JSONObject instruction = route.getJSONObject("html_instructions");
+                        JSONObject line = route.getJSONObject("polyline");
 
                         String dis = distance.getString("text");
                         String dur = duration.getString("text");
-                        String in = route.getString("html_instructions");
+                        String linepoly = line.getString("points");
+
+                        JSONObject start = route.getJSONObject("start_location");
+                        JSONObject end = route.getJSONObject("end_location");
+
+                        LatLng startlatlng = new LatLng(start.getDouble("lat"), start.getDouble("lng"));
+                        LatLng endlatlng = new LatLng(end.getDouble("lat"), end.getDouble("lng"));
 
                         step = new Steps();
                         step.setDistance(dis);
                         step.setDuration(dur);
                         step.setHtml_instructions(in);
+                        step.setManeuver(man);
+                        step.setStart_location(startlatlng);
+                        step.setEnd_location(endlatlng);
+                        step.setTravel_mode(mode);
+                        step.setPolyline(linepoly);
 
                         stepsArrayList.add(step);
                     }
