@@ -16,6 +16,9 @@ import java.util.ArrayList;
 public class ListViewDraggingAnimation extends Fragment {
 
     private View view;
+    private StableArrayAdapter adapter;
+    private DynamicListView listView;
+    private ArrayList<String> mCheeseList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -23,19 +26,20 @@ public class ListViewDraggingAnimation extends Fragment {
 
         view = inflater.inflate(R.layout.activity_new_route_list, container,false);
 
-        ArrayList<String>mCheeseList = new ArrayList<String>();
-        for (int i = 0; i < Cheeses.sCheeseStrings.length; ++i) {
-            mCheeseList.add(Cheeses.sCheeseStrings[i]);
-        }
+        return view;
+    }
 
-        StableArrayAdapter adapter = new StableArrayAdapter(getContext(), R.layout.activity_new_route_list_item, mCheeseList);
-        DynamicListView listView = (DynamicListView) view.findViewById(R.id.listview);
+    @Override
+    public void onResume() {
+        super.onResume();
+        mCheeseList = Cheeses.getInstance().mCheeseList;
+
+        adapter = new StableArrayAdapter(getContext(), R.layout.activity_new_route_list_item, mCheeseList);
+        listView = (DynamicListView) view.findViewById(R.id.listview);
 
         listView.setCheeseList(mCheeseList);
         listView.setAdapter(adapter);
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-
-        return view;
     }
 }
 

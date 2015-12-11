@@ -2,7 +2,6 @@ package net.sightwalk.Helpers;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;
-
 import java.util.HashMap;
 import java.util.List;
 

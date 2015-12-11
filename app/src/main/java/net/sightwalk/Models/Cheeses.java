@@ -1,13 +1,20 @@
 package net.sightwalk.Models;
 
 
+import android.database.Cursor;
+
+import java.util.ArrayList;
+
 public class Cheeses {
 
-    public static final String[] sCheeseStrings = {
-            "Abbaye de Belloc", "Abbaye du Mont des Cats", "Abertam", "Abondance", "Ackawi",
-            "Acorn", "Adelost", "Affidelice au Chablis", "Afuega'l Pitu", "Airag", "Airedale",
-            "Aisy Cendre", "Allgauer Emmentaler", "Alverca", "Ambert", "American Cheese",
-            "Ami du Chambertin", "Anejo Enchilado", "Anneau du Vic-Bilh", "Anthoriro", "Appenzell",
-            "Aragon", "Ardi Gasna"
-    };
+    private static final Cheeses instance = new Cheeses();
+    public static final ArrayList<String> mCheeseList = new ArrayList<String>();
+    public static Cursor activeCheese = null;
+
+    public static Cheeses getInstance(){
+        return instance;
+    }
+
+    private Cheeses() {
+    }
 }

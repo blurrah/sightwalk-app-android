@@ -59,4 +59,15 @@ public class NewRouteActivity extends AppCompatActivity {
             startActivity(i);
         }
     }
+
+
+    public interface OnDataChangeListener{
+        public void onDataChanged(int size);
+    }
+
+    private OnDataChangeListener mOnDataChangeListener;
+
+    public void setOnDataChangeListener(OnDataChangeListener onDataChangeListener){
+        mOnDataChangeListener = onDataChangeListener;
+    }
 }

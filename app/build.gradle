@@ -35,4 +35,12 @@ dependencies {
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.mobsandgeeks:android-saripaar:2.0.3'
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
+    compile 'me.relex:circleindicator:1.1.6@aar'
+}
+
+allprojects {
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:deprecation"
+        options.compilerArgs << "-Xlint:unchecked"
+    }
 }

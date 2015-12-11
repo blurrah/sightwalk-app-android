@@ -25,4 +25,17 @@ public class SightDBHandeler extends SQLiteAssetHelper {
 
         return c;
     }
+
+    public Cursor getSelectedSight(String title){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String format = String.format("SELECT * FROM sights WHERE title=\"%s\"", title);
+
+        String query = format;
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+
+        return c;
+    }
 }
