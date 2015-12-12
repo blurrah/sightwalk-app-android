@@ -1,11 +1,14 @@
 package net.sightwalk.Controllers.Route;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
@@ -35,33 +38,82 @@ public class RouteActivity extends AppCompatActivity implements RouteTask.Retrie
     private GoogleMap googleMap;
 
     public locationListener listener;
-
+    LocationManager mLocationManager;
     public LatLng mLocation;
+
+    static AlertDialog alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
-        LocationManager mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         listener = new locationListener();
 
-        try {
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, listener);
-        } catch (SecurityException e) {
-            Log.e("ERROR_", e.getLocalizedMessage());
-        }
+        locationManager();
 
         // Hardcoded values for testing
         final RouteTask routeTask = new RouteTask(this, "Etten-Leur,Vijfkamp", "Breda-Centrum", "", "walking", "nl");
         routeTask.execute();
     }
 
+    public void locationManager() {
+        boolean gpsIsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean networkIsEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if(gpsIsEnabled) {
+            try {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, listener);
+            } catch (SecurityException e) {
+                Log.e("ERROR_", e.getLocalizedMessage());
+            }
+        }
+        else if (networkIsEnabled) {
+            try {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, listener);
+            } catch (SecurityException e) {
+                Log.e("ERROR_", e.getLocalizedMessage());
+            }
+        }
+        else {
+            errorDialog("Locatie niet gevonden");
+        }
+    }
+
+    public void errorDialog(String error) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Om deze functie te gebruiken hebben we je locatie nodig. Zet alsjeblieft je internet of GPS modus aan in de locatie opties.")
+                .setTitle(error)
+                .setCancelable(false)
+                .setPositiveButton("Instellingen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                        alert.dismiss();
+                    }
+                })
+                .setNegativeButton("Annuleren", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(getApplicationContext(), NewRouteActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                });
+        alert = builder.create();
+        alert.show();
+    }
+
     private class locationListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
-            mLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            if(location == null) {
+                errorDialog("Locatie niet gevonden");
+            }
+            else {
+                mLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            }
 
             // Hardcoded values for testing
             boolean range = inRange(51.5676979, 4.6547354, 51.567638, 4.654226299999999, location.getLatitude(), location.getLongitude());
@@ -110,11 +162,16 @@ public class RouteActivity extends AppCompatActivity implements RouteTask.Retrie
 
                 googleMap.setMyLocationEnabled(true);
 
-                CameraUpdate center = CameraUpdateFactory.newLatLng(mLocation);
-                CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(mLocation, 15);
+                if(mLocation == null) {
+                    errorDialog("Locatie niet gevonden");
+                }
+                else {
+                    CameraUpdate center = CameraUpdateFactory.newLatLng(mLocation);
+                    CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(mLocation, 15);
 
-                googleMap.moveCamera(center);
-                googleMap.animateCamera(zoom);
+                    googleMap.moveCamera(center);
+                    googleMap.animateCamera(zoom);
+                }
 
                 googleMap.addPolyline(new PolylineOptions()
                         .addAll(PolyUtil.decode(poly))
