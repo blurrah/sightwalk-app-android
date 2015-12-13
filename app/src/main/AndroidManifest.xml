@@ -16,6 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:screenOrientation="portrait"
             android:name=".Controllers.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
@@ -24,15 +25,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Controllers.Introduction.MainActivity"></activity>
-        <activity android:name=".Controllers.Introduction.LoginActivity"></activity>
-        <activity android:name=".Controllers.Introduction.RegisterActivity"></activity>
-        <activity android:name=".Controllers.Dashboard.DashboardActivity"></activity>
-        <activity android:name=".Controllers.Tutorial.TutorialActivity"></activity>
-        <activity android:name=".Controllers.Route.NewRouteActivity"></activity>
-        <activity android:name=".Controllers.Route.RouteActivity"></activity>
-        <activity android:name=".Controllers.Route.SightActivity"></activity>
-        <activity android:name=".Controllers.SettingsActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Introduction.MainActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Introduction.LoginActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Introduction.RegisterActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Dashboard.DashboardActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Tutorial.TutorialActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Route.NewRouteActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Route.RouteActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Route.SightActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.SettingsActivity"></activity>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -41,7 +42,7 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAiKKjzTJeuvWz6n8vC3vKGp3Wr36W6DU4" />
 
-        <activity android:name=".Controllers.Route.ChooseRouteActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Route.ChooseRouteActivity"></activity>
     </application>
 
 </manifest>

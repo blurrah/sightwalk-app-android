@@ -1,17 +1,25 @@
 package net.sightwalk.Helpers;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
+
+import net.sightwalk.R;
+
 import java.util.HashMap;
 import java.util.List;
 
-public class StableArrayAdapter extends ArrayAdapter<String> {
+public class StableArrayAdapter extends ArrayAdapter<Cursor> {
 
     final int INVALID_ID = -1;
 
-    HashMap<String, Integer> mIdMap = new HashMap<String, Integer>();
+    HashMap<Cursor, Integer> mIdMap = new HashMap<Cursor, Integer>();
 
-    public StableArrayAdapter(Context context, int textViewResourceId, List<String> objects) {
+    public StableArrayAdapter(Context context, int textViewResourceId, List<Cursor> objects) {
         super(context, textViewResourceId, objects);
         for (int i = 0; i < objects.size(); ++i) {
             mIdMap.put(objects.get(i), i);
@@ -19,11 +27,24 @@ public class StableArrayAdapter extends ArrayAdapter<String> {
     }
 
     @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+
+        if (convertView == null) {
+            convertView = LayoutInflater.from(getContext()).inflate(R.layout.activity_new_route_list_item, parent, false);
+        }
+
+        TextView tvList = (TextView) convertView.findViewById(R.id.routeListText);
+        tvList.setText(getItem(position).getString(getItem(position).getColumnIndex("name")));
+
+        return convertView;
+    }
+
+        @Override
     public long getItemId(int position) {
         if (position < 0 || position >= mIdMap.size()) {
             return INVALID_ID;
         }
-        String item = getItem(position);
+        Cursor item = getItem(position);
         return mIdMap.get(item);
     }
 

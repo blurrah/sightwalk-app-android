@@ -10,6 +10,7 @@ import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -27,6 +28,7 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import net.sightwalk.Helpers.StableArrayAdapter;
+import net.sightwalk.R;
 
 import java.util.ArrayList;
 
@@ -36,7 +38,7 @@ public class DynamicListView extends ListView {
     private final int MOVE_DURATION = 150;
     private final int LINE_THICKNESS = 15;
 
-    public ArrayList<String> mCheeseList;
+    public ArrayList<Cursor> mCheeseList;
 
     private int mLastEventY = -1;
 
@@ -81,15 +83,8 @@ public class DynamicListView extends ListView {
 
     public void init(Context context) {
         setOnItemLongClickListener(mOnItemLongClickListener);
-        //setOnScrollListener(mScrollListener);
-        //DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        //mSmoothScrollAmountAtEdge = (int)(SMOOTH_SCROLL_AMOUNT_AT_EDGE / metrics.density);
     }
 
-    /**
-     * Listens for long clicks on any items in the listview. When a cell has
-     * been selected, the hover cell is created and set up.
-     */
     private AdapterView.OnItemLongClickListener mOnItemLongClickListener =
             new AdapterView.OnItemLongClickListener() {
                 public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int pos, long id) {
@@ -145,7 +140,7 @@ public class DynamicListView extends ListView {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(LINE_THICKNESS);
-        paint.setColor(Color.BLACK);
+        paint.setColor(getResources().getColor(R.color.colorPrimary));
 
         can.drawBitmap(bitmap, 0, 0, null);
         can.drawRect(rect, paint);
@@ -413,7 +408,7 @@ public class DynamicListView extends ListView {
         }
     };
 
-    public void setCheeseList(ArrayList<String> cheeseList) {
+    public void setCheeseList(ArrayList<Cursor> cheeseList) {
         mCheeseList = cheeseList;
     }
 }

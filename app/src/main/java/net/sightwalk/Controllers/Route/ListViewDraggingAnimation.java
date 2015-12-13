@@ -1,5 +1,6 @@
 package net.sightwalk.Controllers.Route;
 
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -18,7 +19,7 @@ public class ListViewDraggingAnimation extends Fragment {
     private View view;
     private StableArrayAdapter adapter;
     private DynamicListView listView;
-    private ArrayList<String> mCheeseList;
+    private ArrayList<Cursor> mCheeseList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

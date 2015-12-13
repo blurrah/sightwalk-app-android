@@ -8,7 +8,7 @@ import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 public class SightDBHandeler extends SQLiteAssetHelper {
 
-    private static final String DATABASE_NAME = "sights.sqlite";
+    private static final String DATABASE_NAME = "Sights Breda.sqlite";
     private static final int DATABASE_VERSION = 1;
 
     public SightDBHandeler(Context context) {
@@ -26,10 +26,10 @@ public class SightDBHandeler extends SQLiteAssetHelper {
         return c;
     }
 
-    public Cursor getSelectedSight(String title){
+    public Cursor getSelectedSight(Integer id){
         SQLiteDatabase db = getReadableDatabase();
 
-        String format = String.format("SELECT * FROM sights WHERE title=\"%s\"", title);
+        String format = String.format("SELECT * FROM sights WHERE id=\"%s\"", id);
 
         String query = format;
 

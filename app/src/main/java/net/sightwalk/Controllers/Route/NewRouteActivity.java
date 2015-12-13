@@ -7,8 +7,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import net.sightwalk.Controllers.SettingsActivity;
+import net.sightwalk.Models.Cheeses;
 import net.sightwalk.R;
 
 public class NewRouteActivity extends AppCompatActivity {
@@ -23,6 +25,14 @@ public class NewRouteActivity extends AppCompatActivity {
 
         Button cButton = (Button) findViewById(R.id.chooseRouteButton);
         cButton.setOnClickListener(new chooseListener());
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+
+        TextView amountSights = (TextView) findViewById(R.id.tvAmountSights);
+        amountSights.setText("Totaal "+ Cheeses.mCheeseList.size() +" sights");
     }
 
     @Override

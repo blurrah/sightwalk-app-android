@@ -36,6 +36,7 @@ dependencies {
     compile 'com.mobsandgeeks:android-saripaar:2.0.3'
     compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     compile 'me.relex:circleindicator:1.1.6@aar'
+    compile 'com.android.support:design:22.2.0'
 }
 
 allprojects {
