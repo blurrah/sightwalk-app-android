@@ -31,8 +31,18 @@ public class NewRouteActivity extends AppCompatActivity {
     public void onResume(){
         super.onResume();
 
+        Button routeButton = (Button) findViewById(R.id.routeButton);
         TextView amountSights = (TextView) findViewById(R.id.tvAmountSights);
         amountSights.setText("Totaal "+ Cheeses.mCheeseList.size() +" sights");
+
+        if(Cheeses.mCheeseList.size() == 0){
+
+            routeButton.setEnabled(false);
+            routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
+        }else{
+            routeButton.setEnabled(true);
+            routeButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        }
     }
 
     @Override

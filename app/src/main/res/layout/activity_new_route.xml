@@ -30,7 +30,8 @@
         android:background="#27b764"
         android:textColor="#ffffff"
         android:layout_margin="10dp"
-        android:padding="16dp" />
+        android:padding="16dp"
+        android:enabled="true" />
 
     <fragment android:name="net.sightwalk.Controllers.Route.ListViewDraggingAnimation"
         android:id="@+id/article_fragment"
