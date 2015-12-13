@@ -70,6 +70,7 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
             case android.R.id.home:
                 // app icon in action bar clicked; goto parent activity.
                 this.finish();
+                overridePendingTransition(R.anim.activity_return_in, R.anim.activity_return_out);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

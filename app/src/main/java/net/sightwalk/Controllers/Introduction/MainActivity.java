@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
             startActivity(i);
+
+            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
     }
 
@@ -62,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
+
+            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
     }
 }

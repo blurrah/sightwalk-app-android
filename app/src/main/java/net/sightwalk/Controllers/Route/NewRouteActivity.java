@@ -77,6 +77,8 @@ public class NewRouteActivity extends AppCompatActivity {
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), ChooseRouteActivity.class);
             startActivity(i);
+
+            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
     }
 
