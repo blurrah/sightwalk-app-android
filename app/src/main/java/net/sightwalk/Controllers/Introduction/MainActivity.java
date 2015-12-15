@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.Button;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
+import net.sightwalk.Controllers.Tutorial.TutorialActivity;
 import net.sightwalk.R;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,6 +18,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        firstRun();
         skipLogin();
 
         Button rButton = (Button) findViewById(R.id.registerButton);
@@ -37,11 +39,23 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void firstRun() {
+        Boolean isFirstRun = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("isFirstRun", true);
+
+        if (isFirstRun) {
+            Intent intent = new Intent(this, TutorialActivity.class);
+            startActivity(intent);
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("isFirstRun", false).commit();
+        }
+    }
+
     private class registerListener implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
             startActivity(i);
+
+            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
     }
 
@@ -50,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
+
+            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
     }
 }

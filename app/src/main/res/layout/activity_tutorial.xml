@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,41 +7,48 @@
     tools:context="net.sightwalk.Controllers.Tutorial.TutorialActivity"
     app:theme="@style/Theme.AppCompat.NoActionBar"
     android:orientation="vertical"
-    android:background="#66010000">
+    android:background="@color/colorPrimary">
 
     <GridLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="84dp"
+        android:layout_above="@+id/indicator"
+        android:layout_alignParentTop="true"
+        android:layout_marginBottom="10dp"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
 
         <android.support.v4.view.ViewPager
             android:id="@+id/pager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp">
+            android:layout_height="match_parent">
         </android.support.v4.view.ViewPager>
 
     </GridLayout>
 
-    <LinearLayout
-        android:orientation="horizontal"
-        android:layout_width="80dp"
-        android:layout_height="20dp"
-        android:id="@+id/dots"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="-40dp">
-
-    </LinearLayout>
+    <me.relex.circleindicator.CircleIndicator
+        android:layout_width="match_parent"
+        android:id="@+id/indicator"
+        android:layout_height="48dp"
+        android:layout_above="@+id/btn_skip"
+        android:layout_marginBottom="10dp"
+        android:layout_alignLeft="@+id/btn_skip"
+        android:layout_alignStart="@+id/btn_skip"
+        android:layout_alignRight="@+id/btn_skip"
+        android:layout_alignEnd="@+id/btn_skip" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/tutorial_skip"
         android:id="@+id/btn_skip"
-        android:background="@color/colorPrimary"
-        android:textColor="@color/textColorPrimary"
-        android:layout_gravity="right"
-        android:layout_marginBottom="-50dp"
-        android:layout_marginTop="-40dp"
-        android:layout_marginRight="10dp" />
+        android:background="@color/textColorPrimary"
+        android:textColor="@color/colorPrimary"
+        android:layout_marginRight="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp" />
 
-</LinearLayout>
+</RelativeLayout>

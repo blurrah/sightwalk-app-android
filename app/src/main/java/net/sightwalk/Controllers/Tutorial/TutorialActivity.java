@@ -14,12 +14,16 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
+import net.sightwalk.Controllers.Introduction.MainActivity;
 import net.sightwalk.Helpers.TutorialAdapter;
 import net.sightwalk.R;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.relex.circleindicator.CircleIndicator;
 
 public class TutorialActivity extends AppCompatActivity {
 
@@ -45,16 +49,21 @@ public class TutorialActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         NUM_PAGES = adapter.getCount();
 
-        addDots();
-        selectDot(0);
+        CircleIndicator indicator = (CircleIndicator) findViewById(R.id.indicator);
+        indicator.setViewPager(viewPager);
+
+        //addDots();
+        //selectDot(0);
 
         skipBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i = new Intent(TutorialActivity.this, DashboardActivity.class);
+                Intent i = new Intent(TutorialActivity.this, MainActivity.class);
                 startActivity(i);
             }
         });
+
+
     }
 
     @Override
@@ -66,55 +75,5 @@ public class TutorialActivity extends AppCompatActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void addDots() {
-        dots = new ArrayList<>();
-        LinearLayout dotsLayout = (LinearLayout)findViewById(R.id.dots);
-
-        for(int i = 0; i < NUM_PAGES; i++) {
-            ImageView dot = new ImageView(this);
-            dot.setImageDrawable(getResources().getDrawable(R.drawable.unselected));
-
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT
-            );
-
-            params.gravity = Gravity.CENTER_VERTICAL;
-            params.leftMargin = 6;
-
-            dotsLayout.addView(dot, params);
-
-            dots.add(dot);
-        }
-
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                selectDot(position);
-
-                if(NUM_PAGES-1 == position){
-                    skipBtn.setText("DONE");
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
-            }
-        });
-    }
-
-    public void selectDot(int idx) {
-        Resources res = getResources();
-        for(int i = 0; i < NUM_PAGES; i++) {
-            int drawableId = (i==idx)?(R.drawable.selected):(R.drawable.unselected);
-            Drawable drawable = res.getDrawable(drawableId);
-            dots.get(i).setImageDrawable(drawable);
-        }
     }
 }
