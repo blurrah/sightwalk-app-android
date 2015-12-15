@@ -53,7 +53,7 @@ public class SightDialogFragment extends Fragment {
 
         if(active != null) {
             sightTitle.setText(active.getString(active.getColumnIndex("name")));
-            sightDesc.setText(active.getString(active.getColumnIndex("text")));
+            sightDesc.setText(active.getString(active.getColumnIndex("short_desc")));
             new LoadImage().execute(active.getString(active.getColumnIndex("imgurl")));
         }
     }

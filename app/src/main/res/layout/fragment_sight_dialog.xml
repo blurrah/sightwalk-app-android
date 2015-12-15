@@ -34,8 +34,7 @@
             android:layout_height="match_parent"
             android:text="New Text"
             android:id="@+id/sightText"
-            android:padding="10dp"
-            android:maxLines="4" />
+            android:padding="10dp" />
 
     </LinearLayout>
 
