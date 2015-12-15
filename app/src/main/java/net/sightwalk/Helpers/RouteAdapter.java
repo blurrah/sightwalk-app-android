@@ -37,6 +37,12 @@ public class RouteAdapter extends ArrayAdapter {
         else if(stepItem.getHtml_instructions().contains("rechtsaf")) {
             imageView.setImageResource(R.drawable.ic_right);
         }
+        else if(stepItem.getHtml_instructions().contains("rechtdoor") || stepItem.getHtml_instructions().contains("vervolgen")) {
+            imageView.setImageResource(R.drawable.ic_arrow);
+        }
+        else {
+            imageView.setImageResource(R.drawable.ic_walking);
+        }
 
         return customView;
     }

@@ -90,8 +90,9 @@ public class RouteActivity extends AppCompatActivity {
                     m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                 }
 
-                googleMap.addMarker(new MarkerOptions().position(Legs.startroute));
-                googleMap.addMarker(new MarkerOptions().position(Legs.endroute));
+                googleMap.addMarker(new MarkerOptions().position(Legs.getInstance().startroute));
+                googleMap.addMarker(new MarkerOptions().position(Legs.getInstance().endroute));
+
 
                 googleMap.addPolyline(new PolylineOptions()
                         .addAll(PolyUtil.decode(poly))

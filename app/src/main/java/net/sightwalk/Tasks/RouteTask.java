@@ -115,8 +115,8 @@ public class RouteTask extends AsyncTask<String, Void, String> {
 
                     JSONObject routeDistance = stepsobject.getJSONObject("distance");
                     JSONObject routeDuration = stepsobject.getJSONObject("duration");
-                    JSONObject startroute = stepsobject.getJSONObject("end_location");
-                    JSONObject endroute = stepsobject.getJSONObject("start_location");
+                    JSONObject startroute = stepsobject.getJSONObject("start_location");
+                    JSONObject endroute = stepsobject.getJSONObject("end_location");
 
                     String routedis = routeDistance.getString("text");
                     String routedur = routeDuration.getString("text");
