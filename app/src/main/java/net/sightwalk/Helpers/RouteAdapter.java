@@ -31,6 +31,13 @@ public class RouteAdapter extends ArrayAdapter {
 
         steps.setText(Html.fromHtml(stepItem.getHtml_instructions()));
 
+        if(stepItem.getHtml_instructions().contains("linksaf")) {
+            imageView.setImageResource(R.drawable.ic_left);
+        }
+        else if(stepItem.getHtml_instructions().contains("rechtsaf")) {
+            imageView.setImageResource(R.drawable.ic_right);
+        }
+
         return customView;
     }
 }

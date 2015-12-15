@@ -7,18 +7,37 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import net.sightwalk.Controllers.SettingsActivity;
-import net.sightwalk.Models.Cheeses;
+import net.sightwalk.Helpers.LocationHelper;
+import net.sightwalk.Models.Sights;
+import net.sightwalk.Models.UserLocation;
 import net.sightwalk.R;
+import net.sightwalk.Tasks.RouteTask;
 
 public class NewRouteActivity extends AppCompatActivity {
+
+    private LocationHelper helper;
+    private String waypoint;
+    private StringBuilder builder;
+
+    CheckBox checkBox;
+
+    LatLng location;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_route);
+
+        helper = new LocationHelper(this);
+        helper.locationManager();
+
+        checkBox = (CheckBox) findViewById(R.id.cbRouteDestination);
 
         Button rButton = (Button) findViewById(R.id.routeButton);
         rButton.setOnClickListener(new routeListener());
@@ -33,15 +52,38 @@ public class NewRouteActivity extends AppCompatActivity {
 
         Button routeButton = (Button) findViewById(R.id.routeButton);
         TextView amountSights = (TextView) findViewById(R.id.tvAmountSights);
-        amountSights.setText("Totaal "+ Cheeses.mCheeseList.size() +" sights");
+        amountSights.setText("Totaal "+ Sights.mSightList.size() +" sights");
 
-        if(Cheeses.mCheeseList.size() == 0){
-
+        if(Sights.mSightList.size() == 0){
             routeButton.setEnabled(false);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
-        }else{
+        } else {
             routeButton.setEnabled(true);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+            builder = new StringBuilder();
+
+            for(int i = 0; i < Sights.mSightList.size(); i++) {
+                String latitude = Sights.mSightList.get(i).getString(Sights.mSightList.get(i).getColumnIndex("latitude"));
+                String longitude = Sights.mSightList.get(i).getString(Sights.mSightList.get(i).getColumnIndex("longitude"));
+
+                builder.append(latitude + "," + longitude + "|");
+            }
+
+            waypoint = builder.toString();
+
+            if(checkBox.isChecked()) {
+                location = UserLocation.getInstance().userlocation;
+            }
+            else {
+                int last = Sights.mSightList.size() -1;
+                Double latitude = Sights.mSightList.get(last).getDouble(Sights.mSightList.get(last).getColumnIndex("latitude"));
+                Double longitude = Sights.mSightList.get(last).getDouble(Sights.mSightList.get(last).getColumnIndex("longitude"));
+                location = new LatLng(latitude,longitude);
+            }
+
+            final RouteTask routeTask = new RouteTask(UserLocation.getInstance().userlocation, location.latitude + "," + location.longitude, waypoint.toString(), "walking", "nl", this, this);
+            routeTask.execute();
         }
     }
 

@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 
 import net.sightwalk.Helpers.StableArrayAdapter;
-import net.sightwalk.Models.Cheeses;
+import net.sightwalk.Models.Sights;
 import net.sightwalk.R;
 
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class ListViewDraggingAnimation extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mCheeseList = Cheeses.getInstance().mCheeseList;
+        mCheeseList = Sights.getInstance().mSightList;
 
         adapter = new StableArrayAdapter(getContext(), R.layout.activity_new_route_list_item, mCheeseList);
         listView = (DynamicListView) view.findViewById(R.id.listview);

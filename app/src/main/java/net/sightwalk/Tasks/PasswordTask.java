@@ -35,7 +35,7 @@ public class PasswordTask extends AsyncTask<String, Void, String> {
         JSONObject jsonParam = new JSONObject();
 
         try {
-            url = new URL("http://sightwalk.net/auth/password-reset");
+            url = new URL("https://sightwalk.net/auth/password-reset");
 
             urlConn = (HttpURLConnection) url.openConnection();
             urlConn.setDoInput(true);

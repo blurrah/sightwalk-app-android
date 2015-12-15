@@ -13,19 +13,27 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.maps.android.PolyUtil;
 
 import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.Helpers.LocationHelper;
 import net.sightwalk.Helpers.RouteAdapter;
+import net.sightwalk.Models.Legs;
+import net.sightwalk.Models.Polyline;
+import net.sightwalk.Models.Sights;
 import net.sightwalk.Models.Steps;
+import net.sightwalk.Models.UserLocation;
 import net.sightwalk.R;
 import net.sightwalk.Tasks.RouteTask;
 
 import java.util.ArrayList;
 
-public class RouteActivity extends AppCompatActivity implements RouteTask.RetrievePolyline {
+public class RouteActivity extends AppCompatActivity {
 
     private GoogleMap googleMap;
     private LocationHelper helper;
@@ -35,12 +43,7 @@ public class RouteActivity extends AppCompatActivity implements RouteTask.Retrie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
-        helper = new LocationHelper(this);
-        helper.locationManager();
-
-        // Hardcoded values for testing
-        final RouteTask routeTask = new RouteTask(this, "Etten-Leur,Vijfkamp", "Breda-Centrum", "", "walking", "nl");
-        routeTask.execute();
+        RetrievePolyline(Polyline.getInstance().polyline, Steps.stepsArrayList);
     }
 
     @Override
@@ -62,7 +65,6 @@ public class RouteActivity extends AppCompatActivity implements RouteTask.Retrie
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
     public void RetrievePolyline(String poly, ArrayList<Steps> steps) {
         if (googleMap == null) {
             googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.routeMapView)).getMap();
@@ -70,15 +72,26 @@ public class RouteActivity extends AppCompatActivity implements RouteTask.Retrie
 
                 googleMap.setMyLocationEnabled(true);
 
-                if(helper.getLocation() == null) {
+                if(UserLocation.userlocation == null) {
                     helper.errorDialog("Locatie niet gevonden");
                 } else {
-                    CameraUpdate center = CameraUpdateFactory.newLatLng(helper.getLocation());
-                    CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(helper.getLocation(), 15);
+                    CameraUpdate center = CameraUpdateFactory.newLatLng(UserLocation.userlocation);
+                    CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(UserLocation.userlocation, 15);
 
                     googleMap.moveCamera(center);
                     googleMap.animateCamera(zoom);
                 }
+
+                for(int i = 0; i < Sights.mSightList.size(); i++) {
+                    Double latitude = Sights.mSightList.get(i).getDouble(Sights.mSightList.get(i).getColumnIndex("latitude"));
+                    Double longitude = Sights.mSightList.get(i).getDouble(Sights.mSightList.get(i).getColumnIndex("longitude"));
+
+                    Marker m = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
+                    m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                }
+
+                googleMap.addMarker(new MarkerOptions().position(Legs.startroute));
+                googleMap.addMarker(new MarkerOptions().position(Legs.endroute));
 
                 googleMap.addPolyline(new PolylineOptions()
                         .addAll(PolyUtil.decode(poly))

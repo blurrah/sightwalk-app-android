@@ -14,7 +14,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import net.sightwalk.Controllers.Route.NewRouteActivity;
+import net.sightwalk.Controllers.Dashboard.DashboardActivity;
+import net.sightwalk.Models.UserLocation;
 
 public class LocationHelper {
 
@@ -22,7 +23,7 @@ public class LocationHelper {
 
     private locationListener listener;
     private LocationManager mLocationManager;
-    private LatLng mLocation;
+    private UserLocation mLocation;
 
     static AlertDialog alert;
 
@@ -62,7 +63,8 @@ public class LocationHelper {
                 errorDialog("Locatie niet gevonden");
             }
             else {
-                mLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                mLocation = UserLocation.getInstance();
+                mLocation.userlocation = new LatLng(location.getLatitude(), location.getLongitude());
             }
 
             // Hardcoded values for testing
@@ -85,10 +87,6 @@ public class LocationHelper {
         public void onProviderDisabled(String provider) { }
     }
 
-    public LatLng getLocation() {
-        return mLocation;
-    }
-
     public void errorDialog(String error) {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
 
@@ -104,7 +102,7 @@ public class LocationHelper {
                 })
                 .setNegativeButton("Annuleren", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(context, NewRouteActivity.class);
+                        Intent intent = new Intent(context, DashboardActivity.class);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         context.startActivity(intent);
                     }

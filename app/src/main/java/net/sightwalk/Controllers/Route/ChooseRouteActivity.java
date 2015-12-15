@@ -1,19 +1,12 @@
 package net.sightwalk.Controllers.Route;
 
-import android.app.DialogFragment;
-import android.app.FragmentTransaction;
-import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -25,12 +18,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import net.sightwalk.Controllers.Route.SightDialogFragment;
-import net.sightwalk.Models.Cheeses;
+import net.sightwalk.Models.Sights;
 import net.sightwalk.R;
 import net.sightwalk.Stores.SightDBHandeler;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -65,7 +56,7 @@ public class ChooseRouteActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                    Cheeses.getInstance().mCheeseList.add(selectedCursor);
+                    Sights.getInstance().mSightList.add(selectedCursor);
                     Toast.makeText(getApplicationContext(), "Sight is toegevoegd", Toast.LENGTH_SHORT).show();
 
                     selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -79,10 +70,10 @@ public class ChooseRouteActivity extends AppCompatActivity {
         fabRemoveSight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    for(Cursor k : Cheeses.getInstance().mCheeseList){
+                    for(Cursor k : Sights.getInstance().mSightList){
                         if(k.getInt(k.getColumnIndex("id")) == selectedCursor.getInt(selectedCursor.getColumnIndex("id")))
                         {
-                            Cheeses.getInstance().mCheeseList.remove(k);
+                            Sights.getInstance().mSightList.remove(k);
                             selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
                             break;
                         }
@@ -116,11 +107,11 @@ public class ChooseRouteActivity extends AppCompatActivity {
             selectedMarker = marker;
             selectedCursor = database.getSelectedSight(markerHaspMap.get(marker));
 
-            Cheeses.activeCheese = selectedCursor;
+            Sights.activeSight = selectedCursor;
 
             FragmentManager fm = getSupportFragmentManager();
 
-            if (!contains(Cheeses.getInstance().mCheeseList, selectedCursor.getInt(selectedCursor.getColumnIndex("id")))) {
+            if (!contains(Sights.getInstance().mSightList, selectedCursor.getInt(selectedCursor.getColumnIndex("id")))) {
                 fabAddSight.setVisibility(View.VISIBLE);
                 fabRemoveSight.setVisibility(View.INVISIBLE);
             }else{
@@ -153,43 +144,31 @@ public class ChooseRouteActivity extends AppCompatActivity {
 
                 googleMap.setMyLocationEnabled(true);
 
-                if (googleMap.getMyLocation() != null) {
-                    LatLng myLocation = new LatLng(googleMap.getMyLocation().getLatitude(), googleMap.getMyLocation().getLongitude());
+                double latitude = 51.5891072;
+                double longitude = 4.7753679;
 
-                    CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(googleMap.getMyLocation().getLatitude(), googleMap.getMyLocation().getLongitude()));
-                    CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(myLocation, 15);
+                LatLng breda = new LatLng(latitude, longitude);
 
-                    googleMap.moveCamera(center);
-                    googleMap.animateCamera(zoom);
-                }
-                else {
-                    double latitude = 51.5891072;
-                    double longitude = 4.7753679;
+                CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, latitude));
+                CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(breda, 15);
 
-                    LatLng breda = new LatLng(latitude, longitude);
-
-                    CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, latitude));
-                    CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(breda, 15);
-
-                    googleMap.moveCamera(center);
-                    googleMap.animateCamera(zoom);
-                }
+                googleMap.moveCamera(center);
+                googleMap.animateCamera(zoom);
 
                 cursor.moveToFirst();
 
                 while(!cursor.isAfterLast()) {
-                    double latitude = cursor.getDouble(cursor.getColumnIndex("latitude"));
-                    double longitude = cursor.getDouble(cursor.getColumnIndex("longitude"));
+                    double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));
+                    double lon = cursor.getDouble(cursor.getColumnIndex("longitude"));
                     String name = cursor.getString(cursor.getColumnIndex("name"));
                     Integer id = cursor.getInt(cursor.getColumnIndex("id"));
 
                     Marker m = googleMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(latitude, longitude))
+                                    .position(new LatLng(lat, lon))
                                     .title(name)
                     );
 
-                    if (contains(Cheeses.getInstance().mCheeseList, cursor.getInt(cursor.getColumnIndex("id")))) {
-
+                    if (contains(Sights.getInstance().mSightList, cursor.getInt(cursor.getColumnIndex("id")))) {
                         m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                     }
                     markerHaspMap.put(m, id);

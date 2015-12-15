@@ -13,10 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import net.sightwalk.Models.Cheeses;
+import net.sightwalk.Models.Sights;
 import net.sightwalk.R;
-
-import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -43,7 +41,7 @@ public class SightDialogFragment extends Fragment {
     }
 
     public void refreshFragment(){
-        Cursor active = Cheeses.activeCheese;
+        Cursor active = Sights.activeSight;
 
         TextView sightTitle = (TextView) view.findViewById(R.id.sightTitle);
         TextView sightDesc = (TextView) view.findViewById(R.id.sightText);

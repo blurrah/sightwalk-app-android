@@ -1,11 +1,18 @@
 package net.sightwalk.Tasks;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import net.sightwalk.Models.Legs;
+import net.sightwalk.Models.Polyline;
 import net.sightwalk.Models.Steps;
+import net.sightwalk.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,34 +25,34 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 
 public class RouteTask extends AsyncTask<String, Void, String> {
 
-    private ArrayList<Steps> stepsArrayList = new ArrayList<Steps>();
     private Steps step;
+    private Polyline line;
+    private Legs leg;
+
+    Context context;
+    Activity activity;
 
     URL url;
     HttpURLConnection urlConn;
     private String result = null;
 
-    String poly;
-
-    private String origin;
+    private LatLng origin;
     private String destination;
     private String waypoints;
     private String mode;
     private String language;
 
-    private RetrievePolyline listener = null;
-
-    public RouteTask(RetrievePolyline listener, String origin, String destination, String waypoints, String mode, String language) {
-        this.listener = listener;
+    public RouteTask(LatLng origin, String destination, String waypoints, String mode, String language, Context context, Activity activity) {
         this.origin = origin;
         this.destination = destination;
         this.waypoints = waypoints;
         this.mode = mode;
         this.language = language;
+        this.context = context;
+        this.activity = activity;
     }
 
     @Override
@@ -53,7 +60,7 @@ public class RouteTask extends AsyncTask<String, Void, String> {
         JSONObject jsonParam = new JSONObject();
 
         try {
-            url = new URL("https://maps.googleapis.com/maps/api/directions/json?origin=" + origin + "&destination=" + destination + "&mode=" + mode + "&language=" + language + "");
+            url = new URL("https://maps.googleapis.com/maps/api/directions/json?origin=" + origin.latitude +","+ origin.longitude + "&destination=" + destination + "&waypoints=" + waypoints + "&mode=" + mode + "&language=" + language + "");
 
             urlConn = (HttpURLConnection) url.openConnection();
             urlConn.setDoInput(true);
@@ -97,12 +104,35 @@ public class RouteTask extends AsyncTask<String, Void, String> {
 
                 JSONObject polyline = overview.getJSONObject("overview_polyline");
 
-                poly = polyline.getString("points");
+                line = Polyline.getInstance();
+
+                line.polyline = polyline.getString("points");
 
                 JSONArray legsObject = overview.getJSONArray("legs");
 
                 for(int l = 0; l < legsObject.length(); l++) {
                     JSONObject stepsobject = legsObject.getJSONObject(l);
+
+                    JSONObject routeDistance = stepsobject.getJSONObject("distance");
+                    JSONObject routeDuration = stepsobject.getJSONObject("duration");
+                    JSONObject startroute = stepsobject.getJSONObject("end_location");
+                    JSONObject endroute = stepsobject.getJSONObject("start_location");
+
+                    String routedis = routeDistance.getString("text");
+                    String routedur = routeDuration.getString("text");
+
+                    LatLng startroutelatlng = new LatLng(startroute.getDouble("lat"), startroute.getDouble("lng"));
+                    LatLng endroutelatlng = new LatLng(endroute.getDouble("lat"), endroute.getDouble("lng"));
+
+                    TextView textView = (TextView) activity.findViewById(R.id.TATextView);
+                    textView.setText("Afstand: " + routedis + " | Duur: " + routedur);
+
+                    leg = Legs.getInstance();
+
+                    leg.duration = routedur;
+                    leg.distance = routedis;
+                    leg.startroute = startroutelatlng;
+                    leg.endroute = endroutelatlng;
 
                     JSONArray steps = stepsobject.getJSONArray("steps");
 
@@ -144,18 +174,12 @@ public class RouteTask extends AsyncTask<String, Void, String> {
                         step.setTravel_mode(mode);
                         step.setPolyline(linepoly);
 
-                        stepsArrayList.add(step);
+                        step.stepsArrayList.add(step);
                     }
                 }
             }
-            listener.RetrievePolyline(poly, stepsArrayList);
-
         } catch (JSONException ex) {
             Log.e("ERROR_", ex.getLocalizedMessage());
         }
-    }
-
-    public interface RetrievePolyline {
-        void RetrievePolyline(String poly, ArrayList<Steps> stepsArrayList);
     }
 }

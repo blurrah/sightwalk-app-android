@@ -43,7 +43,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
         JSONObject jsonParam = new JSONObject();
 
         try {
-            url = new URL("http://sightwalk.net/auth/login");
+            url = new URL("https://sightwalk.net/auth/login");
 
             urlConn = (HttpURLConnection) url.openConnection();
             urlConn.setDoInput(true);

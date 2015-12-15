@@ -52,7 +52,7 @@ public class RegisterTask extends AsyncTask<String, Void, String> {
         JSONObject jsonParam = new JSONObject();
 
         try {
-            url = new URL("http://sightwalk.net/user");
+            url = new URL("https://sightwalk.net/user");
 
             urlConn = (HttpURLConnection) url.openConnection();
             urlConn.setDoInput(true);

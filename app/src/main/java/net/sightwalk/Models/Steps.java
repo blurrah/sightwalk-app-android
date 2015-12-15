@@ -2,7 +2,13 @@ package net.sightwalk.Models;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.ArrayList;
+
 public class Steps {
+
+    private static final Steps instance = new Steps();
+
+    public static final ArrayList<Steps> stepsArrayList = new ArrayList<Steps>();
 
     public Steps() {}
 
@@ -14,6 +20,10 @@ public class Steps {
     private String polyline;
     private LatLng start_location;
     private String travel_mode;
+
+    public static Steps getInstance(){
+        return instance;
+    }
 
     public String getHtml_instructions() {
         return html_instructions;
