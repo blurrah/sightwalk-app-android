@@ -1,11 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="net.sightwalk.Controllers.Route.NewRouteActivity">
+    android:layout_height="match_parent"
+    tools:context="net.sightwalk.Controllers.Route.NewRouteActivity"
+    android:background="#ffffff">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="PLEKKEN"
+        android:id="@+id/textView4"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:paddingTop="16dp"
+        android:paddingBottom="11dp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Kies bestemmingen"
+        android:id="@+id/chooseRouteButton"
+        android:textColor="@color/colorPrimary"
+        android:layout_alignStart="@+id/article_fragment"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:background="@color/colorSecondary"
+        android:allowUndo="false"
+        android:drawableRight="@drawable/ic_chevron_right_white_24dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="32dp"
+        android:textAlignment="textStart"
+        android:layout_below="@+id/textView4" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/chooseRouteButton"
+        android:id="@+id/relativeLayout"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Route eindigen waar hij begint"
+            android:id="@+id/textView5"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:textColor="@color/colorPrimary" />
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/cbRouteDestination"
+            android:layout_below="@+id/chooseRouteButton"
+            android:checked="true"
+            android:textColor="@color/colorPrimary"
+            android:buttonTint="@color/colorPrimary"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="false"
+            android:singleLine="true"
+            android:layout_centerVertical="true" />
+    </RelativeLayout>
+
+    <fragment android:name="net.sightwalk.Controllers.Route.ListViewDraggingAnimation"
+        android:id="@+id/article_fragment"
+        android:layout_weight="2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="false"
+        android:layout_above="@+id/tvAmountSights"
+        android:layout_below="@+id/relativeLayout" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Totaal X sights"
+        android:id="@+id/tvAmountSights"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16dp"
+        android:textAlignment="center"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
+        android:layout_alignStart="@+id/article_fragment"
+        android:layout_above="@+id/routeButton" />
 
     <Button
         android:layout_width="wrap_content"
@@ -13,12 +93,14 @@
         android:text="Genereer route"
         android:id="@+id/routeButton"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentLeft="false"
         android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentRight="false"
         android:layout_alignParentEnd="true"
         android:background="#27b764"
         android:textColor="#ffffff"
-        android:layout_marginBottom="2dp" />
+        android:layout_margin="10dp"
+        android:padding="16dp"
+        android:enabled="true" />
 
 </RelativeLayout>
