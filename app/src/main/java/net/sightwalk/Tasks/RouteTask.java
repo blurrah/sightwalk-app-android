@@ -110,6 +110,9 @@ public class RouteTask extends AsyncTask<String, Void, String> {
 
                 JSONArray legsObject = overview.getJSONArray("legs");
 
+                int routedis = 0;
+                int routedur = 0;
+
                 for(int l = 0; l < legsObject.length(); l++) {
                     JSONObject stepsobject = legsObject.getJSONObject(l);
 
@@ -118,14 +121,11 @@ public class RouteTask extends AsyncTask<String, Void, String> {
                     JSONObject startroute = stepsobject.getJSONObject("start_location");
                     JSONObject endroute = stepsobject.getJSONObject("end_location");
 
-                    String routedis = routeDistance.getString("text");
-                    String routedur = routeDuration.getString("text");
+                    routedis += routeDistance.getInt("value");
+                    routedur += routeDuration.getInt("value");
 
                     LatLng startroutelatlng = new LatLng(startroute.getDouble("lat"), startroute.getDouble("lng"));
                     LatLng endroutelatlng = new LatLng(endroute.getDouble("lat"), endroute.getDouble("lng"));
-
-                    TextView textView = (TextView) activity.findViewById(R.id.TATextView);
-                    textView.setText("Afstand: " + routedis + " | Duur: " + routedur);
 
                     leg = Legs.getInstance();
 
@@ -177,6 +177,12 @@ public class RouteTask extends AsyncTask<String, Void, String> {
                         step.stepsArrayList.add(step);
                     }
                 }
+
+                int minutes = routedur /60 % 60;
+                int hours = routedur / 60 / 60;
+
+                TextView textView = (TextView) activity.findViewById(R.id.TATextView);
+                textView.setText("Afstand: " + routedis / 1000 + " km" + " | Duur: " + hours +" uur " + minutes + " min.");
             }
         } catch (JSONException ex) {
             Log.e("ERROR_", ex.getLocalizedMessage());

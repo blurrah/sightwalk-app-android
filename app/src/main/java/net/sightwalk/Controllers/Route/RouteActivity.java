@@ -43,7 +43,7 @@ public class RouteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_route);
 
-        RetrievePolyline(Polyline.getInstance().polyline, Steps.stepsArrayList);
+        RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
     }
 
     @Override
@@ -72,32 +72,29 @@ public class RouteActivity extends AppCompatActivity {
 
                 googleMap.setMyLocationEnabled(true);
 
-                if(UserLocation.userlocation == null) {
+                if(UserLocation.getInstance().userlocation == null) {
                     helper.errorDialog("Locatie niet gevonden");
                 } else {
-                    CameraUpdate center = CameraUpdateFactory.newLatLng(UserLocation.userlocation);
-                    CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(UserLocation.userlocation, 15);
+                    CameraUpdate center = CameraUpdateFactory.newLatLng(UserLocation.getInstance().userlocation);
+                    CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(UserLocation.getInstance().userlocation, 15);
 
                     googleMap.moveCamera(center);
                     googleMap.animateCamera(zoom);
                 }
 
-                for(int i = 0; i < Sights.mSightList.size(); i++) {
-                    Double latitude = Sights.mSightList.get(i).getDouble(Sights.mSightList.get(i).getColumnIndex("latitude"));
-                    Double longitude = Sights.mSightList.get(i).getDouble(Sights.mSightList.get(i).getColumnIndex("longitude"));
+                for(int i = 0; i < Sights.getInstance().mSightList.size(); i++) {
+                    Double latitude = Sights.getInstance().mSightList.get(i).getDouble(Sights.getInstance().mSightList.get(i).getColumnIndex("latitude"));
+                    Double longitude = Sights.getInstance().mSightList.get(i).getDouble(Sights.getInstance().mSightList.get(i).getColumnIndex("longitude"));
 
                     Marker m = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                     m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                 }
 
-                googleMap.addMarker(new MarkerOptions().position(Legs.getInstance().startroute));
-                googleMap.addMarker(new MarkerOptions().position(Legs.getInstance().endroute));
-
 
                 googleMap.addPolyline(new PolylineOptions()
                         .addAll(PolyUtil.decode(poly))
-                        .width(5)
-                        .color(Color.RED));
+                        .width(10)
+                        .color(Color.parseColor("#0088FF")));
             }
         }
 

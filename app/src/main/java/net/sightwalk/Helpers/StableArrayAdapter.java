@@ -1,5 +1,6 @@
 package net.sightwalk.Helpers;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
@@ -8,7 +9,12 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
+import net.sightwalk.Models.Sights;
+import net.sightwalk.Models.UserLocation;
 import net.sightwalk.R;
+import net.sightwalk.Tasks.RouteTask;
 
 import java.util.HashMap;
 import java.util.List;

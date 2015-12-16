@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -38,6 +39,7 @@ public class NewRouteActivity extends AppCompatActivity {
         helper.locationManager();
 
         checkBox = (CheckBox) findViewById(R.id.cbRouteDestination);
+        checkBox.setOnCheckedChangeListener(new checkedListener());
 
         Button rButton = (Button) findViewById(R.id.routeButton);
         rButton.setOnClickListener(new routeListener());
@@ -52,39 +54,44 @@ public class NewRouteActivity extends AppCompatActivity {
 
         Button routeButton = (Button) findViewById(R.id.routeButton);
         TextView amountSights = (TextView) findViewById(R.id.tvAmountSights);
-        amountSights.setText("Totaal "+ Sights.mSightList.size() +" sights");
+        amountSights.setText("Totaal " + Sights.mSightList.size() + " sights");
 
-        if(Sights.mSightList.size() == 0){
+        if(Sights.getInstance().mSightList.size() == 0){
             routeButton.setEnabled(false);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
         } else {
+
             routeButton.setEnabled(true);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
-            builder = new StringBuilder();
+            createRoute(checkBox.isChecked());
 
-            for(int i = 0; i < Sights.mSightList.size(); i++) {
-                String latitude = Sights.mSightList.get(i).getString(Sights.mSightList.get(i).getColumnIndex("latitude"));
-                String longitude = Sights.mSightList.get(i).getString(Sights.mSightList.get(i).getColumnIndex("longitude"));
-
-                builder.append(latitude + "," + longitude + "|");
-            }
-
-            waypoint = builder.toString();
-
-            if(checkBox.isChecked()) {
-                location = UserLocation.getInstance().userlocation;
-            }
-            else {
-                int last = Sights.mSightList.size() -1;
-                Double latitude = Sights.mSightList.get(last).getDouble(Sights.mSightList.get(last).getColumnIndex("latitude"));
-                Double longitude = Sights.mSightList.get(last).getDouble(Sights.mSightList.get(last).getColumnIndex("longitude"));
-                location = new LatLng(latitude,longitude);
-            }
-
-            final RouteTask routeTask = new RouteTask(UserLocation.getInstance().userlocation, location.latitude + "," + location.longitude, waypoint.toString(), "walking", "nl", this, this);
-            routeTask.execute();
         }
+    }
+
+    public void createRoute(boolean cbChecked){
+        builder = new StringBuilder();
+
+        for (int i = 0; i < Sights.getInstance().mSightList.size(); i++) {
+            String latitude = Sights.getInstance().mSightList.get(i).getString(Sights.getInstance().mSightList.get(i).getColumnIndex("latitude"));
+            String longitude = Sights.getInstance().mSightList.get(i).getString(Sights.getInstance().mSightList.get(i).getColumnIndex("longitude"));
+
+            builder.append(latitude + "," + longitude + "|");
+        }
+
+        waypoint = builder.toString();
+
+        if (cbChecked) {
+            location = UserLocation.getInstance().userlocation;
+        } else {
+            int last = Sights.getInstance().mSightList.size() - 1;
+            Double latitude = Sights.getInstance().mSightList.get(last).getDouble(Sights.getInstance().mSightList.get(last).getColumnIndex("latitude"));
+            Double longitude = Sights.getInstance().mSightList.get(last).getDouble(Sights.getInstance().mSightList.get(last).getColumnIndex("longitude"));
+            location = new LatLng(latitude, longitude);
+        }
+
+        final RouteTask routeTask = new RouteTask(UserLocation.getInstance().userlocation, location.latitude + "," + location.longitude, waypoint.toString(), "walking", "nl", this, this);
+        routeTask.execute();
     }
 
     @Override
@@ -124,14 +131,13 @@ public class NewRouteActivity extends AppCompatActivity {
         }
     }
 
+    private class checkedListener implements CheckBox.OnCheckedChangeListener{
 
-    public interface OnDataChangeListener{
-        public void onDataChanged(int size);
-    }
-
-    private OnDataChangeListener mOnDataChangeListener;
-
-    public void setOnDataChangeListener(OnDataChangeListener onDataChangeListener){
-        mOnDataChangeListener = onDataChangeListener;
+        @Override
+        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+            if(Sights.getInstance().mSightList.size() > 0){
+                createRoute(b);
+            }
+        }
     }
 }

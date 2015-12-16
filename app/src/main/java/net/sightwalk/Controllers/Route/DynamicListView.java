@@ -102,6 +102,8 @@ public class DynamicListView extends ListView {
 
                     updateNeighborViewsForID(mMobileItemId);
 
+
+
                     return true;
                 }
             };
@@ -242,6 +244,8 @@ public class DynamicListView extends ListView {
                 break;
             case MotionEvent.ACTION_UP:
                 touchEventsEnded();
+
+                ((NewRouteActivity) getContext()).createRoute(((NewRouteActivity) getContext()).findViewById(R.id.cbRouteDestination).isEnabled());
                 break;
             case MotionEvent.ACTION_CANCEL:
                 touchEventsCancelled();

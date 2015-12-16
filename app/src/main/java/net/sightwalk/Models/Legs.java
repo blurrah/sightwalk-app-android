@@ -6,8 +6,8 @@ public class Legs {
 
     private static final Legs instance = new Legs();
 
-    public static String duration = new String();
-    public static String distance = new String();
+    public static Integer duration = 0;
+    public static Integer distance = 0;
     public static LatLng startroute = new LatLng(0,0);
     public static LatLng endroute = new LatLng(0,0);
 

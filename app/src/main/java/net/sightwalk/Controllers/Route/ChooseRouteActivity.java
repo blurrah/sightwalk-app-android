@@ -107,7 +107,7 @@ public class ChooseRouteActivity extends AppCompatActivity {
             selectedMarker = marker;
             selectedCursor = database.getSelectedSight(markerHaspMap.get(marker));
 
-            Sights.activeSight = selectedCursor;
+            Sights.getInstance().activeSight = selectedCursor;
 
             FragmentManager fm = getSupportFragmentManager();
 
