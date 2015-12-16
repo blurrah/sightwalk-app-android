@@ -25,6 +25,7 @@ import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ListView;
 
 import net.sightwalk.Helpers.StableArrayAdapter;
@@ -244,8 +245,8 @@ public class DynamicListView extends ListView {
                 break;
             case MotionEvent.ACTION_UP:
                 touchEventsEnded();
-
-                ((NewRouteActivity) getContext()).createRoute(((NewRouteActivity) getContext()).findViewById(R.id.cbRouteDestination).isEnabled());
+                CheckBox cbDest = (CheckBox) ((NewRouteActivity) getContext()).findViewById(R.id.cbRouteDestination);
+                        ((NewRouteActivity) getContext()).createRoute(cbDest.isChecked());
                 break;
             case MotionEvent.ACTION_CANCEL:
                 touchEventsCancelled();
