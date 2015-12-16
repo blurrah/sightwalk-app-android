@@ -1,22 +1,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="horizontal" >
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:background="#ffffff">
 
     <ImageView
         android:id="@+id/maneuverImageView"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="5dp" />
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_gravity="center" />
 
     <TextView
         android:id="@+id/routeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"
-        android:paddingTop="5dp" />
+        android:textSize="18dp"
+        android:text="Ga in zuidwestelijke richting op Domein naar Sille"
+        android:paddingLeft="10dp" />
 
 </LinearLayout>
