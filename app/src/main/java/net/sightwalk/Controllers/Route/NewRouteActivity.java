@@ -56,7 +56,7 @@ public class NewRouteActivity extends AppCompatActivity {
         TextView amountSights = (TextView) findViewById(R.id.tvAmountSights);
         amountSights.setText("Totaal " + Sights.mSightList.size() + " sights");
 
-        if(Sights.getInstance().mSightList.size() == 0){
+        if(Sights.getInstance().mSightList.size() == 0) {
             routeButton.setEnabled(false);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
         } else {
@@ -65,7 +65,6 @@ public class NewRouteActivity extends AppCompatActivity {
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
             createRoute(checkBox.isChecked());
-
         }
     }
 

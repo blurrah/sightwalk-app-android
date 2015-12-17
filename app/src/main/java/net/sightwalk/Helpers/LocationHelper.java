@@ -13,9 +13,13 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.PolyUtil;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
 import net.sightwalk.Models.UserLocation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocationHelper {
 
@@ -68,7 +72,14 @@ public class LocationHelper {
             }
 
             // Hardcoded values for testing
-            boolean range = inRange(51.5676979, 4.6547354, 51.567638, 4.654226299999999, location.getLatitude(), location.getLongitude());
+            boolean range2 = inRange(51.5676979, 4.6547354, 51.567638, 4.654226299999999, location.getLatitude(), location.getLongitude());
+
+            List<LatLng> latLngs;
+            latLngs = new ArrayList<>();
+            latLngs.add(new LatLng(51.5684449,4.656751799999999));
+            latLngs.add(new LatLng(51.5683616,4.6565268));
+
+            boolean range = PolyUtil.isLocationOnPath(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true);
 
             if(!range) {
                 Toast.makeText(context, "false", Toast.LENGTH_LONG).show();

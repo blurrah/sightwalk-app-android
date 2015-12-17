@@ -97,47 +97,51 @@ public class RegisterTask extends AsyncTask<String, Void, String> {
 
         JSONObject jsonObject;
 
-        try {
-            jsonObject = new JSONObject(response);
-            Boolean requestStatus = jsonObject.getBoolean("success");
+        if (response.isEmpty()) {
+            Toast.makeText(appContext, "Oeps! Er is iets fouts gegaan aan onze kant, probeer het overal een aantal minuten opnieuw.", Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                jsonObject = new JSONObject(response);
+                Boolean requestStatus = jsonObject.getBoolean("success");
 
-            if(requestStatus){
-                LoginTask loginTask = new LoginTask(appContext, username, password, instance_id);
-                loginTask.execute();
-            } else {
-                int errorCode = jsonObject.getInt("error");
+                if (requestStatus) {
+                    LoginTask loginTask = new LoginTask(appContext, username, password, instance_id);
+                    loginTask.execute();
+                } else {
+                    int errorCode = jsonObject.getInt("error");
 
-                switch(errorCode) {
-                    case -1:
-                        Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 2:
-                        Toast.makeText(appContext, "Er missen gegevens.", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 3:
-                        Toast.makeText(appContext, "E-mailadres klopt niet (is deze al in gebruik?).", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 4:
-                        Toast.makeText(appContext, "Wachtwoord klopt niet.", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 5:
-                        Toast.makeText(appContext, "Gebruikersnaam is al in gebruik.", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 6:
-                        Toast.makeText(appContext, "Gewicht klopt niet.", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 7:
-                        Toast.makeText(appContext, "Lengte klopt niet.", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 8:
-                        Toast.makeText(appContext, "Geboortedatum klopt niet.", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
+                    switch (errorCode) {
+                        case -1:
+                            Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 2:
+                            Toast.makeText(appContext, "Er missen gegevens.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 3:
+                            Toast.makeText(appContext, "E-mailadres klopt niet (is deze al in gebruik?).", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 4:
+                            Toast.makeText(appContext, "Wachtwoord klopt niet.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 5:
+                            Toast.makeText(appContext, "Gebruikersnaam is al in gebruik.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 6:
+                            Toast.makeText(appContext, "Gewicht klopt niet.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 7:
+                            Toast.makeText(appContext, "Lengte klopt niet.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 8:
+                            Toast.makeText(appContext, "Geboortedatum klopt niet.", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
+                    }
                 }
+            } catch (JSONException ex) {
+                Log.e("ERROR_", ex.getLocalizedMessage());
             }
-        } catch( JSONException ex) {
-            Log.e("ERROR_", ex.getLocalizedMessage());
         }
     }
 }

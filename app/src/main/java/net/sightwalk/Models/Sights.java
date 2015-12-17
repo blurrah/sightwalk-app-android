@@ -16,6 +16,5 @@ public class Sights {
         return instance;
     }
 
-    private Sights() {
-    }
+    private Sights() { }
 }

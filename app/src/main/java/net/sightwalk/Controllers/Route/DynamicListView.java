@@ -1,9 +1,5 @@
 package net.sightwalk.Controllers.Route;
 
-/**
- * Created by Ruben on 08/12/2015.
- */
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
@@ -13,16 +9,13 @@ import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
@@ -102,8 +95,6 @@ public class DynamicListView extends ListView {
                     mCellIsMobile = true;
 
                     updateNeighborViewsForID(mMobileItemId);
-
-
 
                     return true;
                 }

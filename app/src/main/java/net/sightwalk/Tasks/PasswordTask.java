@@ -73,25 +73,29 @@ public class PasswordTask extends AsyncTask<String, Void, String> {
 
         JSONObject jsonObject;
 
-        try {
-            jsonObject = new JSONObject(response);
-            Boolean requestStatus = jsonObject.getBoolean("success");
+        if (response.isEmpty()) {
+            Toast.makeText(appContext, "Oeps! Er is iets fouts gegaan aan onze kant, probeer het overal een aantal minuten opnieuw.", Toast.LENGTH_SHORT).show();
+        } else {
+            try {
+                jsonObject = new JSONObject(response);
+                Boolean requestStatus = jsonObject.getBoolean("success");
 
-            if(requestStatus){
+                if (requestStatus) {
 
-            } else {
-                int errorCode = jsonObject.getInt("error");
+                } else {
+                    int errorCode = jsonObject.getInt("error");
 
-                switch(errorCode) {
-                    case 3:
-                        Toast.makeText(appContext, "E-mailadres onbekend.", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
+                    switch (errorCode) {
+                        case 3:
+                            Toast.makeText(appContext, "E-mailadres onbekend.", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
+                    }
                 }
+            } catch (JSONException ex) {
+                Log.e("ERROR_", ex.getLocalizedMessage());
             }
-        } catch( JSONException ex) {
-            Log.e("ERROR_", ex.getLocalizedMessage());
         }
     }
 }

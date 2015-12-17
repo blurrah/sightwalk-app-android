@@ -23,13 +23,11 @@ import com.google.maps.android.PolyUtil;
 import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.Helpers.LocationHelper;
 import net.sightwalk.Helpers.RouteAdapter;
-import net.sightwalk.Models.Legs;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.Models.Sights;
 import net.sightwalk.Models.Steps;
 import net.sightwalk.Models.UserLocation;
 import net.sightwalk.R;
-import net.sightwalk.Tasks.RouteTask;
 
 import java.util.ArrayList;
 
@@ -89,7 +87,6 @@ public class RouteActivity extends AppCompatActivity {
                     Marker m = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                     m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
                 }
-
 
                 googleMap.addPolyline(new PolylineOptions()
                         .addAll(PolyUtil.decode(poly))

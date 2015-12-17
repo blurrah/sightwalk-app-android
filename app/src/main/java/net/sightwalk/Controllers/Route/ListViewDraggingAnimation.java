@@ -22,9 +22,7 @@ public class ListViewDraggingAnimation extends Fragment {
     private ArrayList<Cursor> mCheeseList;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                         Bundle savedInstanceState) {
-
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.activity_new_route_list, container,false);
 
         return view;
@@ -43,4 +41,3 @@ public class ListViewDraggingAnimation extends Fragment {
         listView.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
     }
 }
-

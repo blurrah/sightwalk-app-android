@@ -84,41 +84,46 @@ public class LoginTask extends AsyncTask<String, Void, String> {
 
         JSONObject jsonObject;
 
-        try {
-            jsonObject = new JSONObject(response);
-            Boolean requestStatus = jsonObject.getBoolean("success");
+        if (response.isEmpty()) {
+            Toast.makeText(appContext, "Oeps! Er is iets fouts gegaan aan onze kant, probeer het overal een aantal minuten opnieuw.", Toast.LENGTH_SHORT).show();
+        }
+        else {
+            try {
+                jsonObject = new JSONObject(response);
+                Boolean requestStatus = jsonObject.getBoolean("success");
 
-            if(requestStatus){
-                String requestToken = jsonObject.getString("token");
+                if (requestStatus) {
+                    String requestToken = jsonObject.getString("token");
 
-                SharedPreferences pref = appContext.getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE);
-                SharedPreferences.Editor editor = pref.edit();
-                editor.putString("USERNAME", username);
-                editor.putString("TOKEN", requestToken);
-                editor.commit();
+                    SharedPreferences pref = appContext.getSharedPreferences("PREFERENCE", Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("USERNAME", username);
+                    editor.putString("TOKEN", requestToken);
+                    editor.commit();
 
-                Intent i = new Intent(appContext, DashboardActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                appContext.startActivity(i);
-            } else {
-                int errorCode = jsonObject.getInt("error");
+                    Intent i = new Intent(appContext, DashboardActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    appContext.startActivity(i);
+                } else {
+                    int errorCode = jsonObject.getInt("error");
 
-                switch(errorCode) {
-                    case -1:
-                        Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 1:
-                        Toast.makeText(appContext, "Inloggegevens kloppen niet.", Toast.LENGTH_SHORT).show();
-                        break;
-                    case 2:
-                        Toast.makeText(appContext, "Er missen gegevens.", Toast.LENGTH_SHORT).show();
-                        break;
-                    default:
-                        Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
+                    switch (errorCode) {
+                        case -1:
+                            Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 1:
+                            Toast.makeText(appContext, "Inloggegevens kloppen niet.", Toast.LENGTH_SHORT).show();
+                            break;
+                        case 2:
+                            Toast.makeText(appContext, "Er missen gegevens.", Toast.LENGTH_SHORT).show();
+                            break;
+                        default:
+                            Toast.makeText(appContext, "Onbekende fout opgetreden.", Toast.LENGTH_SHORT).show();
+                    }
                 }
+            } catch (JSONException ex) {
+                Log.e("ERROR_", ex.getLocalizedMessage());
             }
-        } catch( JSONException ex) {
-            Log.e("ERROR_", ex.getLocalizedMessage());
         }
     }
 }

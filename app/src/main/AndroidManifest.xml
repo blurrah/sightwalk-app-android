@@ -34,6 +34,7 @@
         <activity android:screenOrientation="portrait" android:name=".Controllers.Route.RouteActivity"></activity>
         <activity android:screenOrientation="portrait" android:name=".Controllers.Route.SightActivity"></activity>
         <activity android:screenOrientation="portrait" android:name=".Controllers.SettingsActivity"></activity>
+        <activity android:screenOrientation="portrait" android:name=".Controllers.Route.ChooseRouteActivity"></activity>
 
         <meta-data
             android:name="com.google.android.gms.version"
@@ -42,7 +43,6 @@
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAiKKjzTJeuvWz6n8vC3vKGp3Wr36W6DU4" />
 
-        <activity android:screenOrientation="portrait" android:name=".Controllers.Route.ChooseRouteActivity"></activity>
     </application>
 
 </manifest>

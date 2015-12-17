@@ -19,9 +19,6 @@ import net.sightwalk.R;
 import java.io.InputStream;
 import java.net.URL;
 
-/**
- * Created by Ruben on 10/12/2015.
- */
 public class SightDialogFragment extends Fragment {
 
     View view;
@@ -47,8 +44,6 @@ public class SightDialogFragment extends Fragment {
         TextView sightDesc = (TextView) view.findViewById(R.id.sightText);
         sightImg = (ImageView) view.findViewById(R.id.sightImage);
 
-
-
         if(active != null) {
             sightTitle.setText(active.getString(active.getColumnIndex("name")));
             sightDesc.setText(active.getString(active.getColumnIndex("short_desc")));
@@ -61,10 +56,10 @@ public class SightDialogFragment extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
         }
+
         protected Bitmap doInBackground(String... args) {
             try {
                 bitmap = BitmapFactory.decodeStream((InputStream) new URL(args[0]).getContent());
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -72,14 +67,11 @@ public class SightDialogFragment extends Fragment {
         }
 
         protected void onPostExecute(Bitmap image) {
-
             if(image != null){
                 sightImg.setImageBitmap(image);
 
-            }else{
-
+            } else {
                 Toast.makeText(getActivity(), "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
-
             }
         }
     }
