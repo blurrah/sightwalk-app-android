@@ -10,12 +10,12 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.PolyUtil;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
+import net.sightwalk.Models.Steps;
 import net.sightwalk.Models.UserLocation;
 
 import java.util.ArrayList;
@@ -71,20 +71,19 @@ public class LocationHelper {
                 mLocation.userlocation = new LatLng(location.getLatitude(), location.getLongitude());
             }
 
-            // Hardcoded values for testing
-            boolean range2 = inRange(51.5676979, 4.6547354, 51.567638, 4.654226299999999, location.getLatitude(), location.getLongitude());
+            if(!Steps.stepsArrayList.isEmpty()) {
+                Steps step = Steps.stepsArrayList.get(0);
 
-            List<LatLng> latLngs;
-            latLngs = new ArrayList<>();
-            latLngs.add(new LatLng(51.5684449,4.656751799999999));
-            latLngs.add(new LatLng(51.5683616,4.6565268));
+                List<LatLng> latLngs;
+                latLngs = new ArrayList<>();
+                latLngs.add(new LatLng(step.getStart_location().latitude, step.getStart_location().longitude));
+                latLngs.add(new LatLng(step.getEnd_location().latitude, step.getEnd_location().longitude));
 
-            boolean range = PolyUtil.isLocationOnPath(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true);
+                boolean range = PolyUtil.isLocationOnPath(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true);
 
-            if(!range) {
-                Toast.makeText(context, "false", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(context, "true", Toast.LENGTH_LONG).show();
+                if (!range) {
+
+                }
             }
         }
 

@@ -98,7 +98,5 @@ public class RouteActivity extends AppCompatActivity {
         ListAdapter adapter = new RouteAdapter(this, steps);
         ListView listView = (ListView) findViewById(R.id.routeListView);
         listView.setAdapter(adapter);
-
-        //Steps item = (Steps) listView.getItemAtPosition(1);
     }
 }
