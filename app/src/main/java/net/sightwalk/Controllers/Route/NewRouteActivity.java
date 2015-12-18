@@ -1,8 +1,15 @@
 package net.sightwalk.Controllers.Route;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -11,32 +18,36 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
 
+import net.sightwalk.Controllers.Dashboard.DashboardActivity;
 import net.sightwalk.Controllers.SettingsActivity;
-import net.sightwalk.Helpers.LocationHelper;
-import net.sightwalk.Models.Sights;
-import net.sightwalk.Models.UserLocation;
+import net.sightwalk.Models.*;
 import net.sightwalk.R;
 import net.sightwalk.Tasks.RouteTask;
 
 public class NewRouteActivity extends AppCompatActivity {
 
-    private LocationHelper helper;
     private String waypoint;
     private StringBuilder builder;
+    private CheckBox checkBox;
+    private LatLng location;
+    private locationListener listener;
+    private LocationManager mLocationManager;
+    private UserLocation mLocation;
 
-    CheckBox checkBox;
-
-    LatLng location;
+    private static AlertDialog alert;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_route);
 
-        helper = new LocationHelper(this);
-        helper.locationManager();
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        listener = new locationListener();
+
+        locationManager();
 
         checkBox = (CheckBox) findViewById(R.id.cbRouteDestination);
         checkBox.setOnCheckedChangeListener(new checkedListener());
@@ -60,7 +71,6 @@ public class NewRouteActivity extends AppCompatActivity {
             routeButton.setEnabled(false);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
         } else {
-
             routeButton.setEnabled(true);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
@@ -138,5 +148,77 @@ public class NewRouteActivity extends AppCompatActivity {
                 createRoute(b);
             }
         }
+    }
+
+    public void locationManager() {
+        boolean gpsIsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        boolean networkIsEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+
+        if(gpsIsEnabled) {
+            try {
+                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, listener);
+            } catch (SecurityException e) {
+                Log.e("ERROR_", e.getLocalizedMessage());
+            }
+        }
+        else {
+            errorDialog("GPS locatie niet gevonden");
+        }
+        if (networkIsEnabled) {
+            try {
+                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, listener);
+            } catch (SecurityException e) {
+                Log.e("ERROR_", e.getLocalizedMessage());
+            }
+        }
+        else {
+            errorDialog("Netwerklocatie niet gevonden");
+        }
+    }
+
+    private class locationListener implements LocationListener {
+        @Override
+        public void onLocationChanged(Location location) {
+            if(location == null) {
+                errorDialog("Locatie niet gevonden");
+            }
+            else {
+                mLocation = UserLocation.getInstance();
+                mLocation.userlocation = new LatLng(location.getLatitude(), location.getLongitude());
+            }
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) { }
+
+        @Override
+        public void onProviderEnabled(String provider) { }
+
+        @Override
+        public void onProviderDisabled(String provider) { }
+    }
+
+    public void errorDialog(String error) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Om deze functie te gebruiken hebben we je locatie nodig. Zet alsjeblieft je internet of GPS modus aan in de locatie opties.")
+                .setTitle(error)
+                .setCancelable(false)
+                .setPositiveButton("Instellingen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                        alert.dismiss();
+                    }
+                })
+                .setNegativeButton("Annuleren", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                });
+        alert = builder.create();
+        alert.show();
     }
 }
