@@ -8,7 +8,7 @@ public class Sights {
 
     private static final Sights instance = new Sights();
 
-    public static final ArrayList<Cursor> mSightList = new ArrayList<Cursor>();
+    public static final ArrayList<Cursor> mSightList = new ArrayList<>();
 
     public static Cursor activeSight = null;
 

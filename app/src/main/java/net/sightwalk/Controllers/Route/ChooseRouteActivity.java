@@ -1,16 +1,12 @@
 package net.sightwalk.Controllers.Route;
 
 import android.Manifest;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
-
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,74 +15,49 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Helpers.PermissionInterface;
-import net.sightwalk.Models.Sights;
+import net.sightwalk.Models.Sight;
 import net.sightwalk.R;
-import net.sightwalk.Stores.SightDBHandeler;
-
-import java.util.ArrayList;
+import net.sightwalk.Stores.SightSelectionStore;
+import net.sightwalk.Stores.SightsInterface;
 import java.util.HashMap;
 
-public class ChooseRouteActivity extends PermissionActivity {
+public class ChooseRouteActivity extends PermissionActivity implements SightsInterface, View.OnClickListener, GoogleMap.OnMarkerClickListener {
 
-    private GoogleMap googleMap;
-    private SightDBHandeler database;
-    private Cursor cursor;
-    private Cursor selectedCursor;
+    /**
+     * View elements
+     */
+    private SightDialogFragment sdfInfo;
     private FloatingActionButton fabAddSight;
     private FloatingActionButton fabRemoveSight;
-    private Marker selectedMarker;
+    private GoogleMap googleMap;
 
-    HashMap<Marker, Integer> markerHaspMap = new HashMap<Marker, Integer>();
+    private Marker selectedMarker;
+    private SightSelectionStore store;
+    private HashMap<Marker, Sight> sights = new HashMap<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_route);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        database = new SightDBHandeler(getApplicationContext());
-        cursor = database.getSights();
-
-        displayLocation();
-
-        googleMap.setOnMarkerClickListener(new markerListener());
-
+        FragmentManager fm = getSupportFragmentManager();
+        sdfInfo = (SightDialogFragment) fm.findFragmentById(R.id.fragment_sight);
         fabAddSight = (FloatingActionButton) findViewById(R.id.fabAddSight);
-        fabAddSight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Sights.getInstance().mSightList.add(selectedCursor);
-                Toast.makeText(getApplicationContext(), "Sight is toegevoegd", Toast.LENGTH_SHORT).show();
-
-                selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                fabAddSight.setVisibility(View.INVISIBLE);
-                fabRemoveSight.setVisibility(View.VISIBLE);
-            }
-
-        });
-
         fabRemoveSight = (FloatingActionButton) findViewById(R.id.fabRemoveSight);
-        fabRemoveSight.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                for (Cursor k : Sights.getInstance().mSightList) {
-                    if (k.getInt(k.getColumnIndex("id")) == selectedCursor.getInt(selectedCursor.getColumnIndex("id"))) {
-                        Sights.getInstance().mSightList.remove(k);
-                        selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
-                        break;
-                    }
-                }
-                Toast.makeText(getApplicationContext(), "Sight is verwijderd", Toast.LENGTH_SHORT).show();
-                fabAddSight.setVisibility(View.VISIBLE);
-                fabRemoveSight.setVisibility(View.INVISIBLE);
-            }
 
-        });
+        fabAddSight.setOnClickListener(this);
+        fabRemoveSight.setOnClickListener(this);
+
+        initGoogleMaps();
+
+        // bind store
+        store = SightSelectionStore.getSharedInstance("chooseRouteActivity", this);
+        for (Sight sight : store.getAll()) {
+            addedSight(sight);
+        }
     }
 
     @Override
@@ -104,81 +75,96 @@ public class ChooseRouteActivity extends PermissionActivity {
         }
     }
 
-    private class markerListener implements GoogleMap.OnMarkerClickListener {
-        @Override
-        public boolean onMarkerClick(Marker marker) {
-            selectedMarker = marker;
-            selectedCursor = database.getSelectedSight(markerHaspMap.get(marker));
+    @Override
+    public void addedSight(Sight sight) {
+        Marker m = googleMap.addMarker(
+                new MarkerOptions().position(sight.getCoordinates()).title(sight.name)
+        );
 
-            Sights.getInstance().activeSight = selectedCursor;
+        sights.put(m, sight);
 
-            FragmentManager fm = getSupportFragmentManager();
-
-            if (!contains(Sights.getInstance().mSightList, selectedCursor.getInt(selectedCursor.getColumnIndex("id")))) {
-                fabAddSight.setVisibility(View.VISIBLE);
-                fabRemoveSight.setVisibility(View.INVISIBLE);
-            } else {
-                fabAddSight.setVisibility(View.INVISIBLE);
-                fabRemoveSight.setVisibility(View.VISIBLE);
-            }
-
-            SightDialogFragment fragment = (SightDialogFragment) fm.findFragmentById(R.id.fragment_sight);
-            fragment.view.setVisibility(View.VISIBLE);
-            fragment.refreshFragment();
-
-            return false;
+        if (store.isSelected(sight)) {
+            m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         }
     }
 
-    boolean contains(ArrayList<Cursor> list, Integer id) {
-        for (Cursor item : list) {
-            if (item.getInt(item.getColumnIndex("id")) == id) {
-                return true;
-            }
+    @Override
+    public void removedSight(Sight sight) {
+
+    }
+
+    @Override
+    public void updatedSight(Sight oldSight, Sight newSight) {
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.fabAddSight:
+                setSightSelection(selectedMarker, true);
+                break;
+            case R.id.fabRemoveSight:
+                setSightSelection(selectedMarker, false);
+                break;
         }
+    }
+
+    private void setSightSelection(Marker marker, boolean state) {
+        // update in store
+        Sight sight = sights.get(marker);
+        store.setSelected(sight, state);
+
+        if(state) {
+            selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        } else {
+            selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
+        }
+
+        // update view
+        updateFloatingButtonStyle(state);
+    }
+
+    private void updateFloatingButtonStyle(boolean state) {
+        if (state) {
+            fabAddSight.setVisibility(View.INVISIBLE);
+            fabRemoveSight.setVisibility(View.VISIBLE);
+        } else {
+            selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
+            fabAddSight.setVisibility(View.VISIBLE);
+            fabRemoveSight.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        selectedMarker = marker;
+
+        updateFloatingButtonStyle(store.isSelected(sights.get(marker)));
+        sdfInfo.show();
+        sdfInfo.setScope(sights.get(marker));
+
         return false;
     }
 
-    private void displayLocation() {
+    private void initGoogleMaps() {
+        googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.chooseMapView)).getMap();
+        googleMap.setOnMarkerClickListener(this);
+        enableGPSTracking();
+        zoomBreda();
+    }
 
-        if (googleMap == null) {
-            googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.chooseMapView)).getMap();
-            if (googleMap != null) {
+    private void zoomBreda() {
+        double latitude = 51.5891072;
+        double longitude = 4.7753679;
 
-                enableGPSTracking();
+        LatLng breda = new LatLng(latitude, longitude);
 
-                double latitude = 51.5891072;
-                double longitude = 4.7753679;
+        CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, latitude));
+        CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(breda, 15);
 
-                LatLng breda = new LatLng(latitude, longitude);
-
-                CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(latitude, latitude));
-                CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(breda, 15);
-
-                googleMap.moveCamera(center);
-                googleMap.animateCamera(zoom);
-
-                cursor.moveToFirst();
-
-                while (!cursor.isAfterLast()) {
-                    double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));
-                    double lon = cursor.getDouble(cursor.getColumnIndex("longitude"));
-                    String name = cursor.getString(cursor.getColumnIndex("name"));
-                    Integer id = cursor.getInt(cursor.getColumnIndex("id"));
-
-                    Marker m = googleMap.addMarker(new MarkerOptions()
-                            .position(new LatLng(lat, lon))
-                            .title(name)
-                    );
-
-                    if (contains(Sights.getInstance().mSightList, cursor.getInt(cursor.getColumnIndex("id")))) {
-                        m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                    }
-                    markerHaspMap.put(m, id);
-                    cursor.moveToNext();
-                }
-            }
-        }
+        googleMap.moveCamera(center);
+        googleMap.animateCamera(zoom);
     }
 
     private void enableGPSTracking() {
