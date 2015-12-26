@@ -104,7 +104,7 @@ public class GPSTracker implements LocationListener {
 
     private void getPermissions() {
         // ask for permission to retrieve gps location
-        if (client.validateGranted(Manifest.permission.ACCESS_FINE_LOCATION, new PermissionInterface() {
+        client.validateGranted(Manifest.permission.ACCESS_FINE_LOCATION, new PermissionInterface() {
             @Override
             public void granted(String... permission) {
                 updateDeviceCapabilities();
@@ -114,9 +114,7 @@ public class GPSTracker implements LocationListener {
             public void denied(String... permission) {
                 Log.d("gpstracker", "GPS permission not granted");
             }
-        })) {
-            updateDeviceCapabilities();
-        }
+        });
     }
 
     private void updateDeviceCapabilities() {

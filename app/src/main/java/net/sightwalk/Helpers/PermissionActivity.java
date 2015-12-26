@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 
 import java.security.Permission;
 import java.util.ArrayList;
@@ -49,22 +50,18 @@ abstract public class PermissionActivity extends AppCompatActivity {
         ActivityCompat.requestPermissions(this, permissions, transactions.indexOf(transaction));
     }
 
-    public boolean validateGranted(String permission, PermissionInterface transaction) {
+    public void validateGranted(String permission, PermissionInterface transaction) {
         if (isGranted(permission)) {
-            if (canAskGranting(permission)) {
-                // permission previously granted
-                return true;
-            } else {
-                // permission denied or not available on device
-                return false;
-            }
+            transaction.granted(permission);
         }
 
-        // ask user to grant permission
-        askGrant(new String[]{permission}, transaction);
+        if (canAskGranting(permission)) {
+            // ask user to grant permission
+            askGrant(new String[]{permission}, transaction);
+        }
 
-        // but not yet granted...
-        return false;
+        // not (yet) granted...
+        transaction.denied(permission);
     }
 
     public final void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {

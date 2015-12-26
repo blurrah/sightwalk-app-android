@@ -1,10 +1,12 @@
 package net.sightwalk.Controllers.Route;
 
+import android.Manifest;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -18,6 +20,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import net.sightwalk.Helpers.PermissionActivity;
+import net.sightwalk.Helpers.PermissionInterface;
 import net.sightwalk.Models.Sights;
 import net.sightwalk.R;
 import net.sightwalk.Stores.SightDBHandeler;
@@ -25,7 +29,7 @@ import net.sightwalk.Stores.SightDBHandeler;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ChooseRouteActivity extends AppCompatActivity {
+public class ChooseRouteActivity extends PermissionActivity {
 
     private GoogleMap googleMap;
     private SightDBHandeler database;
@@ -35,7 +39,7 @@ public class ChooseRouteActivity extends AppCompatActivity {
     private FloatingActionButton fabRemoveSight;
     private Marker selectedMarker;
 
-    HashMap<Marker, Integer> markerHaspMap = new HashMap <Marker, Integer>();
+    HashMap<Marker, Integer> markerHaspMap = new HashMap<Marker, Integer>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +60,13 @@ public class ChooseRouteActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                    Sights.getInstance().mSightList.add(selectedCursor);
-                    Toast.makeText(getApplicationContext(), "Sight is toegevoegd", Toast.LENGTH_SHORT).show();
+                Sights.getInstance().mSightList.add(selectedCursor);
+                Toast.makeText(getApplicationContext(), "Sight is toegevoegd", Toast.LENGTH_SHORT).show();
 
-                    selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
-                    fabAddSight.setVisibility(View.INVISIBLE);
-                    fabRemoveSight.setVisibility(View.VISIBLE);
-                }
+                selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+                fabAddSight.setVisibility(View.INVISIBLE);
+                fabRemoveSight.setVisibility(View.VISIBLE);
+            }
 
         });
 
@@ -70,18 +74,17 @@ public class ChooseRouteActivity extends AppCompatActivity {
         fabRemoveSight.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                    for(Cursor k : Sights.getInstance().mSightList){
-                        if(k.getInt(k.getColumnIndex("id")) == selectedCursor.getInt(selectedCursor.getColumnIndex("id")))
-                        {
-                            Sights.getInstance().mSightList.remove(k);
-                            selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
-                            break;
-                        }
+                for (Cursor k : Sights.getInstance().mSightList) {
+                    if (k.getInt(k.getColumnIndex("id")) == selectedCursor.getInt(selectedCursor.getColumnIndex("id"))) {
+                        Sights.getInstance().mSightList.remove(k);
+                        selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
+                        break;
                     }
-                    Toast.makeText(getApplicationContext(), "Sight is verwijderd", Toast.LENGTH_SHORT).show();
-                    fabAddSight.setVisibility(View.VISIBLE);
-                    fabRemoveSight.setVisibility(View.INVISIBLE);
                 }
+                Toast.makeText(getApplicationContext(), "Sight is verwijderd", Toast.LENGTH_SHORT).show();
+                fabAddSight.setVisibility(View.VISIBLE);
+                fabRemoveSight.setVisibility(View.INVISIBLE);
+            }
 
         });
     }
@@ -114,12 +117,12 @@ public class ChooseRouteActivity extends AppCompatActivity {
             if (!contains(Sights.getInstance().mSightList, selectedCursor.getInt(selectedCursor.getColumnIndex("id")))) {
                 fabAddSight.setVisibility(View.VISIBLE);
                 fabRemoveSight.setVisibility(View.INVISIBLE);
-            }else{
+            } else {
                 fabAddSight.setVisibility(View.INVISIBLE);
                 fabRemoveSight.setVisibility(View.VISIBLE);
             }
 
-                SightDialogFragment fragment = (SightDialogFragment) fm.findFragmentById(R.id.fragment_sight);
+            SightDialogFragment fragment = (SightDialogFragment) fm.findFragmentById(R.id.fragment_sight);
             fragment.view.setVisibility(View.VISIBLE);
             fragment.refreshFragment();
 
@@ -142,7 +145,7 @@ public class ChooseRouteActivity extends AppCompatActivity {
             googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.chooseMapView)).getMap();
             if (googleMap != null) {
 
-                googleMap.setMyLocationEnabled(true);
+                enableGPSTracking();
 
                 double latitude = 51.5891072;
                 double longitude = 4.7753679;
@@ -157,15 +160,15 @@ public class ChooseRouteActivity extends AppCompatActivity {
 
                 cursor.moveToFirst();
 
-                while(!cursor.isAfterLast()) {
+                while (!cursor.isAfterLast()) {
                     double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));
                     double lon = cursor.getDouble(cursor.getColumnIndex("longitude"));
                     String name = cursor.getString(cursor.getColumnIndex("name"));
                     Integer id = cursor.getInt(cursor.getColumnIndex("id"));
 
                     Marker m = googleMap.addMarker(new MarkerOptions()
-                                    .position(new LatLng(lat, lon))
-                                    .title(name)
+                            .position(new LatLng(lat, lon))
+                            .title(name)
                     );
 
                     if (contains(Sights.getInstance().mSightList, cursor.getInt(cursor.getColumnIndex("id")))) {
@@ -174,6 +177,30 @@ public class ChooseRouteActivity extends AppCompatActivity {
                     markerHaspMap.put(m, id);
                     cursor.moveToNext();
                 }
+            }
+        }
+    }
+
+    private void enableGPSTracking() {
+        validateGranted(Manifest.permission.ACCESS_FINE_LOCATION, new PermissionInterface() {
+            @Override
+            public void granted(String... permission) {
+                updateGPSTracking();
+            }
+
+            @Override
+            public void denied(String... permission) {
+                Log.d("gpstracker", "GPS permission not granted");
+            }
+        });
+    }
+
+    private void updateGPSTracking() {
+        if (googleMap != null) {
+            try {
+                googleMap.setMyLocationEnabled(true);
+            } catch (SecurityException e) {
+                Log.d("ChooseRouteActivity", "failed to enable map location tracker");
             }
         }
     }
