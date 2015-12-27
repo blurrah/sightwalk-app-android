@@ -8,22 +8,19 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import net.sightwalk.Models.Sight;
 import net.sightwalk.R;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class StableArrayAdapter extends ArrayAdapter<Cursor> {
+public class StableArrayAdapter extends ArrayAdapter<Sight> {
 
     final int INVALID_ID = -1;
 
-    HashMap<Cursor, Integer> mIdMap = new HashMap<Cursor, Integer>();
-
-    public StableArrayAdapter(Context context, int textViewResourceId, List<Cursor> objects) {
-        super(context, textViewResourceId, objects);
-        for (int i = 0; i < objects.size(); ++i) {
-            mIdMap.put(objects.get(i), i);
-        }
+    public StableArrayAdapter(Context context, int textViewResourceId, ArrayList<Sight> sights) {
+        super(context, textViewResourceId, sights);
     }
 
     @Override
@@ -33,18 +30,18 @@ public class StableArrayAdapter extends ArrayAdapter<Cursor> {
         }
 
         TextView tvList = (TextView) convertView.findViewById(R.id.routeListText);
-        tvList.setText(getItem(position).getString(getItem(position).getColumnIndex("name")));
+        tvList.setText(getItem(position).name);
 
         return convertView;
     }
 
-        @Override
+    @Override
     public long getItemId(int position) {
-        if (position < 0 || position >= mIdMap.size()) {
+        if (position < 0 || position >= getCount()) {
             return INVALID_ID;
         }
-        Cursor item = getItem(position);
-        return mIdMap.get(item);
+        Sight item = getItem(position);
+        return item.id;
     }
 
     @Override

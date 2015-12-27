@@ -22,6 +22,7 @@ import android.widget.CheckBox;
 import android.widget.ListView;
 
 import net.sightwalk.Helpers.StableArrayAdapter;
+import net.sightwalk.Models.Sight;
 import net.sightwalk.R;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class DynamicListView extends ListView {
     private final int MOVE_DURATION = 150;
     private final int LINE_THICKNESS = 15;
 
-    public ArrayList<Cursor> mCheeseList;
+    public ArrayList<Sight> mCheeseList;
 
     private int mLastEventY = -1;
 
@@ -236,8 +237,7 @@ public class DynamicListView extends ListView {
                 break;
             case MotionEvent.ACTION_UP:
                 touchEventsEnded();
-                CheckBox cbDest = (CheckBox) ((NewRouteActivity) getContext()).findViewById(R.id.cbRouteDestination);
-                        ((NewRouteActivity) getContext()).createRoute(cbDest.isChecked());
+                ((NewRouteActivity) getContext()).createRoute();
                 break;
             case MotionEvent.ACTION_CANCEL:
                 touchEventsCancelled();
@@ -404,7 +404,7 @@ public class DynamicListView extends ListView {
         }
     };
 
-    public void setCheeseList(ArrayList<Cursor> cheeseList) {
+    public void setCheeseList(ArrayList<Sight> cheeseList) {
         mCheeseList = cheeseList;
     }
 }

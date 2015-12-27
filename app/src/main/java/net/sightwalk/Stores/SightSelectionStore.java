@@ -22,6 +22,10 @@ public class SightSelectionStore extends SightStore {
 
     private ArrayList<Sight> selected;
 
+    public ArrayList<Sight> getSelectedSights() {
+        return selected;
+    }
+
     protected SightSelectionStore(String slot, SightsInterface client) {
         super(slot, client);
         selected = new ArrayList<>();

@@ -1,15 +1,9 @@
 package net.sightwalk.Controllers.Route;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,26 +12,35 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 
-import net.sightwalk.Controllers.Dashboard.DashboardActivity;
 import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Models.*;
 import net.sightwalk.R;
+import net.sightwalk.Stores.SightSelectionStore;
+import net.sightwalk.Stores.SightsInterface;
 import net.sightwalk.Tasks.RouteTask;
 
-public class NewRouteActivity extends PermissionActivity implements GPSTrackerInterface {
+import java.util.ArrayList;
+
+public class NewRouteActivity extends PermissionActivity implements GPSTrackerInterface, SightsInterface, CompoundButton.OnCheckedChangeListener {
 
     private String waypoint;
     private StringBuilder builder;
     private CheckBox checkBox;
     private LatLng location;
+    private LatLng deviceLocation;
+    private Button routeButton;
+    private TextView amountSights;
+    private Button cButton;
+    private ListViewDraggingAnimation lvdaSights;
 
     private GPSTracker gpsTracker;
+    private ArrayList<Sight> selectedSights;
+    private SightSelectionStore sightStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +48,20 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         setContentView(R.layout.activity_new_route);
 
         checkBox = (CheckBox) findViewById(R.id.cbRouteDestination);
-        checkBox.setOnCheckedChangeListener(new checkedListener());
+        routeButton = (Button) findViewById(R.id.routeButton);
+        amountSights = (TextView) findViewById(R.id.tvAmountSights);
+        cButton = (Button) findViewById(R.id.chooseRouteButton);
+        FragmentManager fm = getSupportFragmentManager();
+        lvdaSights = (ListViewDraggingAnimation) fm.findFragmentById(R.id.article_fragment);
 
-        Button rButton = (Button) findViewById(R.id.routeButton);
-        rButton.setOnClickListener(new routeListener());
-
-        Button cButton = (Button) findViewById(R.id.chooseRouteButton);
+        checkBox.setOnCheckedChangeListener(this);
+        routeButton.setOnClickListener(new routeListener());
         cButton.setOnClickListener(new chooseListener());
 
         gpsTracker = new GPSTracker(this, this);
+        sightStore = SightSelectionStore.getSharedInstance("newRouteActivity", this);
+        selectedSights = sightStore.getSelectedSights();
+        lvdaSights.setSights(selectedSights);
     }
 
     @Override
@@ -63,44 +71,39 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         updateDistance();
     }
 
-    private void updateDistance() {
-        Button routeButton = (Button) findViewById(R.id.routeButton);
-        TextView amountSights = (TextView) findViewById(R.id.tvAmountSights);
-        amountSights.setText("Totaal " + Sights.mSightList.size() + " sights");
+    public void updateDistance() {
+        amountSights.setText("Totaal " + selectedSights.size() + " sights");
 
-        if (Sights.getInstance().mSightList.size() == 0) {
+        if (selectedSights.size() == 0) {
             routeButton.setEnabled(false);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
         } else {
             routeButton.setEnabled(true);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
 
-            createRoute(checkBox.isChecked());
+            createRoute();
         }
     }
 
-    public void createRoute(boolean cbChecked) {
+    public void createRoute() {
+        LatLng startPosition = getStartPosition();
+        LatLng endPosition = getEndPosition();
+
+        // start- and endposition is required
+        if (!(startPosition instanceof LatLng) || !(endPosition instanceof LatLng)) {
+            return;
+        }
+
         builder = new StringBuilder();
 
-        for (int i = 0; i < Sights.getInstance().mSightList.size(); i++) {
-            String latitude = Sights.getInstance().mSightList.get(i).getString(Sights.getInstance().mSightList.get(i).getColumnIndex("latitude"));
-            String longitude = Sights.getInstance().mSightList.get(i).getString(Sights.getInstance().mSightList.get(i).getColumnIndex("longitude"));
-
-            builder.append(latitude + "," + longitude + "|");
+        for (int i = 0; i < selectedSights.size(); i++) {
+            Sight sight = selectedSights.get(i);
+            builder.append(Double.toString(sight.latitude) + "," + Double.toString(sight.longitude) + "|");
         }
 
         waypoint = builder.toString();
 
-        if (cbChecked) {
-            location = UserLocation.getInstance().userlocation;
-        } else {
-            int last = Sights.getInstance().mSightList.size() - 1;
-            Double latitude = Sights.getInstance().mSightList.get(last).getDouble(Sights.getInstance().mSightList.get(last).getColumnIndex("latitude"));
-            Double longitude = Sights.getInstance().mSightList.get(last).getDouble(Sights.getInstance().mSightList.get(last).getColumnIndex("longitude"));
-            location = new LatLng(latitude, longitude);
-        }
-
-        final RouteTask routeTask = new RouteTask(UserLocation.getInstance().userlocation, location.latitude + "," + location.longitude, waypoint.toString(), "walking", "nl", this, this);
+        final RouteTask routeTask = new RouteTask(startPosition, endPosition.latitude + "," + endPosition.longitude, waypoint.toString(), "walking", "nl", this, this);
         routeTask.execute();
     }
 
@@ -125,8 +128,50 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
 
     @Override
     public void updatedLocation(Location location) {
-        this.location = new LatLng(location.getLatitude(), location.getLongitude());
+        this.deviceLocation = new LatLng(location.getLatitude(), location.getLongitude());
         updateDistance();
+    }
+
+    @Override
+    public void addedSight(Sight sight) {
+        // nobody cares
+    }
+
+    @Override
+    public void removedSight(Sight sight) {
+        if (sightStore.isSelected(sight)) {
+            sightStore.setSelected(sight, false);
+            updateDistance();
+        }
+    }
+
+    @Override
+    public void updatedSight(Sight oldSight, Sight newSight) {
+        // nobody cares
+    }
+
+    private LatLng getEndPosition() {
+        if (checkBox.isChecked()) {
+            // end on device location
+            return deviceLocation;
+        }
+
+        // end on last sight location
+        if (selectedSights.size() > 0) {
+            return selectedSights.get(selectedSights.size() - 1).getCoordinates();
+        }
+
+        // no start position clear
+        return null;
+    }
+
+    private LatLng getStartPosition() {
+        return deviceLocation;
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        createRoute();
     }
 
     private class routeListener implements Button.OnClickListener {
@@ -146,15 +191,4 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
             overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
     }
-
-    private class checkedListener implements CheckBox.OnCheckedChangeListener {
-
-        @Override
-        public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-            if (Sights.getInstance().mSightList.size() > 0) {
-                createRoute(b);
-            }
-        }
-    }
-
 }
