@@ -1,10 +1,13 @@
 package net.sightwalk.Stores;
 
 import android.content.Context;
+import android.util.Log;
 
 import net.sightwalk.Models.Sight;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
 
 /**
  * Created by Frank on 12/26/2015.
@@ -41,6 +44,15 @@ public class SightSelectionStore extends SightStore {
 
         if (!state && isSelected(sight))
             selected.remove(sight);
+    }
+
+    @Override
+    public void triggerRemoveSight(Sight sight) {
+        super.triggerRemoveSight(sight);
+
+        if (isSelected(sight)) {
+            setSelected(sight, false);
+        }
     }
 
     public void setSelected(Sight sight) {

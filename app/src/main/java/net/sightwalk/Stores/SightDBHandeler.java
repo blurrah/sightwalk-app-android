@@ -1,10 +1,13 @@
 package net.sightwalk.Stores;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
+
+import net.sightwalk.Models.Sight;
 
 public class SightDBHandeler extends SQLiteAssetHelper {
 
@@ -26,7 +29,7 @@ public class SightDBHandeler extends SQLiteAssetHelper {
         return c;
     }
 
-    public Cursor getSelectedSight(Integer id){
+    public Cursor getSelectedSight(Integer id) {
         SQLiteDatabase db = getReadableDatabase();
 
         String format = String.format("SELECT * FROM sights WHERE id=\"%s\"", id);
@@ -37,5 +40,34 @@ public class SightDBHandeler extends SQLiteAssetHelper {
         c.moveToFirst();
 
         return c;
+    }
+
+    public void createSight(Sight sight) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues records = new ContentValues();
+        records.put("id", sight.id);
+        records.put("type", sight.type);
+        records.put("longitude", sight.longitude);
+        records.put("latitude", sight.latitude);
+        records.put("name", sight.name);
+        records.put("title", sight.title);
+        records.put("text", sight.text);
+        records.put("imgurl", sight.image);
+        records.put("short_desc", sight.shortdesc);
+
+        db.insert("sights", null, records);
+        db.close();
+    }
+
+    public void deleteSight(Sight sight) {
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("sights", "id=?", new String[]{Integer.toString(sight.id)});
+        db.close();
+    }
+
+    public void updateSight(Sight oldSight, Sight newSight) {
+        deleteSight(oldSight);
+        createSight(newSight);
     }
 }

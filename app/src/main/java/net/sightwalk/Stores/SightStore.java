@@ -3,7 +3,9 @@ package net.sightwalk.Stores;
 import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
+import android.util.Log;
 
+import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.SightSyncer;
 import net.sightwalk.Models.Sight;
 
@@ -53,6 +55,10 @@ public class SightStore implements SightSyncerInterface {
         SightSyncer.SyncForLocation(location, this);
     }
 
+    public void sync(GPSTracker gpsTracker) {
+        sync(gpsTracker.getLocation());
+    }
+
     private void readSights() {
         sights = new ArrayList<>();
 
@@ -82,6 +88,9 @@ public class SightStore implements SightSyncerInterface {
     public void triggerAddSight(Sight sight) {
         // commit changes
         sights.add(sight);
+        db.createSight(sight);
+
+        Log.d("SightStore", "trigger add");
 
         // communicate clients
         Iterator it = clients.entrySet().iterator();
@@ -94,8 +103,7 @@ public class SightStore implements SightSyncerInterface {
 
     @Override
     public void triggerRemoveSight(Sight sight) {
-        // commit changes
-        sights.remove(sight);
+        Log.d("SightStore", "trigger remove");
 
         // communicate clients
         Iterator it = clients.entrySet().iterator();
@@ -104,10 +112,25 @@ public class SightStore implements SightSyncerInterface {
             SightsInterface client = (SightsInterface) pair.getValue();
             client.removedSight(sight);
         }
+
+        // commit changes
+        sights.remove(sight);
+        db.deleteSight(sight);
     }
 
     @Override
     public void triggerUpdateSight(Sight oldSight, Sight newSight) {
+        db.updateSight(oldSight, newSight);
 
+        Iterator it = clients.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            SightsInterface client = (SightsInterface) pair.getValue();
+            client.updatedSight(oldSight, newSight);
+        }
+
+        Log.d("SightStore", "trigger update");
+
+        oldSight.commit(newSight);
     }
 }

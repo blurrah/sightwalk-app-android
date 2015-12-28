@@ -25,19 +25,19 @@ import net.sightwalk.Stores.SightsInterface;
 import net.sightwalk.Tasks.RouteTask;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class NewRouteActivity extends PermissionActivity implements GPSTrackerInterface, SightsInterface, CompoundButton.OnCheckedChangeListener {
 
     private String waypoint;
     private StringBuilder builder;
     private CheckBox checkBox;
-    private LatLng location;
-    private LatLng deviceLocation;
+    private Location deviceLocation;
+    private long lastGPSTime = 0;
     private Button routeButton;
     private TextView amountSights;
     private Button cButton;
     private ListViewDraggingAnimation lvdaSights;
-
     private GPSTracker gpsTracker;
     private ArrayList<Sight> selectedSights;
     private SightSelectionStore sightStore;
@@ -128,8 +128,17 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
 
     @Override
     public void updatedLocation(Location location) {
-        this.deviceLocation = new LatLng(location.getLatitude(), location.getLongitude());
-        updateDistance();
+        long currentTime = new Date().getTime();
+
+        // only update if moved more than 100 meters or 60 seconds elapsed
+        if (currentTime - 60 * 1000 > lastGPSTime || deviceLocation.distanceTo(location) > 100) {
+            lastGPSTime = currentTime;
+            deviceLocation = location;
+
+            // update store and views
+            updateDistance();
+            sightStore.sync(location);
+        }
     }
 
     @Override
@@ -153,7 +162,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     private LatLng getEndPosition() {
         if (checkBox.isChecked()) {
             // end on device location
-            return deviceLocation;
+            return getStartPosition();
         }
 
         // end on last sight location
@@ -166,7 +175,12 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     }
 
     private LatLng getStartPosition() {
-        return deviceLocation;
+        if (deviceLocation instanceof Location) {
+            return new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
+        }
+
+        // no start position clear
+        return null;
     }
 
     @Override

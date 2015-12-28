@@ -99,6 +99,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
                     SharedPreferences.Editor editor = pref.edit();
                     editor.putString("USERNAME", username);
                     editor.putString("TOKEN", requestToken);
+                    AuthenticatedAsyncNetworkTask.setAuthenticationToken(requestToken);
                     editor.commit();
 
                     Intent i = new Intent(appContext, DashboardActivity.class);
