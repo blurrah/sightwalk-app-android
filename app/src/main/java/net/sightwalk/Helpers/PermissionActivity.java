@@ -42,7 +42,7 @@ abstract public class PermissionActivity extends AppCompatActivity {
     }
 
     private boolean canAskGranting(String permission) {
-        return ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
+        return !ActivityCompat.shouldShowRequestPermissionRationale(this, permission);
     }
 
     private void askGrant(String[] permissions, PermissionInterface transaction) {
@@ -53,6 +53,7 @@ abstract public class PermissionActivity extends AppCompatActivity {
     public void validateGranted(String permission, PermissionInterface transaction) {
         if (isGranted(permission)) {
             transaction.granted(permission);
+            return;
         }
 
         if (canAskGranting(permission)) {
