@@ -63,15 +63,8 @@ public class SightSyncer implements TaskInterface {
     }
 
     private void performSync() {
-        double latitude = 51.5891072;
-        double longitude = 4.7753679;
-
-        LatLng breda = new LatLng(latitude, longitude);
-        SightGeoLoadTask sglt = new SightGeoLoadTask(breda, syncDistance, this);
-
-        lastSyncLocation = breda;
-
-//        SightGeoLoadTask sglt = new SightGeoLoadTask(new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude()), syncDistance, this);
+        lastSyncLocation = new LatLng(lastLocation.getLatitude(), lastLocation.getLongitude());
+        SightGeoLoadTask sglt = new SightGeoLoadTask(lastSyncLocation, syncDistance, this);
         sglt.execute();
     }
 
