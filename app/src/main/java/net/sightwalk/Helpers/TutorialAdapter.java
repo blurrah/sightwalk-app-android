@@ -5,7 +5,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import net.sightwalk.Controllers.Tutorial.TutorialFragment;
-import net.sightwalk.R;
 
 public class TutorialAdapter extends FragmentStatePagerAdapter {
 

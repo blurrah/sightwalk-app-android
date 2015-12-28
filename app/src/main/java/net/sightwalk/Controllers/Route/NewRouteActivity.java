@@ -1,48 +1,110 @@
 package net.sightwalk.Controllers.Route;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import net.sightwalk.Controllers.SettingsActivity;
-import net.sightwalk.Models.Cheeses;
-import net.sightwalk.R;
+import com.google.android.gms.maps.model.*;
 
-public class NewRouteActivity extends AppCompatActivity {
+import net.sightwalk.Controllers.SettingsActivity;
+import net.sightwalk.Helpers.GPSTracker;
+import net.sightwalk.Helpers.GPSTrackerInterface;
+import net.sightwalk.Helpers.PermissionActivity;
+import net.sightwalk.Models.*;
+import net.sightwalk.R;
+import net.sightwalk.Stores.SightSelectionStore;
+import net.sightwalk.Stores.SightsInterface;
+import net.sightwalk.Tasks.RouteTask;
+
+import java.util.ArrayList;
+import java.util.Date;
+
+public class NewRouteActivity extends PermissionActivity implements GPSTrackerInterface, SightsInterface, CompoundButton.OnCheckedChangeListener {
+
+    private String waypoint;
+    private StringBuilder builder;
+    private CheckBox checkBox;
+    private Location deviceLocation;
+    private long lastGPSTime = 0;
+    private Button routeButton;
+    private TextView amountSights;
+    private Button cButton;
+    private ListViewDraggingAnimation lvdaSights;
+    private GPSTracker gpsTracker;
+    private ArrayList<Sight> selectedSights;
+    private SightSelectionStore sightStore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_route);
 
-        Button rButton = (Button) findViewById(R.id.routeButton);
-        rButton.setOnClickListener(new routeListener());
+        checkBox = (CheckBox) findViewById(R.id.cbRouteDestination);
+        routeButton = (Button) findViewById(R.id.routeButton);
+        amountSights = (TextView) findViewById(R.id.tvAmountSights);
+        cButton = (Button) findViewById(R.id.chooseRouteButton);
+        FragmentManager fm = getSupportFragmentManager();
+        lvdaSights = (ListViewDraggingAnimation) fm.findFragmentById(R.id.article_fragment);
 
-        Button cButton = (Button) findViewById(R.id.chooseRouteButton);
+        checkBox.setOnCheckedChangeListener(this);
+        routeButton.setOnClickListener(new routeListener());
         cButton.setOnClickListener(new chooseListener());
+
+        gpsTracker = new GPSTracker(this, this);
+        sightStore = SightSelectionStore.getSharedInstance("newRouteActivity", this);
+        selectedSights = sightStore.getSelectedSights();
+        lvdaSights.setSights(selectedSights);
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
-        Button routeButton = (Button) findViewById(R.id.routeButton);
-        TextView amountSights = (TextView) findViewById(R.id.tvAmountSights);
-        amountSights.setText("Totaal "+ Cheeses.mCheeseList.size() +" sights");
+        updateDistance();
+    }
 
-        if(Cheeses.mCheeseList.size() == 0){
+    public void updateDistance() {
+        amountSights.setText("Totaal " + selectedSights.size() + " sights");
 
+        if (selectedSights.size() == 0) {
             routeButton.setEnabled(false);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
-        }else{
+        } else {
             routeButton.setEnabled(true);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+
+            createRoute();
         }
+    }
+
+    public void createRoute() {
+        LatLng startPosition = getStartPosition();
+        LatLng endPosition = getEndPosition();
+
+        // start- and endposition is required
+        if (!(startPosition instanceof LatLng) || !(endPosition instanceof LatLng)) {
+            return;
+        }
+
+        builder = new StringBuilder();
+
+        for (int i = 0; i < selectedSights.size(); i++) {
+            Sight sight = selectedSights.get(i);
+            builder.append(Double.toString(sight.latitude) + "," + Double.toString(sight.longitude) + "|");
+        }
+
+        waypoint = builder.toString();
+
+        final RouteTask routeTask = new RouteTask(startPosition, endPosition.latitude + "," + endPosition.longitude, waypoint.toString(), "walking", "nl", this, this);
+        routeTask.execute();
     }
 
     @Override
@@ -64,6 +126,68 @@ public class NewRouteActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void updatedLocation(Location location) {
+        long currentTime = new Date().getTime();
+
+        // only update if moved more than 100 meters or 60 seconds elapsed
+        if (currentTime - 60 * 1000 > lastGPSTime || deviceLocation.distanceTo(location) > 100) {
+            lastGPSTime = currentTime;
+            deviceLocation = location;
+
+            // update store and views
+            updateDistance();
+            sightStore.sync(location);
+        }
+    }
+
+    @Override
+    public void addedSight(Sight sight) {
+        // nobody cares
+    }
+
+    @Override
+    public void removedSight(Sight sight) {
+        if (sightStore.isSelected(sight)) {
+            sightStore.setSelected(sight, false);
+            updateDistance();
+        }
+    }
+
+    @Override
+    public void updatedSight(Sight oldSight, Sight newSight) {
+        // nobody cares
+    }
+
+    private LatLng getEndPosition() {
+        if (checkBox.isChecked()) {
+            // end on device location
+            return getStartPosition();
+        }
+
+        // end on last sight location
+        if (selectedSights.size() > 0) {
+            return selectedSights.get(selectedSights.size() - 1).getCoordinates();
+        }
+
+        // no start position clear
+        return null;
+    }
+
+    private LatLng getStartPosition() {
+        if (deviceLocation instanceof Location) {
+            return new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
+        }
+
+        // no start position clear
+        return null;
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        createRoute();
+    }
+
     private class routeListener implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
@@ -80,16 +204,5 @@ public class NewRouteActivity extends AppCompatActivity {
 
             overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
-    }
-
-
-    public interface OnDataChangeListener{
-        public void onDataChanged(int size);
-    }
-
-    private OnDataChangeListener mOnDataChangeListener;
-
-    public void setOnDataChangeListener(OnDataChangeListener onDataChangeListener){
-        mOnDataChangeListener = onDataChangeListener;
     }
 }

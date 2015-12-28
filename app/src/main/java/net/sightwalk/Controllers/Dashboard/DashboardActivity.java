@@ -1,16 +1,23 @@
 package net.sightwalk.Controllers.Dashboard;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import net.sightwalk.Controllers.SettingsActivity;
-import net.sightwalk.Controllers.Tutorial.TutorialActivity;
+import net.sightwalk.Helpers.GPSTracker;
+import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PagerAdapter;
+import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.R;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -66,9 +73,11 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onTabUnselected(TabLayout.Tab tab) {}
+        public void onTabUnselected(TabLayout.Tab tab) {
+        }
 
         @Override
-        public void onTabReselected(TabLayout.Tab tab) {}
+        public void onTabReselected(TabLayout.Tab tab) {
+        }
     }
 }
