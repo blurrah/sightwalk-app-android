@@ -31,6 +31,8 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
     private SightDialogFragment sdfInfo;
     private FloatingActionButton fabAddSight;
     private FloatingActionButton fabRemoveSight;
+    private FloatingActionButton fabAddFavourite;
+    private FloatingActionButton fabRemoveFavourite;
     private GoogleMap googleMap;
 
     private Marker selectedMarker;
@@ -47,9 +49,13 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
         sdfInfo = (SightDialogFragment) fm.findFragmentById(R.id.fragment_sight);
         fabAddSight = (FloatingActionButton) findViewById(R.id.fabAddSight);
         fabRemoveSight = (FloatingActionButton) findViewById(R.id.fabRemoveSight);
+        fabAddFavourite = (FloatingActionButton) findViewById(R.id.fabAddFavourite);
+        fabRemoveFavourite = (FloatingActionButton) findViewById(R.id.fabRemoveFavourite);
 
         fabAddSight.setOnClickListener(this);
         fabRemoveSight.setOnClickListener(this);
+        fabAddFavourite.setOnClickListener(this);
+        fabRemoveFavourite.setOnClickListener(this);
 
         initGoogleMaps();
 
@@ -107,6 +113,12 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
             case R.id.fabRemoveSight:
                 setSightSelection(selectedMarker, false);
                 break;
+            case R.id.fabAddFavourite:
+                setSightFavourite(selectedMarker);
+                break;
+            case R.id.fabRemoveFavourite:
+                setSightFavourite(selectedMarker);
+                break;
         }
     }
 
@@ -125,6 +137,29 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
         updateFloatingButtonStyle(state);
     }
 
+    private void setSightFavourite(Marker marker) {
+        // update in store
+        Sight sight = sights.get(marker);
+        boolean state = false;
+
+        for (Integer sightId : store.getFavourites()) {
+            if(sightId == sight.id){
+                state = true;
+                break;
+            }
+        }
+
+        if(state){
+            store.RemoveFavourite(sight);
+            state = false;
+        } else {
+            store.AddFavourite(sight);
+            state = true;
+        }
+
+        updateFavouriteFloatingButtonStyle(state, sight.id);
+    }
+
     private void updateFloatingButtonStyle(boolean state) {
         if (state) {
             fabAddSight.setVisibility(View.INVISIBLE);
@@ -136,6 +171,16 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
         }
     }
 
+    private void updateFavouriteFloatingButtonStyle(boolean state , Integer sightId) {
+        if (state) {
+            fabAddFavourite.setVisibility(View.INVISIBLE);
+            fabRemoveFavourite.setVisibility(View.VISIBLE);
+        } else {
+            fabAddFavourite.setVisibility(View.VISIBLE);
+            fabRemoveFavourite.setVisibility(View.INVISIBLE);
+        }
+    }
+
     @Override
     public boolean onMarkerClick(Marker marker) {
         selectedMarker = marker;
@@ -143,6 +188,15 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
         updateFloatingButtonStyle(store.isSelected(sights.get(marker)));
         sdfInfo.show();
         sdfInfo.setScope(sights.get(marker));
+
+        boolean state = false;
+        for (Integer sightId : store.getFavourites()) {
+            if(sightId == sights.get(marker).id){
+                state = true;
+                break;
+            }
+        }
+        updateFavouriteFloatingButtonStyle(state, sights.get(marker).id);
 
         return false;
     }

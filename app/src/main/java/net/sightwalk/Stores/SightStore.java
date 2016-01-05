@@ -34,6 +34,7 @@ public class SightStore implements SightSyncerInterface {
     private static SightDBHandeler db;
     private ArrayList<Sight> sights;
     private static HashMap<String, SightsInterface> clients = new HashMap<>();
+    private ArrayList<Integer> favourites;
 
     protected SightStore(String slot, SightsInterface client) {
         // add subscriber
@@ -45,11 +46,13 @@ public class SightStore implements SightSyncerInterface {
         }
 
         readSights();
+        readFavourites();
     }
 
     public ArrayList<Sight> getAll() {
         return sights;
     }
+    public ArrayList<Integer> getFavourites() {return favourites;}
 
     public void sync(Location location) {
         SightSyncer.SyncForLocation(location, this);
@@ -67,6 +70,18 @@ public class SightStore implements SightSyncerInterface {
 
         while (!cursor.isAfterLast()) {
             sights.add(parseSight(cursor));
+            cursor.moveToNext();
+        }
+    }
+
+    private void readFavourites() {
+        favourites = new ArrayList<>();
+
+        Cursor cursor = db.getFavourites();
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            favourites.add(cursor.getInt(cursor.getColumnIndex("sightId")));
             cursor.moveToNext();
         }
     }
@@ -132,5 +147,24 @@ public class SightStore implements SightSyncerInterface {
         Log.d("SightStore", "trigger update");
 
         oldSight.commit(newSight);
+    }
+
+    public void AddFavourite(Sight sight) {
+        // commit changes
+        favourites.add(sight.id);
+        db.addFavourite(sight);
+
+
+    }
+
+    public void RemoveFavourite(Sight sight) {
+
+        for(int i = 0; i < favourites.size();i++){
+            if(favourites.get(i) == sight.id){
+                favourites.remove(i);
+            }
+        }
+
+        db.deleteFavourite(sight);
     }
 }

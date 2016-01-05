@@ -70,4 +70,42 @@ public class SightDBHandeler extends SQLiteAssetHelper {
         deleteSight(oldSight);
         createSight(newSight);
     }
+
+    public Cursor getFavourites() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT * FROM favourites";
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+
+        return c;
+    }
+
+    public Cursor getFavouritesPerSight(Sight sight) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT * FROM favourites WHERE sightId = '"+ sight.id +"'";
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+
+        return c;
+    }
+
+    public void addFavourite(Sight sight){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues records = new ContentValues();
+        records.put("sightId", sight.id);
+
+        db.insert("favourites", null, records);
+        db.close();
+    }
+
+    public void deleteFavourite(Sight sight){
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete("favourites", "sightId="+sight.id, null);
+        db.close();
+    }
 }
