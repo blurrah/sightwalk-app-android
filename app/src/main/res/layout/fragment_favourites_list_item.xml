@@ -35,7 +35,9 @@ android:weightSum="1">
         android:layout_height="match_parent"
         android:text="New Text"
         android:id="@+id/favouriteDesc"
-        android:padding="10dp" />
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp" />
 
 </LinearLayout>
 
