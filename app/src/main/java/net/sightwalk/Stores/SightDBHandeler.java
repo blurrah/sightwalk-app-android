@@ -74,7 +74,7 @@ public class SightDBHandeler extends SQLiteAssetHelper {
     public Cursor getFavourites() {
         SQLiteDatabase db = getReadableDatabase();
 
-        String query = "SELECT * FROM favourites";
+        String query = "SELECT id as _id, * FROM sights JOIN favourites ON sights.id = favourites.sightId";
 
         Cursor c = db.rawQuery(query, null);
         c.moveToFirst();

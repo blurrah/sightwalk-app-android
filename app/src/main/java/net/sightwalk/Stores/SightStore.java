@@ -153,8 +153,10 @@ public class SightStore implements SightSyncerInterface {
         // commit changes
         favourites.add(sight.id);
         db.addFavourite(sight);
+    }
 
-
+    public boolean isFavourited(Sight sight) {
+        return favourites.contains(sight.id);
     }
 
     public void RemoveFavourite(Sight sight) {
