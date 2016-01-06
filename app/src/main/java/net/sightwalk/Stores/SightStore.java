@@ -1,5 +1,6 @@
 package net.sightwalk.Stores;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
@@ -22,8 +23,17 @@ public class SightStore implements SightSyncerInterface {
 
     public static SightStore getSharedInstance(String slot, SightsInterface client) {
         if (!(sharedInstance instanceof SightStore)) {
-            sharedInstance = new SightStore(slot, client);
+            sharedInstance = new SightStore(client);
         }
+        SightStore.subscribe(slot, client);
+        return sharedInstance;
+    }
+
+    public static SightStore getSharedInstance(Context context) {
+        if (!(sharedInstance instanceof SightStore)) {
+            sharedInstance = new SightStore(context);
+        }
+
         return sharedInstance;
     }
 
@@ -31,17 +41,22 @@ public class SightStore implements SightSyncerInterface {
         clients.remove(slot);
     }
 
+    public static void subscribe(String slot, SightsInterface client) {
+        clients.put(slot, client);
+    }
+
     private static SightDBHandeler db;
     private ArrayList<Sight> sights;
     private static HashMap<String, SightsInterface> clients = new HashMap<>();
 
-    protected SightStore(String slot, SightsInterface client) {
-        // add subscriber
-        clients.put(slot, client);
+    protected SightStore(SightsInterface client) {
+        this(client.getApplicationContext());
+    }
 
+    protected SightStore(Context context) {
         // set database handler
         if (!(db instanceof SightDBHandeler)) {
-            db = new SightDBHandeler(client.getApplicationContext());
+            db = new SightDBHandeler(context);
         }
 
         readSights();
