@@ -176,6 +176,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
 
     private LatLng getStartPosition() {
         if (deviceLocation instanceof Location) {
+            UserLocation.getInstance().userlocation = new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
             return new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
         }
 

@@ -9,6 +9,8 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.NavUtils;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
@@ -36,16 +38,15 @@ import net.sightwalk.Stores.SightStore;
 import net.sightwalk.Stores.SightsInterface;
 
 import java.util.*;
+import java.util.jar.Manifest;
 
 public class RouteActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface {
 
     private GoogleMap googleMap;
-    private locationListener listener;
-    private LocationManager mLocationManager;
-    private UserLocation mLocation;
     private TextView steps;
     private ImageView imageView;
     private GPSTracker gpsTracker;
+    private Location userLocation;
 
     private static AlertDialog alert;
 
@@ -59,10 +60,8 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         steps = (TextView) findViewById(R.id.routeTextView);
         imageView = (ImageView) findViewById(R.id.maneuverImageView);
 
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        listener = new locationListener();
+        //mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
-        locationManager();
 
         RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
 
@@ -94,13 +93,32 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
+        switch(id){
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
+
+                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+                for(Sight sight : sights){
+                    SightSelectionStore.getSharedInstance("RouteActivity", this).triggerRemoveSight(sight);
+                }
+
+                this.finish();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed(){
+        Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
+
+        this.finish();
     }
 
     public void RetrievePolyline(String poly, ArrayList<Steps> steps) {
@@ -137,33 +155,6 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
                     .width(10)
                     .color(Color.parseColor("#AAAAAA")));
         }
-
-    }
-
-    public void locationManager() {
-        boolean gpsIsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        boolean networkIsEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        if(gpsIsEnabled) {
-            try {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, listener);
-            } catch (SecurityException e) {
-                Log.e("ERROR_", e.getLocalizedMessage());
-            }
-        }
-        else {
-            errorDialog("GPS locatie niet gevonden");
-        }
-        if (networkIsEnabled) {
-            try {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, listener);
-            } catch (SecurityException e) {
-                Log.e("ERROR_", e.getLocalizedMessage());
-            }
-        }
-        else {
-            errorDialog("Netwerklocatie niet gevonden");
-        }
     }
 
     @Override
@@ -183,56 +174,44 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
     @Override
     public void updatedLocation(Location location) {
-        Marker m = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
-        m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+        userLocation = location;
 
-        gpsTracker.stopUsingGPS();
-    }
+        if(location == null) {
+            errorDialog("Locatie niet gevonden");
+        }
+        else {
 
-    private class locationListener implements LocationListener {
-        @Override
-        public void onLocationChanged(Location location) {
-            if(location == null) {
-                errorDialog("Locatie niet gevonden");
-            }
-            else {
-                mLocation = UserLocation.getInstance();
-                mLocation.userlocation = new LatLng(location.getLatitude(), location.getLongitude());
+            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+            CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
 
-                CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
+            googleMap.moveCamera(center);
+            googleMap.animateCamera(zoom);
+        }
 
-                googleMap.moveCamera(center);
-                googleMap.animateCamera(zoom);
-            }
+        if(!Steps.stepsArrayList.isEmpty()) {
+            Steps step = Steps.stepsArrayList.get(0);
 
-            if(!Steps.stepsArrayList.isEmpty()) {
-                Steps step = Steps.stepsArrayList.get(0);
+            List<LatLng> latLngs;
+            latLngs = new ArrayList<>();
+            latLngs.add(new LatLng(step.getStart_location().latitude, step.getStart_location().longitude));
+            latLngs.add(new LatLng(step.getEnd_location().latitude, step.getEnd_location().longitude));
 
-                List<LatLng> latLngs;
-                latLngs = new ArrayList<>();
-                latLngs.add(new LatLng(step.getStart_location().latitude, step.getStart_location().longitude));
-                latLngs.add(new LatLng(step.getEnd_location().latitude, step.getEnd_location().longitude));
+            boolean range = PolyUtil.isLocationOnEdge(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true, 30);
 
-                boolean range = PolyUtil.isLocationOnEdge(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true, 30);
-
-                if (range) {
-                    Steps.stepsArrayList.remove(0);
-
+            if (range) {
+                Steps.stepsArrayList.remove(0);
+                if(!Steps.stepsArrayList.isEmpty()) {
                     Steps stepupdate = Steps.stepsArrayList.get(0);
 
                     steps.setText(Html.fromHtml(stepupdate.getHtml_instructions()));
 
-                    if(stepupdate.getHtml_instructions().contains("linksaf")) {
+                    if (stepupdate.getHtml_instructions().contains("linksaf")) {
                         imageView.setImageResource(R.drawable.ic_left);
-                    }
-                    else if(stepupdate.getHtml_instructions().contains("rechtsaf")) {
+                    } else if (stepupdate.getHtml_instructions().contains("rechtsaf")) {
                         imageView.setImageResource(R.drawable.ic_right);
-                    }
-                    else if(stepupdate.getHtml_instructions().contains("rechtdoor") || stepupdate.getHtml_instructions().contains("vervolgen")) {
+                    } else if (stepupdate.getHtml_instructions().contains("rechtdoor") || stepupdate.getHtml_instructions().contains("vervolgen")) {
                         imageView.setImageResource(R.drawable.ic_arrow);
-                    }
-                    else {
+                    } else {
                         imageView.setImageResource(R.drawable.ic_walking);
                     }
 
@@ -242,29 +221,30 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
                             .color(Color.parseColor("#0088FF")));
                 }
             }
-
-            if(Steps.stepsArrayList.size() == 1){
-
-                float[] results = new float[1];
-                Location.distanceBetween(location.getLatitude(), location.getLongitude(), Legs.getInstance().endroute.latitude, Legs.getInstance().endroute.longitude, results);
-
-                if(results[0] < 50){
-                    Log.d("RESULT", results.toString());
-                    Toast.makeText(getBaseContext(), "Route voltooid!", Toast.LENGTH_SHORT).show();
-                }
-
-            }
         }
 
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) { }
+        if(Steps.stepsArrayList.size() == 1){
 
-        @Override
-        public void onProviderEnabled(String provider) { }
+            float[] results = new float[1];
+            Location.distanceBetween(location.getLatitude(), location.getLongitude(), Legs.getInstance().endroute.latitude, Legs.getInstance().endroute.longitude, results);
 
-        @Override
-        public void onProviderDisabled(String provider) { }
+            if(results[0] < 30){
+                Toast.makeText(getBaseContext(), "Route voltooid!", Toast.LENGTH_SHORT).show();
+
+                Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
+
+                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+                for(Sight sight : sights){
+                    SightSelectionStore.getSharedInstance("RouteActivity", this).triggerRemoveSight(sight);
+                }
+
+                gpsTracker.stopUsingGPS();
+                this.finish();
+            }
+
+        }
     }
+
 
     public void errorDialog(String error) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
