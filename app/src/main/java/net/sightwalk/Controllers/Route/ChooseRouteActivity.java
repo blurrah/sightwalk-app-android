@@ -31,6 +31,8 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
     private SightDialogFragment sdfInfo;
     private FloatingActionButton fabAddSight;
     private FloatingActionButton fabRemoveSight;
+    private FloatingActionButton fabAddFavourite;
+    private FloatingActionButton fabRemoveFavourite;
     private GoogleMap googleMap;
 
     private Marker selectedMarker;
@@ -47,9 +49,13 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
         sdfInfo = (SightDialogFragment) fm.findFragmentById(R.id.fragment_sight);
         fabAddSight = (FloatingActionButton) findViewById(R.id.fabAddSight);
         fabRemoveSight = (FloatingActionButton) findViewById(R.id.fabRemoveSight);
+        fabAddFavourite = (FloatingActionButton) findViewById(R.id.fabAddFavourite);
+        fabRemoveFavourite = (FloatingActionButton) findViewById(R.id.fabRemoveFavourite);
 
         fabAddSight.setOnClickListener(this);
         fabRemoveSight.setOnClickListener(this);
+        fabAddFavourite.setOnClickListener(this);
+        fabRemoveFavourite.setOnClickListener(this);
 
         initGoogleMaps();
 
@@ -83,6 +89,10 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
 
         sights.put(m, sight);
 
+        if(store.isFavourited(sight)){
+            m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+        }
+
         if (store.isSelected(sight)) {
             m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         }
@@ -107,6 +117,12 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
             case R.id.fabRemoveSight:
                 setSightSelection(selectedMarker, false);
                 break;
+            case R.id.fabAddFavourite:
+                setSightFavourite(selectedMarker);
+                break;
+            case R.id.fabRemoveFavourite:
+                setSightFavourite(selectedMarker);
+                break;
         }
     }
 
@@ -119,10 +135,42 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
             selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         } else {
             selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
+            if(store.isFavourited(sight)){
+                selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            }
         }
 
         // update view
         updateFloatingButtonStyle(state);
+    }
+
+    private void setSightFavourite(Marker marker) {
+        // update in store
+        Sight sight = sights.get(marker);
+        boolean state = false;
+
+        for (Integer sightId : store.getFavourites()) {
+            if(sightId == sight.id){
+                state = true;
+                break;
+            }
+        }
+
+        if(state){
+            store.RemoveFavourite(sight);
+            if(!store.isSelected(sight)) {
+                selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
+            }
+            state = false;
+        } else {
+            store.AddFavourite(sight);
+            if(!store.isSelected(sight)) {
+                selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            }
+            state = true;
+        }
+
+        updateFavouriteFloatingButtonStyle(state, marker);
     }
 
     private void updateFloatingButtonStyle(boolean state) {
@@ -130,9 +178,18 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
             fabAddSight.setVisibility(View.INVISIBLE);
             fabRemoveSight.setVisibility(View.VISIBLE);
         } else {
-            selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
             fabAddSight.setVisibility(View.VISIBLE);
             fabRemoveSight.setVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void updateFavouriteFloatingButtonStyle(boolean state , Marker m) {
+        if (state) {
+            fabAddFavourite.setVisibility(View.INVISIBLE);
+            fabRemoveFavourite.setVisibility(View.VISIBLE);
+        } else {
+            fabAddFavourite.setVisibility(View.VISIBLE);
+            fabRemoveFavourite.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -143,6 +200,15 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
         updateFloatingButtonStyle(store.isSelected(sights.get(marker)));
         sdfInfo.show();
         sdfInfo.setScope(sights.get(marker));
+
+        boolean state = false;
+        for (Integer sightId : store.getFavourites()) {
+            if(sightId == sights.get(marker).id){
+                state = true;
+                break;
+            }
+        }
+        updateFavouriteFloatingButtonStyle(state, marker);
 
         return false;
     }

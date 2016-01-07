@@ -18,8 +18,17 @@ public class SightSelectionStore extends SightStore {
 
     public static SightSelectionStore getSharedInstance(String slot, SightsInterface client) {
         if (!(sharedInstance instanceof SightSelectionStore)) {
-            sharedInstance = new SightSelectionStore(slot, client);
+            sharedInstance = new SightSelectionStore(client);
         }
+        SightStore.subscribe(slot, client);
+        return sharedInstance;
+    }
+
+    public static SightSelectionStore getSharedInstance(Context context) {
+        if (!(sharedInstance instanceof SightSelectionStore)) {
+            sharedInstance = new SightSelectionStore(context);
+        }
+
         return sharedInstance;
     }
 
@@ -29,8 +38,13 @@ public class SightSelectionStore extends SightStore {
         return selected;
     }
 
-    protected SightSelectionStore(String slot, SightsInterface client) {
-        super(slot, client);
+    protected SightSelectionStore(SightsInterface client) {
+        super(client);
+        selected = new ArrayList<>();
+    }
+
+    protected SightSelectionStore(Context context) {
+        super(context);
         selected = new ArrayList<>();
     }
 

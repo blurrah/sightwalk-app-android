@@ -8,5 +8,11 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_report_sight"
+        android:title="@string/action_report_sight"
+        android:orderInCategory="99"
+        app:showAsAction="never"
+        />
 
 </menu>
