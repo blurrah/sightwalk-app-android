@@ -194,6 +194,8 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         public void onClick(View v) {
             Intent i = new Intent(getApplicationContext(), RouteActivity.class);
             startActivity(i);
+
+            finish();
         }
     }
 

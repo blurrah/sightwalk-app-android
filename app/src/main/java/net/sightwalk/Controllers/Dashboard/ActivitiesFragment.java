@@ -31,6 +31,12 @@ public class ActivitiesFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        populateActivityList(view);
+    }
+
     private class routeListener implements Button.OnClickListener {
         @Override
         public void onClick(View v) {

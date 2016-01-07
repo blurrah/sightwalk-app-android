@@ -26,7 +26,7 @@ public class RouteDBHandler extends SQLiteAssetHelper {
     public Cursor getActivities() {
         SQLiteDatabase db = getReadableDatabase();
 
-        String query = "SELECT id as _id, * FROM activities";
+        String query = "SELECT id as _id, * FROM activities ORDER BY id DESC";
 
         Cursor c = db.rawQuery(query, null);
         c.moveToFirst();
