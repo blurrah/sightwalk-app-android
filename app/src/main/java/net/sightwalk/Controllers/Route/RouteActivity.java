@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
@@ -240,15 +241,18 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
                             .width(10)
                             .color(Color.parseColor("#0088FF")));
                 }
-            }else{
-                //if no legs left
-                //check if near start location
+            }
+
+            if(Steps.stepsArrayList.size() == 1){
+
                 float[] results = new float[1];
-                Location.distanceBetween( location.getLatitude(), location.getLongitude(), Legs.getInstance().endroute.latitude, Legs.getInstance().endroute.longitude, results);
+                Location.distanceBetween(location.getLatitude(), location.getLongitude(), Legs.getInstance().endroute.latitude, Legs.getInstance().endroute.longitude, results);
 
+                if(results[0] < 50){
+                    Log.d("RESULT", results.toString());
+                    Toast.makeText(getBaseContext(), "Route voltooid!", Toast.LENGTH_SHORT).show();
+                }
 
-
-                Log.d("RESULT", results.toString());
             }
         }
 
