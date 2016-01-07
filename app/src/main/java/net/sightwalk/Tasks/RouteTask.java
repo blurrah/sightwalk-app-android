@@ -94,6 +94,8 @@ public class RouteTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String response) {
 
         try {
+            Legs.getInstance().routeJson = response;
+
             JSONObject directionsObject = new JSONObject(response);
 
             JSONArray routesObject = directionsObject.getJSONArray("routes");

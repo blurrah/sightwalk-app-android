@@ -108,4 +108,8 @@ public class SightDBHandeler extends SQLiteAssetHelper {
         db.delete("favourites", "sightId="+sight.id, null);
         db.close();
     }
+
+    public void addRoute(){
+
+    }
 }

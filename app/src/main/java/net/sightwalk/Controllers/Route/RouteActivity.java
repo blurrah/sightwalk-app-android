@@ -1,6 +1,7 @@
 package net.sightwalk.Controllers.Route;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -33,6 +34,7 @@ import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Models.*;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.R;
+import net.sightwalk.Stores.RouteStore;
 import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Stores.SightStore;
 import net.sightwalk.Stores.SightsInterface;
@@ -47,6 +49,8 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
     private ImageView imageView;
     private GPSTracker gpsTracker;
     private Location userLocation;
+    private Date startTime;
+    private Date endTime;
 
     private static AlertDialog alert;
 
@@ -60,8 +64,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         steps = (TextView) findViewById(R.id.routeTextView);
         imageView = (ImageView) findViewById(R.id.maneuverImageView);
 
-        //mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-
+        startTime = new Date();
 
         RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
 
@@ -178,8 +181,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
         if(location == null) {
             errorDialog("Locatie niet gevonden");
-        }
-        else {
+        } else {
 
             CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
             CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
@@ -228,7 +230,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
             float[] results = new float[1];
             Location.distanceBetween(location.getLatitude(), location.getLongitude(), Legs.getInstance().endroute.latitude, Legs.getInstance().endroute.longitude, results);
 
-            if(results[0] < 30){
+            if(results[0] < 50){
                 Toast.makeText(getBaseContext(), "Route voltooid!", Toast.LENGTH_SHORT).show();
 
                 Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
@@ -238,13 +240,33 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
                     SightSelectionStore.getSharedInstance("RouteActivity", this).triggerRemoveSight(sight);
                 }
 
+                endTime = new Date();
                 gpsTracker.stopUsingGPS();
-                this.finish();
+
+                showFinishDialog();
             }
 
         }
     }
 
+    public void showFinishDialog(){
+        FragmentManager fm = getFragmentManager();
+        FinishedRouteDialogFragment dialogFragment = new FinishedRouteDialogFragment();
+        dialogFragment.show(fm, "Sample Fragment");
+    }
+
+    public void saveRoute(String routeName){
+        Integer distance =  Legs.getInstance().distance;
+        Date timeStart = startTime;
+        Date timeEnd = endTime;
+        String routejson = Legs.getInstance().routeJson;
+
+        Route route = new Route(routeName, distance, timeStart, timeEnd, routejson);
+
+        RouteStore routeStore = RouteStore.getSharedInstance(getApplicationContext());
+        routeStore.addRoute(route);
+        this.finish();
+    }
 
     public void errorDialog(String error) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
