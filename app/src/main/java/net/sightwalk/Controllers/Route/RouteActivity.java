@@ -20,16 +20,23 @@ import android.widget.TextView;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.maps.android.PolyUtil;
+import com.google.maps.android.geometry.*;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
 import net.sightwalk.Controllers.SettingsActivity;
+import net.sightwalk.Helpers.GPSTracker;
+import net.sightwalk.Helpers.GPSTrackerInterface;
+import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Models.*;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.R;
+import net.sightwalk.Stores.SightSelectionStore;
+import net.sightwalk.Stores.SightStore;
+import net.sightwalk.Stores.SightsInterface;
 
 import java.util.*;
 
-public class RouteActivity extends AppCompatActivity {
+public class RouteActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface {
 
     private GoogleMap googleMap;
     private locationListener listener;
@@ -37,6 +44,7 @@ public class RouteActivity extends AppCompatActivity {
     private UserLocation mLocation;
     private TextView steps;
     private ImageView imageView;
+    private GPSTracker gpsTracker;
 
     private static AlertDialog alert;
 
@@ -57,6 +65,8 @@ public class RouteActivity extends AppCompatActivity {
 
         RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
 
+        gpsTracker = new GPSTracker(this, this);
+
         setRoute();
     }
 
@@ -70,7 +80,7 @@ public class RouteActivity extends AppCompatActivity {
         googleMap.addPolyline(new PolylineOptions()
                 .addAll(PolyUtil.decode(step.getPolyline()))
                 .width(10)
-                .color(Color.RED));
+                .color(Color.parseColor("#0088FF")));
     }
 
     @Override
@@ -111,9 +121,11 @@ public class RouteActivity extends AppCompatActivity {
                 googleMap.animateCamera(zoom);
             }
 
-            for(int i = 0; i < Sights.getInstance().mSightList.size(); i++) {
-                Double latitude = Sights.getInstance().mSightList.get(i).getDouble(Sights.getInstance().mSightList.get(i).getColumnIndex("latitude"));
-                Double longitude = Sights.getInstance().mSightList.get(i).getDouble(Sights.getInstance().mSightList.get(i).getColumnIndex("longitude"));
+            ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+
+            for(int i = 0; i < sights.size(); i++) {
+                Double latitude = sights.get(i).latitude;
+                Double longitude = sights.get(i).longitude;
 
                 Marker m = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                 m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -122,7 +134,7 @@ public class RouteActivity extends AppCompatActivity {
             googleMap.addPolyline(new PolylineOptions()
                     .addAll(PolyUtil.decode(poly))
                     .width(10)
-                    .color(Color.parseColor("#0088FF")));
+                    .color(Color.parseColor("#AAAAAA")));
         }
 
     }
@@ -153,6 +165,29 @@ public class RouteActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void addedSight(Sight sight) {
+
+    }
+
+    @Override
+    public void removedSight(Sight sight) {
+
+    }
+
+    @Override
+    public void updatedSight(Sight oldSight, Sight newSight) {
+
+    }
+
+    @Override
+    public void updatedLocation(Location location) {
+        Marker m = googleMap.addMarker(new MarkerOptions().position(new LatLng(location.getLatitude(), location.getLongitude())));
+        m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
+
+        gpsTracker.stopUsingGPS();
+    }
+
     private class locationListener implements LocationListener {
         @Override
         public void onLocationChanged(Location location) {
@@ -178,7 +213,7 @@ public class RouteActivity extends AppCompatActivity {
                 latLngs.add(new LatLng(step.getStart_location().latitude, step.getStart_location().longitude));
                 latLngs.add(new LatLng(step.getEnd_location().latitude, step.getEnd_location().longitude));
 
-                boolean range = PolyUtil.isLocationOnPath(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true);
+                boolean range = PolyUtil.isLocationOnEdge(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true, 30);
 
                 if (range) {
                     Steps.stepsArrayList.remove(0);
@@ -203,8 +238,17 @@ public class RouteActivity extends AppCompatActivity {
                     googleMap.addPolyline(new PolylineOptions()
                             .addAll(PolyUtil.decode(stepupdate.getPolyline()))
                             .width(10)
-                            .color(Color.RED));
+                            .color(Color.parseColor("#0088FF")));
                 }
+            }else{
+                //if no legs left
+                //check if near start location
+                float[] results = new float[1];
+                Location.distanceBetween( location.getLatitude(), location.getLongitude(), Legs.getInstance().endroute.latitude, Legs.getInstance().endroute.longitude, results);
+
+
+
+                Log.d("RESULT", results.toString());
             }
         }
 

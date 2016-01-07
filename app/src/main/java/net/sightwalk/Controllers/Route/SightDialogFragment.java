@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.squareup.picasso.Picasso;
+
 import net.sightwalk.Models.Sight;
 import net.sightwalk.R;
 
@@ -53,31 +55,6 @@ public class SightDialogFragment extends Fragment {
     public void setScope(Sight sight) {
         sightTitle.setText(sight.name);
         sightDesc.setText(sight.shortdesc);
-        new LoadImage().execute(sight.image);
-    }
-
-    private class LoadImage extends AsyncTask<String, String, Bitmap> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        protected Bitmap doInBackground(String... args) {
-            try {
-                bitmap = BitmapFactory.decodeStream((InputStream) new URL(args[0]).getContent());
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return bitmap;
-        }
-
-        protected void onPostExecute(Bitmap image) {
-            if (image != null) {
-                sightImg.setImageBitmap(image);
-
-            } else {
-                Toast.makeText(getActivity(), "Image Does Not exist or Network Error", Toast.LENGTH_SHORT).show();
-            }
-        }
+        Picasso.with(getContext()).load(sight.image).into(sightImg);
     }
 }
