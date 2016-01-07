@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import net.sightwalk.Controllers.SettingsActivity;
+import net.sightwalk.Controllers.Sight.CreateSightActivity;
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PagerAdapter;
@@ -58,6 +59,12 @@ public class DashboardActivity extends AppCompatActivity {
 
         if (id == R.id.action_settings) {
             Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+
+        if(id == R.id.action_report_sight) {
+            Intent intent = new Intent(this, CreateSightActivity.class);
             startActivity(intent);
             return true;
         }
