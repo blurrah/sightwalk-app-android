@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         if (isFirstRun) {
             Intent intent = new Intent(this, TutorialActivity.class);
             startActivity(intent);
+            finish();
             getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("isFirstRun", false).commit();
         }
     }
@@ -55,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
             startActivity(i);
 
-            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
-
             finish();
+
+            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
     }
 
@@ -67,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
             Intent i = new Intent(getApplicationContext(), LoginActivity.class);
             startActivity(i);
 
-            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
-
             finish();
+
+            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
     }
 }

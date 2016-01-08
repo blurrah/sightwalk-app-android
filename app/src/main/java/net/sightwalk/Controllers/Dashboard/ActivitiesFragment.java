@@ -100,6 +100,7 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
         public void onClick(View v) {
             Intent i = new Intent(view.getContext(), NewRouteActivity.class);
             startActivity(i);
+            getActivity().finish();
         }
     }
 
