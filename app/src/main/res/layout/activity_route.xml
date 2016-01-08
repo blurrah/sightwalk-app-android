@@ -6,23 +6,32 @@
     tools:context="net.sightwalk.Controllers.Route.RouteActivity"
     android:weightSum="1">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Stop"
+        android:id="@+id/stopRouteBtn"
+        android:background="#da0000"
+        android:textColor="#ffffff"
+        android:layout_gravity="top|right"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp" />
+
     <fragment
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/routeMapView"
-        android:layout_weight="1" />
+        android:layout_weight="1.12"
+        android:layout_gravity="top"
+        android:layout_marginTop="-60dp" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/routeMapView"
         android:padding="10dp"
-        android:background="#ffffff" >
+        android:background="#ffffff">
 
         <ImageView
             android:id="@+id/maneuverImageView"

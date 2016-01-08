@@ -6,17 +6,15 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +22,6 @@ import android.widget.Toast;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.maps.android.PolyUtil;
-import com.google.maps.android.geometry.*;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
 import net.sightwalk.Controllers.SettingsActivity;
@@ -36,21 +33,20 @@ import net.sightwalk.Models.Polyline;
 import net.sightwalk.R;
 import net.sightwalk.Stores.RouteStore;
 import net.sightwalk.Stores.SightSelectionStore;
-import net.sightwalk.Stores.SightStore;
 import net.sightwalk.Stores.SightsInterface;
 
 import java.util.*;
-import java.util.jar.Manifest;
 
-public class RouteActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface {
+public class RouteActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface, View.OnClickListener {
 
     private GoogleMap googleMap;
     private TextView steps;
     private ImageView imageView;
+    private Button stopButton;
     private GPSTracker gpsTracker;
-    private Location userLocation;
     private Date startTime;
     private Date endTime;
+    private Location userLocation;
 
     private static AlertDialog alert;
 
@@ -63,6 +59,9 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
         steps = (TextView) findViewById(R.id.routeTextView);
         imageView = (ImageView) findViewById(R.id.maneuverImageView);
+        stopButton = (Button) findViewById(R.id.stopRouteBtn);
+
+        stopButton.setOnClickListener(this);
 
         startTime = new Date();
 
@@ -119,7 +118,16 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
     @Override
     public void onBackPressed(){
+        clearDataRouteActivity();
+    }
+
+    public void clearDataRouteActivity(){
         Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
+
+        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+        for(Sight sight : sights){
+            SightSelectionStore.getSharedInstance("RouteActivity", this).triggerRemoveSight(sight);
+        }
 
         this.finish();
     }
@@ -291,4 +299,14 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         alert = builder.create();
         alert.show();
     }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.stopRouteBtn:
+                clearDataRouteActivity();
+                break;
+        }
+    }
+
 }

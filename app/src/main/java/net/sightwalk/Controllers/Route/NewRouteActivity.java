@@ -127,6 +127,18 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     }
 
     @Override
+    public void onBackPressed(){
+        Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
+
+        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("newRouteActivity", this).getSelectedSights();
+        for(Sight sight : sights){
+            SightSelectionStore.getSharedInstance("newRouteActivity", this).triggerRemoveSight(sight);
+        }
+
+        this.finish();
+    }
+
+    @Override
     public void updatedLocation(Location location) {
         long currentTime = new Date().getTime();
 
