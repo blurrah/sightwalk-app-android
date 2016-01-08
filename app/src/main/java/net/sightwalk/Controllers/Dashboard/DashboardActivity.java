@@ -23,7 +23,9 @@ import java.util.Calendar;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    ViewPager viewPager;
+    private ViewPager viewPager;
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +79,13 @@ public class DashboardActivity extends AppCompatActivity {
     public void notification() {
         Boolean notificationEnabled = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("notificationEnabled", true);
 
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+
+        pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
         if (notificationEnabled) {
-            Intent notificationIntent = new Intent(this, AlarmReceiver.class);
-
-            AlarmReceiver alarm = new AlarmReceiver();
-            alarm.onReceive(this, notificationIntent);
-
-            PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Calendar calendar = Calendar.getInstance();
 
@@ -97,11 +99,12 @@ public class DashboardActivity extends AppCompatActivity {
 
             long time = calendar.getTimeInMillis();
 
-            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-
             alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
 
             getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("notificationEnabled", true).commit();
+        }
+        else {
+            alarmManager.cancel(pendingIntent);
         }
     }
 

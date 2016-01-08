@@ -56,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
 
             overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
+
+            finish();
         }
     }
 
@@ -66,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
             startActivity(i);
 
             overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
+
+            finish();
         }
     }
 }
