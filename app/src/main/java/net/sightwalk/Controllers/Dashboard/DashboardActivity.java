@@ -80,6 +80,9 @@ public class DashboardActivity extends AppCompatActivity {
         if (notificationEnabled) {
             Intent notificationIntent = new Intent(this, AlarmReceiver.class);
 
+            AlarmReceiver alarm = new AlarmReceiver();
+            alarm.onReceive(this, notificationIntent);
+
             PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
             Calendar calendar = Calendar.getInstance();
@@ -88,11 +91,17 @@ public class DashboardActivity extends AppCompatActivity {
             calendar.set(Calendar.MINUTE, 0);
             calendar.set(Calendar.SECOND, 0);
 
+            if(calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DATE, 1);
+            }
+
             long time = calendar.getTimeInMillis();
 
-            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
 
-            alarmManager.setRepeating(AlarmManager.RTC, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("notificationEnabled", true).commit();
         }
     }
 
