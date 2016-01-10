@@ -1,5 +1,6 @@
 package net.sightwalk.Controllers.Dashboard;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -15,6 +16,8 @@ import com.github.mikephil.charting.data.BarEntry;
 
 import net.danlew.android.joda.JodaTimeAndroid;
 import net.sightwalk.R;
+
+import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 
@@ -46,6 +49,7 @@ public class WeekFragment extends Fragment {
         chart.getAxisLeft().setDrawGridLines(false);
         chart.getXAxis().setDrawGridLines(false);
         chart.getAxisRight().setEnabled(false);
+        chart.setTouchEnabled(false);
 
         XAxis label = chart.getXAxis();
         label.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -53,12 +57,35 @@ public class WeekFragment extends Fragment {
         Legend legend = chart.getLegend();
         legend.setEnabled(false);
 
-        //BarDataSet dataSet = new BarDataSet(getDataSet(), "Test");
+        BarDataSet dataSet = new BarDataSet(getDataSet(), "Test");
 
-        //dataSet.setDrawValues(false);
-        //dataSet.setHighlightEnabled(false);
+        dataSet.setColors(new int[]{Color.parseColor("#27b764"), Color.parseColor("#a8e2c1")});
+        dataSet.setDrawValues(false);
+        dataSet.setHighlightEnabled(false);
 
-        //BarData data = new BarData(getLabels(), dataSet);
-        //chart.setData(data);
+        BarData data = new BarData(getLabels(), dataSet);
+        chart.setData(data);
+    }
+
+    private ArrayList<BarEntry> getDataSet() {
+        entries = new ArrayList<>();
+
+        entries.add(new BarEntry(4f, 0));
+        entries.add(new BarEntry(8f, 1));
+        entries.add(new BarEntry(6f, 2));
+        entries.add(new BarEntry(14f, 3));
+
+        return entries;
+    }
+
+    private ArrayList<String> getLabels() {
+        labels = new ArrayList<>();
+
+        labels.add("Week " + Integer.toString(DateTime.now().minusWeeks(3).getWeekOfWeekyear()));
+        labels.add("Week " + Integer.toString(DateTime.now().minusWeeks(2).getWeekOfWeekyear()));
+        labels.add("Week " + Integer.toString(DateTime.now().minusWeeks(1).getWeekOfWeekyear()));
+        labels.add("Week " + Integer.toString(DateTime.now().getWeekOfWeekyear()));
+
+        return labels;
     }
 }

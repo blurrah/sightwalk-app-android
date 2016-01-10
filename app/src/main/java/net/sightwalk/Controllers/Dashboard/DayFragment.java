@@ -1,5 +1,6 @@
 package net.sightwalk.Controllers.Dashboard;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -46,6 +47,7 @@ public class DayFragment extends Fragment {
         chart.getAxisLeft().setDrawGridLines(false);
         chart.getXAxis().setDrawGridLines(false);
         chart.getAxisRight().setEnabled(false);
+        chart.setTouchEnabled(false);
 
         XAxis label = chart.getXAxis();
         label.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -55,6 +57,7 @@ public class DayFragment extends Fragment {
 
         BarDataSet dataSet = new BarDataSet(getDataSet(), "Test");
 
+        dataSet.setColors(new int[]{Color.parseColor("#27b764"), Color.parseColor("#a8e2c1")});
         dataSet.setDrawValues(false);
         dataSet.setHighlightEnabled(false);
 
@@ -79,13 +82,13 @@ public class DayFragment extends Fragment {
     private ArrayList<String> getLabels() {
         labels = new ArrayList<>();
 
-        labels.add("Maandag");
-        labels.add("Dinsdag");
-        labels.add("Woensdag");
-        labels.add("Donderdag");
-        labels.add("Vrijdag");
-        labels.add("Zaterdag");
-        labels.add("Zondag");
+        labels.add("Ma");
+        labels.add("Di");
+        labels.add("Wo");
+        labels.add("Do");
+        labels.add("Vr");
+        labels.add("Za");
+        labels.add("Zo");
 
         return labels;
     }
