@@ -69,12 +69,12 @@ public class SightStore implements SightSyncerInterface {
     }
     public ArrayList<Integer> getFavourites() {return favourites;}
 
-    public void sync(Location location) {
-        SightSyncer.SyncForLocation(location, this);
+    public void sync(Location location, Context context) {
+        SightSyncer.SyncForLocation(location, this, context);
     }
 
-    public void sync(GPSTracker gpsTracker) {
-        sync(gpsTracker.getLocation());
+    public void sync(GPSTracker gpsTracker, Context context) {
+        sync(gpsTracker.getLocation(), context);
     }
 
     private void readSights() {

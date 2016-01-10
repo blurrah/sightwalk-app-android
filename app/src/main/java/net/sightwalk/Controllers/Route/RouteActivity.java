@@ -27,6 +27,7 @@ import net.sightwalk.Controllers.Dashboard.DashboardActivity;
 import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
+import net.sightwalk.Helpers.GeoDistanceCalculator;
 import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Models.*;
 import net.sightwalk.Models.Polyline;
@@ -47,6 +48,8 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
     private Date startTime;
     private Date endTime;
     private Location userLocation;
+    private ArrayList<Sight> selectedSights;
+    private ArrayList<Sight> storeSight;
 
     private static AlertDialog alert;
 
@@ -68,6 +71,17 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
 
         gpsTracker = new GPSTracker(this, this);
+        selectedSights = new ArrayList<>();
+        storeSight = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+
+        for(Sight sight : storeSight){
+            selectedSights.add(sight);
+        }
+
+
+        Sight k = new Sight(-1,null, UserLocation.getInstance().userlocation.latitude, UserLocation.getInstance().userlocation.longitude,null,null,null,null,null);
+        selectedSights.add(k);
+
 
         setRoute();
     }
@@ -233,27 +247,27 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
             }
         }
 
-        if(Steps.stepsArrayList.size() == 1){
+        if(selectedSights.size() > 0) {
 
             float[] results = new float[1];
-            Location.distanceBetween(location.getLatitude(), location.getLongitude(), Legs.getInstance().endroute.latitude, Legs.getInstance().endroute.longitude, results);
+            Location.distanceBetween(location.getLatitude(), location.getLongitude(), selectedSights.get(0).latitude, selectedSights.get(0).longitude, results);
 
-            if(results[0] < 50){
-                Toast.makeText(getBaseContext(), "Route voltooid!", Toast.LENGTH_SHORT).show();
+            if (results[0] < 30) {
 
-                Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
+                //TODO
+                //Show sight info
 
-                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
-                for(Sight sight : sights){
-                    SightSelectionStore.getSharedInstance("RouteActivity", this).triggerRemoveSight(sight);
+                if(storeSight.size() > 0) {
+                    storeSight.remove(0);
                 }
 
-                endTime = new Date();
-                gpsTracker.stopUsingGPS();
+                selectedSights.remove(0);
+                if(selectedSights.size() == 0){
 
-                showFinishDialog();
+                    showFinishDialog();
+                    Toast.makeText(getBaseContext(), "Route afgerond!", Toast.LENGTH_SHORT).show();
+                }
             }
-
         }
     }
 
@@ -264,10 +278,16 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
     }
 
     public void saveRoute(String routeName){
+
+        endTime = new Date();
+        gpsTracker.stopUsingGPS();
+
         Integer distance =  Legs.getInstance().distance;
         Date timeStart = startTime;
         Date timeEnd = endTime;
         String routejson = Legs.getInstance().routeJson;
+
+        Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
 
         Route route = new Route(routeName, distance, timeStart, timeEnd, routejson);
 

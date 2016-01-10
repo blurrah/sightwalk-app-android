@@ -149,7 +149,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
 
             // update store and views
             updateDistance();
-            sightStore.sync(location);
+            sightStore.sync(location, getBaseContext());
         }
     }
 

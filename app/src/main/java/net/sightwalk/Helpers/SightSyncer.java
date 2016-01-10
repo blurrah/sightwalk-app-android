@@ -1,11 +1,14 @@
 package net.sightwalk.Helpers;
 
+import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 import android.util.Pair;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import net.sightwalk.Controllers.Introduction.MainActivity;
 import net.sightwalk.Models.Sight;
 import net.sightwalk.Stores.SightStore;
 import net.sightwalk.Tasks.SightGeoLoadTask;
@@ -28,6 +31,7 @@ public class SightSyncer implements TaskInterface {
 
     private static SightSyncer sharedInstance;
     private static int syncDistance = 10;
+    private static Context baseContext;
 
     public static SightSyncer getSharedInstance(SightStore store) {
         if (!(sharedInstance instanceof SightSyncer)) {
@@ -36,8 +40,9 @@ public class SightSyncer implements TaskInterface {
         return sharedInstance;
     }
 
-    public static void SyncForLocation(Location location, SightStore store) {
+    public static void SyncForLocation(Location location, SightStore store, Context context) {
         getSharedInstance(store).sync(location);
+        baseContext = context;
     }
 
     private Location lastLocation;
@@ -77,6 +82,7 @@ public class SightSyncer implements TaskInterface {
                 Sight newSight = new Sight(sightArray.getJSONObject(i));
                 sights.put(newSight.id, newSight);
             }
+            Toast.makeText(baseContext, "Nieuwe Sights beschikbaar", Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
             e.printStackTrace();
         }
