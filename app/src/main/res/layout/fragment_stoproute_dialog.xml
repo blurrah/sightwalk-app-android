@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:background="#27b764"
-        android:text="U heeft de route afgerond"
+        android:text="Stoppen"
         android:gravity="center"
         android:textColor="#ffffff"
         android:textSize="20dp"
@@ -18,7 +18,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Gefeliciteerd! U heeft de route afgemaakt en het einde behaald. Hopelijk heeft u veel leuke sights gezien."
+        android:text="Weet u zeker dat u de route wilt stoppen? U heeft het einde van de route nog niet behaald."
         android:id="@+id/textView6"
         android:textAlignment="center"
         android:textSize="16dp"

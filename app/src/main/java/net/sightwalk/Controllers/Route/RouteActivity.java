@@ -16,40 +16,47 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.maps.android.PolyUtil;
+import com.squareup.picasso.Picasso;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
 import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
-import net.sightwalk.Helpers.GeoDistanceCalculator;
 import net.sightwalk.Helpers.PermissionActivity;
+import net.sightwalk.Helpers.RouteStepsAdapter;
 import net.sightwalk.Models.*;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.R;
-import net.sightwalk.Stores.RouteStore;
 import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Stores.SightsInterface;
 
 import java.util.*;
 
-public class RouteActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface, View.OnClickListener {
+public class RouteActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface, Button.OnClickListener {
 
     private GoogleMap googleMap;
-    private TextView steps;
-    private ImageView imageView;
-    private Button stopButton;
     private GPSTracker gpsTracker;
+    private Location userLocation;
+
     private Date startTime;
     private Date endTime;
-    private Location userLocation;
+
     private ArrayList<Sight> selectedSights;
     private ArrayList<Sight> storeSight;
+    private Boolean finishSight;
+
+    private ListView routeStepListView;
+    private LinearLayout nextSightLayout;
+    private Button directionsButton;
+    private Button nextSightButton;
 
     private static AlertDialog alert;
 
@@ -59,39 +66,47 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         setContentView(R.layout.activity_route);
 
         googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.routeMapView)).getMap();
-
-        steps = (TextView) findViewById(R.id.routeTextView);
-        imageView = (ImageView) findViewById(R.id.maneuverImageView);
-        stopButton = (Button) findViewById(R.id.stopRouteBtn);
-
-        stopButton.setOnClickListener(this);
-
+        gpsTracker = new GPSTracker(this, this);
         startTime = new Date();
 
-        RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
-
-        gpsTracker = new GPSTracker(this, this);
-        selectedSights = new ArrayList<>();
         storeSight = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
-
+        selectedSights = new ArrayList<>();
         for(Sight sight : storeSight){
             selectedSights.add(sight);
         }
 
+        // If the route ends at beginning add Sight
+        Bundle intentValues = getIntent().getExtras();
+        finishSight = intentValues.getBoolean("FINISH_SIGHT");
+        if(finishSight) {
+            Sight k = new Sight(-1, null, UserLocation.getInstance().userlocation.latitude, UserLocation.getInstance().userlocation.longitude, null, null, null, null, null);
+            selectedSights.add(k);
+        }
 
-        Sight k = new Sight(-1,null, UserLocation.getInstance().userlocation.latitude, UserLocation.getInstance().userlocation.longitude,null,null,null,null,null);
-        selectedSights.add(k);
+        // Set directions list
+        ArrayList<Steps> stepsArrayList = Steps.getInstance().stepsArrayList;
+        RouteStepsAdapter routeStepsAdapter = new RouteStepsAdapter(this, stepsArrayList);
+        routeStepListView = (ListView) findViewById(R.id.routeStepListView);
+        routeStepListView.setAdapter(routeStepsAdapter);
+
+        directionsButton = (Button) findViewById(R.id.directionsButton);
+        nextSightButton = (Button) findViewById(R.id.nextSightButton);
+        nextSightLayout = (LinearLayout) findViewById(R.id.nextSightLayout);
+
+        directionsButton.setOnClickListener(this);
+        nextSightButton.setOnClickListener(this);
 
 
+        RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
+
+        // Create polyline route
         setRoute();
     }
 
     public void setRoute() {
         Steps step = Steps.stepsArrayList.get(0);
 
-        steps.setText(Html.fromHtml(step.getHtml_instructions()));
-
-        imageView.setImageResource(R.drawable.ic_walking);
+        setNextSightInfo(selectedSights.get(0));
 
         googleMap.addPolyline(new PolylineOptions()
                 .addAll(PolyUtil.decode(step.getPolyline()))
@@ -101,7 +116,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_route, menu);
         return true;
     }
 
@@ -110,20 +125,8 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         int id = item.getItemId();
 
         switch(id){
-            case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-                return true;
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
-
-                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
-                for(Sight sight : sights){
-                    SightSelectionStore.getSharedInstance("RouteActivity", this).triggerRemoveSight(sight);
-                }
-
-                this.finish();
+            case R.id.action_stop:
+                showStopDialog();
                 return true;
         }
 
@@ -136,12 +139,11 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
     }
 
     public void clearDataRouteActivity(){
+        gpsTracker.stopUsingGPS();
         Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
 
         ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
-        for(Sight sight : sights){
-            SightSelectionStore.getSharedInstance("RouteActivity", this).triggerRemoveSight(sight);
-        }
+        sights.clear();
 
         this.finish();
     }
@@ -223,21 +225,9 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
             boolean range = PolyUtil.isLocationOnEdge(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true, 30);
 
             if (range) {
-                Steps.stepsArrayList.remove(0);
+
                 if(!Steps.stepsArrayList.isEmpty()) {
                     Steps stepupdate = Steps.stepsArrayList.get(0);
-
-                    steps.setText(Html.fromHtml(stepupdate.getHtml_instructions()));
-
-                    if (stepupdate.getHtml_instructions().contains("linksaf")) {
-                        imageView.setImageResource(R.drawable.ic_left);
-                    } else if (stepupdate.getHtml_instructions().contains("rechtsaf")) {
-                        imageView.setImageResource(R.drawable.ic_right);
-                    } else if (stepupdate.getHtml_instructions().contains("rechtdoor") || stepupdate.getHtml_instructions().contains("vervolgen")) {
-                        imageView.setImageResource(R.drawable.ic_arrow);
-                    } else {
-                        imageView.setImageResource(R.drawable.ic_walking);
-                    }
 
                     googleMap.addPolyline(new PolylineOptions()
                             .addAll(PolyUtil.decode(stepupdate.getPolyline()))
@@ -266,34 +256,38 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
                     showFinishDialog();
                     Toast.makeText(getBaseContext(), "Route afgerond!", Toast.LENGTH_SHORT).show();
+                }else{
+                    setNextSightInfo(selectedSights.get(0));
                 }
+            }
+
+            if(selectedSights.size() == 0){
+
             }
         }
     }
 
+    public void setNextSightInfo(Sight sight){
+
+        TextView nextSightTitle = (TextView) findViewById(R.id.nextSightTitle);
+        TextView nextSightText = (TextView )findViewById(R.id.nextSightText);
+        ImageView nextSightImage = (ImageView) findViewById(R.id.nextSightImage);
+
+        nextSightTitle.setText(sight.title);
+        nextSightText.setText(sight.shortdesc);
+        Picasso.with(getApplicationContext()).load(sight.image).into(nextSightImage);
+    }
+
     public void showFinishDialog(){
         FragmentManager fm = getFragmentManager();
-        FinishedRouteDialogFragment dialogFragment = new FinishedRouteDialogFragment();
+        FinishedDialogFragment dialogFragment = new FinishedDialogFragment();
         dialogFragment.show(fm, "Sample Fragment");
     }
 
-    public void saveRoute(String routeName){
-
-        endTime = new Date();
-        gpsTracker.stopUsingGPS();
-
-        Integer distance =  Legs.getInstance().distance;
-        Date timeStart = startTime;
-        Date timeEnd = endTime;
-        String routejson = Legs.getInstance().routeJson;
-
-        Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
-
-        Route route = new Route(routeName, distance, timeStart, timeEnd, routejson);
-
-        RouteStore routeStore = RouteStore.getSharedInstance(getApplicationContext());
-        routeStore.addRoute(route);
-        this.finish();
+    public void showStopDialog(){
+        FragmentManager fm = getFragmentManager();
+        StopDialogFragment dialogFragment = new StopDialogFragment();
+        dialogFragment.show(fm, "Sample Fragment");
     }
 
     public void errorDialog(String error) {
@@ -322,11 +316,19 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.stopRouteBtn:
-                clearDataRouteActivity();
+        switch(view.getId()){
+            case R.id.nextSightButton:
+                nextSightLayout.setVisibility(View.VISIBLE);
+                nextSightButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                directionsButton.setTextColor(getResources().getColor(R.color.colorDisabled));
+                routeStepListView.setVisibility(View.GONE);
+                break;
+            case R.id.directionsButton:
+                routeStepListView.setVisibility(View.VISIBLE);
+                directionsButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                nextSightButton.setTextColor(getResources().getColor(R.color.colorDisabled));
+                nextSightLayout.setVisibility(View.GONE);
                 break;
         }
     }
-
 }

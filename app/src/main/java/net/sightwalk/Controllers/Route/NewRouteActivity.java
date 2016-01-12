@@ -20,6 +20,7 @@ import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Models.*;
 import net.sightwalk.R;
+import net.sightwalk.Stores.RouteStore;
 import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Stores.SightsInterface;
 import net.sightwalk.Tasks.RouteTask;
@@ -202,22 +203,45 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     }
 
     private class routeListener implements Button.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            Intent i = new Intent(getApplicationContext(), RouteActivity.class);
-            startActivity(i);
 
-            finish();
+        @Override
+        public void onClick(View view) {
+            showFinishDialog();
         }
     }
 
     private class chooseListener implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
+
             Intent i = new Intent(getApplicationContext(), ChooseRouteActivity.class);
             startActivity(i);
-
-            overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
         }
+    }
+
+    public void showFinishDialog(){
+        android.app.FragmentManager fm = getFragmentManager();
+        NameRouteDialogFragment dialogFragment = new NameRouteDialogFragment();
+        dialogFragment.show(fm, "Sample Fragment");
+    }
+
+    public void saveRoute(String routeName){
+
+        Intent i = new Intent(getApplicationContext(), RouteActivity.class);
+
+        i.putExtra("FINISH_SIGHT",checkBox.isChecked());
+
+        startActivity(i);
+
+        Integer distance =  Legs.getInstance().distance;
+        Date timeStart = new Date();
+        Date timeEnd = new Date();
+        String routejson = Legs.getInstance().routeJson;
+
+        Route route = new Route(routeName, distance, timeStart, timeEnd, routejson);
+
+        RouteStore routeStore = RouteStore.getSharedInstance(getApplicationContext());
+        routeStore.addRoute(route);
+        this.finish();
     }
 }

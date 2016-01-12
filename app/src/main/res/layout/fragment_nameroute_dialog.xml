@@ -9,22 +9,21 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:background="#27b764"
-        android:text="U heeft de route afgerond"
+        android:text="Geef de route een naam"
         android:gravity="center"
         android:textColor="#ffffff"
         android:textSize="20dp"
         android:textStyle="bold" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/nameDialogEditText"
+        android:inputType="textEmailAddress"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Gefeliciteerd! U heeft de route afgemaakt en het einde behaald. Hopelijk heeft u veel leuke sights gezien."
-        android:id="@+id/textView6"
-        android:textAlignment="center"
-        android:textSize="16dp"
-        android:paddingTop="20dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:paddingBottom="10dp" />
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:hint="Route naam" />
 
 </LinearLayout>

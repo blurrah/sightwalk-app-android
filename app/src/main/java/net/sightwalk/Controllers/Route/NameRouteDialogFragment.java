@@ -3,6 +3,7 @@ package net.sightwalk.Controllers.Route;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
@@ -13,9 +14,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import net.sightwalk.R;
-import net.sightwalk.Tasks.PasswordTask;
 
-public class FinishedRouteDialogFragment extends DialogFragment {
+public class NameRouteDialogFragment extends DialogFragment {
 
     EditText nameField;
     View view;
@@ -28,7 +28,7 @@ public class FinishedRouteDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        view = inflater.inflate(R.layout.fragment_finishedroute_dialog, null);
+        view = inflater.inflate(R.layout.fragment_nameroute_dialog, null);
         builder.setView(view);
 
         this.setCancelable(false);
@@ -36,7 +36,7 @@ public class FinishedRouteDialogFragment extends DialogFragment {
 
 
 
-        builder.setPositiveButton("Verzenden", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Start route", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
 
@@ -44,11 +44,19 @@ public class FinishedRouteDialogFragment extends DialogFragment {
                 String name = nameField.getText().toString();
 
                 if (name.length() > 0) {
-                    RouteActivity activity = (RouteActivity) getActivity();
+                    NewRouteActivity activity = (NewRouteActivity) getActivity();
                     activity.saveRoute(name);
+
                 } else {
                     Toast.makeText(getActivity(), "Alle velden moeten worden ingevuld!", Toast.LENGTH_SHORT).show();
                 }
+            }
+        });
+
+        builder.setNegativeButton("Annuleren", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int id) {
+                dismiss();
             }
         });
 
