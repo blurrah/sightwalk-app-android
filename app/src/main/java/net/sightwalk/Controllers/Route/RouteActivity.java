@@ -52,6 +52,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
     private ArrayList<Sight> selectedSights;
     private ArrayList<Sight> storeSight;
     private Boolean finishSight;
+    private Boolean startSight;
 
     private ListView routeStepListView;
     private LinearLayout nextSightLayout;
@@ -78,6 +79,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         // If the route ends at beginning add Sight
         Bundle intentValues = getIntent().getExtras();
         finishSight = intentValues.getBoolean("FINISH_SIGHT");
+        startSight = intentValues.getBoolean("START_SIGHT");
         if(finishSight) {
             Sight k = new Sight(-1, null, UserLocation.getInstance().userlocation.latitude, UserLocation.getInstance().userlocation.longitude, null, null, null, null, null);
             selectedSights.add(k);

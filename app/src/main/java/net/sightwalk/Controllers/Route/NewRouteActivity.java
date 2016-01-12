@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.*;
@@ -42,6 +43,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     private GPSTracker gpsTracker;
     private ArrayList<Sight> selectedSights;
     private SightSelectionStore sightStore;
+    private Switch startSight;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,8 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         routeButton = (Button) findViewById(R.id.routeButton);
         amountSights = (TextView) findViewById(R.id.tvAmountSights);
         cButton = (Button) findViewById(R.id.chooseRouteButton);
+        startSight = (Switch) findViewById(R.id.startSight);
+
         FragmentManager fm = getSupportFragmentManager();
         lvdaSights = (ListViewDraggingAnimation) fm.findFragmentById(R.id.article_fragment);
 
@@ -63,6 +67,13 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         sightStore = SightSelectionStore.getSharedInstance("newRouteActivity", this);
         selectedSights = sightStore.getSelectedSights();
         lvdaSights.setSights(selectedSights);
+
+        startSight.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                updateDistance();
+            }
+        });
     }
 
     @Override
@@ -76,6 +87,9 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         amountSights.setText("Totaal " + selectedSights.size() + " sights");
 
         if (selectedSights.size() == 0) {
+            routeButton.setEnabled(false);
+            routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
+        } else if(startSight.isChecked() && selectedSights.size() < 2){
             routeButton.setEnabled(false);
             routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
         } else {
@@ -188,9 +202,18 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     }
 
     private LatLng getStartPosition() {
-        if (deviceLocation instanceof Location) {
-            UserLocation.getInstance().userlocation = new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
-            return new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
+
+        if(startSight.isChecked()){
+            if(selectedSights.size() > 1){
+
+
+                return new LatLng(selectedSights.get(0).latitude, selectedSights.get(0).longitude);
+            }
+        }else{
+            if (deviceLocation instanceof Location) {
+                UserLocation.getInstance().userlocation = new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
+                return new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
+            }
         }
 
         // no start position clear
@@ -199,7 +222,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        createRoute();
+        updateDistance();
     }
 
     private class routeListener implements Button.OnClickListener {
@@ -230,6 +253,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         Intent i = new Intent(getApplicationContext(), RouteActivity.class);
 
         i.putExtra("FINISH_SIGHT",checkBox.isChecked());
+        i.putExtra("START_SIGHT", startSight.isChecked());
 
         startActivity(i);
 
