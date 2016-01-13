@@ -56,6 +56,9 @@
         <activity
             android:name=".Controllers.Route.ChooseRouteActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".Controllers.Activity.CheckActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.gms.version"

@@ -27,4 +27,18 @@
         android:paddingRight="10dp"
         android:paddingBottom="10dp" />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=" afstand + tijd"
+        android:id="@+id/routeStats"
+        android:textAlignment="center"
+        android:textSize="16dp"
+        android:paddingTop="20dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingBottom="10dp"
+        android:textColor="@color/colorPrimary"
+        android:textStyle="bold" />
+
 </LinearLayout>

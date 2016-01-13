@@ -7,19 +7,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 
+import net.sightwalk.Controllers.Activity.CheckActivity;
 import net.sightwalk.Controllers.Route.NewRouteActivity;
 import net.sightwalk.Helpers.ActivitiesAdapter;
 import net.sightwalk.R;
 import net.sightwalk.Stores.RouteDBHandler;
 
-public class ActivitiesFragment extends Fragment {
+public class ActivitiesFragment extends Fragment implements AdapterView.OnItemClickListener{
 
     private View view;
     private ActivitiesAdapter activitiesAdapter;
     private RouteDBHandler db;
+    private ListView activityList;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,6 +38,16 @@ public class ActivitiesFragment extends Fragment {
     public void onResume(){
         super.onResume();
         populateActivityList(view);
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Cursor k = (Cursor) activityList.getItemAtPosition(i);
+        String json = k.getString(k.getColumnIndex("routeJson"));
+
+        Intent intent = new Intent(getActivity(), CheckActivity.class);
+        intent.putExtra("ROUTE_JSON", json);
+        startActivity(intent);
     }
 
     private class routeListener implements Button.OnClickListener {
@@ -55,10 +68,11 @@ public class ActivitiesFragment extends Fragment {
     }
 
     public void populateActivityList(View rootView){
-        ListView activityList = (ListView) rootView.findViewById(R.id.activitiesListView);
+        activityList = (ListView) rootView.findViewById(R.id.activitiesListView);
 
         activitiesAdapter = new ActivitiesAdapter(getActivity(), getActivityCursor(), false);
 
         activityList.setAdapter(activitiesAdapter);
+        activityList.setOnItemClickListener(this);
     }
 }

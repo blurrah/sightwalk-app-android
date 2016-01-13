@@ -46,8 +46,8 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
     private GPSTracker gpsTracker;
     private Location userLocation;
 
-    private Date startTime;
-    private Date endTime;
+    public Date startTime;
+    public Date endTime;
 
     private ArrayList<Sight> selectedSights;
     private ArrayList<Sight> storeSight;
@@ -255,8 +255,6 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
             if (results[0] < 30) {
 
-
-
                 if(storeSight.size() > 0) {
                     gpsTracker.stopUsingGPS();
                     selectionStore.setActiveSight(storeSight.get(0));
@@ -265,7 +263,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
                 selectedSights.remove(0);
                 if(selectedSights.size() == 0){
-
+                    endTime = new Date();
                     showFinishDialog();
                     Toast.makeText(getBaseContext(), "Route afgerond!", Toast.LENGTH_SHORT).show();
                 } else {
@@ -275,11 +273,6 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
                     startActivity(i);
                 }
-
-            }
-
-            if(selectedSights.size() == 0){
-
             }
         }
     }
