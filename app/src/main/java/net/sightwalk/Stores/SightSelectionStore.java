@@ -72,4 +72,15 @@ public class SightSelectionStore extends SightStore {
     public void setSelected(Sight sight) {
         setSelected(sight, true);
     }
+
+
+    private Sight activeSight;
+
+    public void setActiveSight(Sight sight){
+        activeSight = sight;
+    }
+
+    public Sight getActiveSight(){
+        return activeSight;
+    }
 }

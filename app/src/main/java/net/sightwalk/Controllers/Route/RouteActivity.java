@@ -59,6 +59,8 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
     private Button directionsButton;
     private Button nextSightButton;
 
+    private SightSelectionStore selectionStore;
+
     private static AlertDialog alert;
 
     @Override
@@ -70,7 +72,8 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         gpsTracker = new GPSTracker(this, this);
         startTime = new Date();
 
-        storeSight = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+        selectionStore = SightSelectionStore.getSharedInstance("RouteActivity", this);
+        storeSight = selectionStore.getSelectedSights();
         selectedSights = new ArrayList<>();
         for(Sight sight : storeSight){
             selectedSights.add(sight);
@@ -103,6 +106,12 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
         // Create polyline route
         setRoute();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        gpsTracker.getLocation();
     }
 
     public void setRoute() {
@@ -246,10 +255,11 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
             if (results[0] < 30) {
 
-                //TODO
-                //Show sight info
+
 
                 if(storeSight.size() > 0) {
+                    gpsTracker.stopUsingGPS();
+                    selectionStore.setActiveSight(storeSight.get(0));
                     storeSight.remove(0);
                 }
 
@@ -258,9 +268,14 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
                     showFinishDialog();
                     Toast.makeText(getBaseContext(), "Route afgerond!", Toast.LENGTH_SHORT).show();
-                }else{
+                } else {
                     setNextSightInfo(selectedSights.get(0));
+
+                    Intent i = new Intent(getApplicationContext(), SightActivity.class);
+
+                    startActivity(i);
                 }
+
             }
 
             if(selectedSights.size() == 0){
