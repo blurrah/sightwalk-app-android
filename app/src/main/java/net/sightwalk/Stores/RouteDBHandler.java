@@ -52,8 +52,8 @@ public class RouteDBHandler extends SQLiteAssetHelper {
         ContentValues records = new ContentValues();
         records.put("name", route.name);
         records.put("distance", route.distance);
-        records.put("startTime", new SimpleDateFormat("dd-MM-yyy HH:mm:ss").format(route.startDate));
-        records.put("endTime", new SimpleDateFormat("dd-MM-yyy HH:mm:ss").format(route.endDate));
+        records.put("startTime", new SimpleDateFormat("dd/MM/yyy HH:mm:ss").format(route.startDate));
+        records.put("endTime", new SimpleDateFormat("dd/MM/yyy HH:mm:ss").format(route.endDate));
         records.put("routeJson", route.routeJson);
 
         db.insert("activities", null, records);

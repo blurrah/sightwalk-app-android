@@ -136,12 +136,12 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
         } else {
             selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
 
-            if(store.isVisited(sight)) {
+            //if(store.isVisited(sight)) {
                 selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
                 if (store.isFavourited(sight)) {
                     selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
                 }
-            }
+            //}
         }
 
         // update view

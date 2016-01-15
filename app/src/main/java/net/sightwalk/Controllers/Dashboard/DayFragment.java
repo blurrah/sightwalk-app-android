@@ -21,11 +21,16 @@ import net.sightwalk.Stores.ActivitiesStore;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DayFragment extends Fragment {
 
@@ -75,8 +80,21 @@ public class DayFragment extends Fragment {
         return view;
     }
 
-    private void checkDate(Activities activities) {
+    private void checkDate(Activities activities){
         LocalDate localDate = new LocalDate();
+
+        SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date day = null;
+
+        try {
+            day = dtf.parse(activities.getStarttijd());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String date = format.format(day);
+
 
         String dateOne = localDate.toString("dd/MM/yyyy");
         String dateTwo = localDate.minusDays(1).toString("dd/MM/yyyy");
@@ -86,25 +104,26 @@ public class DayFragment extends Fragment {
         String dateSix = localDate.minusDays(5).toString("dd/MM/yyyy");
         String dateSeven = localDate.minusDays(6).toString("dd/MM/yyyy");
 
-        if(activities.getActivityDate().equals(dateOne)) {
+
+        if(date.equals(dateOne)) {
             valueOne.add(getDistance(activities.getJson()));
         }
-        else if(activities.getActivityDate().equals(dateTwo)) {
+        else if(date.equals(dateTwo)) {
             valueTwo.add(getDistance(activities.getJson()));
         }
-        else if(activities.getActivityDate().equals(dateThree)) {
+        else if(date.equals(dateThree)) {
             valueThree.add(getDistance(activities.getJson()));
         }
-        else if(activities.getActivityDate().equals(dateFour)) {
+        else if(date.equals(dateFour)) {
             valueFour.add(getDistance(activities.getJson()));
         }
-        else if(activities.getActivityDate().equals(dateFive)) {
+        else if(date.equals(dateFive)) {
             valueFive.add(getDistance(activities.getJson()));
         }
-        else if(activities.getActivityDate().equals(dateSix)) {
+        else if(date.equals(dateSix)) {
             valueSix.add(getDistance(activities.getJson()));
         }
-        else if(activities.getActivityDate().equals(dateSeven)) {
+        else if(date.equals(dateSeven)) {
             valueSeven.add(getDistance(activities.getJson()));
         }
     }
