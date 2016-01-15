@@ -9,26 +9,6 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Inloggen met Facebook"
-        android:id="@+id/facebookButton"
-        android:background="#3b5998"
-        android:textColor="#ffffff"
-        android:layout_above="@+id/loginButton"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignRight="@+id/loginButton"
-        android:layout_alignEnd="@+id/loginButton" />
-
-    <View
-        android:layout_width="wrap_content"
-        android:layout_below="@+id/facebookButton"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray"
-        android:layout_marginTop="15dp"/>
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:text="Registreren"
         android:id="@+id/registerButton"
         android:layout_alignParentBottom="true"

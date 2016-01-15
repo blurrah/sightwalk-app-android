@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
 
     <application
@@ -59,6 +60,10 @@
         <activity
             android:name=".Controllers.Activity.CheckActivity"
             android:screenOrientation="portrait" />
+
+        <receiver
+            android:name=".Tasks.AlarmReceiver"
+            android:process=":remote" />
 
         <meta-data
             android:name="com.google.android.gms.version"

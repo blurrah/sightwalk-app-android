@@ -42,6 +42,17 @@ public class SightDBHandeler extends SQLiteAssetHelper {
         return c;
     }
 
+    public Cursor getStatsData() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT * FROM activities";
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+
+        return c;
+    }
+
     public void createSight(Sight sight) {
         SQLiteDatabase db = getWritableDatabase();
 

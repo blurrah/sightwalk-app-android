@@ -1,15 +1,13 @@
 package net.sightwalk.Controllers.Dashboard;
 
-import android.Manifest;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -18,12 +16,16 @@ import net.sightwalk.Controllers.Sight.CreateSightActivity;
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PagerAdapter;
-import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.R;
+import net.sightwalk.Tasks.AlarmReceiver;
+
+import java.util.Calendar;
 
 public class DashboardActivity extends AppCompatActivity {
 
-    ViewPager viewPager;
+    private ViewPager viewPager;
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +33,8 @@ public class DashboardActivity extends AppCompatActivity {
         setContentView(R.layout.activity_dashboard);
 
         getSupportActionBar().setElevation(0);
+
+        notification();
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Activiteiten"));
@@ -70,6 +74,38 @@ public class DashboardActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void notification() {
+        Boolean notificationEnabled = getSharedPreferences("PREFERENCE", MODE_PRIVATE).getBoolean("notificationEnabled", true);
+
+        Intent notificationIntent = new Intent(this, AlarmReceiver.class);
+
+        pendingIntent = PendingIntent.getBroadcast(this, 0, notificationIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+
+        if (notificationEnabled) {
+
+            Calendar calendar = Calendar.getInstance();
+
+            calendar.set(Calendar.HOUR, 15);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+
+            if(calendar.before(Calendar.getInstance())) {
+                calendar.add(Calendar.DATE, 1);
+            }
+
+            long time = calendar.getTimeInMillis();
+
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, time, AlarmManager.INTERVAL_DAY, pendingIntent);
+
+            getSharedPreferences("PREFERENCE", MODE_PRIVATE).edit().putBoolean("notificationEnabled", true).commit();
+        }
+        else {
+            alarmManager.cancel(pendingIntent);
+        }
     }
 
     private class tabListener implements TabLayout.OnTabSelectedListener {

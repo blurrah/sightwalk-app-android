@@ -53,6 +53,7 @@ public class TutorialActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent i = new Intent(TutorialActivity.this, MainActivity.class);
                 startActivity(i);
+                finish();
             }
         });
     }
