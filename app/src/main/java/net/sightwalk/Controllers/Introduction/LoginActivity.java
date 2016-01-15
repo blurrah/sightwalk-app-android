@@ -79,6 +79,7 @@ public class LoginActivity extends AppCompatActivity {
 
             LoginTask loginTask = new LoginTask(getApplicationContext(),username, password, instanceId);
             loginTask.execute();
+            finish();
         } else {
             //display message if text field is empty
             Toast.makeText(getBaseContext(), "Alle velden moeten worden ingevuld!", Toast.LENGTH_SHORT).show();

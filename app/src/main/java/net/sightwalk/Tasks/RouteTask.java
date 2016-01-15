@@ -2,12 +2,15 @@ package net.sightwalk.Tasks;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import net.sightwalk.Controllers.Activity.CheckActivity;
+import net.sightwalk.Controllers.Dashboard.ActivitiesFragment;
 import net.sightwalk.Models.Legs;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.Models.Steps;
@@ -94,6 +97,8 @@ public class RouteTask extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String response) {
 
         try {
+            Legs.getInstance().routeJson = response;
+
             JSONObject directionsObject = new JSONObject(response);
 
             JSONArray routesObject = directionsObject.getJSONArray("routes");
@@ -180,8 +185,10 @@ public class RouteTask extends AsyncTask<String, Void, String> {
                 int minutes = routedur /60 % 60;
                 int hours = routedur / 60 / 60;
 
-                TextView textView = (TextView) activity.findViewById(R.id.TATextView);
-                textView.setText("Afstand: " + routedis / 1000 + " km" + " | Duur: " + hours +" uur " + minutes + " min.");
+                if(activity.findViewById(R.id.TATextView) != null) {
+                    TextView textView = (TextView) activity.findViewById(R.id.TATextView);
+                    textView.setText("Afstand: " + routedis / 1000 + " km" + " | Duur: " + hours + " uur " + minutes + " min.");
+                }
             }
         } catch (JSONException ex) {
             Log.e("ERROR_", ex.getLocalizedMessage());
