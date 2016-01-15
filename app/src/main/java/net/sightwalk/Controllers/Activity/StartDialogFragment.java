@@ -1,9 +1,10 @@
-package net.sightwalk.Controllers.Route;
+package net.sightwalk.Controllers.Activity;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -18,12 +19,18 @@ import net.sightwalk.Stores.SightsInterface;
 
 import java.util.ArrayList;
 
-public class StopDialogFragment extends DialogFragment implements SightsInterface, DialogInterface.OnClickListener {
+public class StartDialogFragment extends DialogFragment implements SightsInterface, DialogInterface.OnClickListener {
 
-    StopDialogFragment dialogFragment;
+    StartDialogFragment dialogFragment;
 
-    public StopDialogFragment(){
+    public StartDialogFragment(){
         dialogFragment = this;
+    }
+
+    public static StartDialogFragment newInstance(){
+        StartDialogFragment startDialogFragment = new StartDialogFragment();
+
+        return  startDialogFragment;
     }
 
     @Override
@@ -31,22 +38,18 @@ public class StopDialogFragment extends DialogFragment implements SightsInterfac
 
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        final View view = inflater.inflate(R.layout.fragment_stoproute_dialog, null);
+        final View view = inflater.inflate(R.layout.fragment_startroute_dialog, null);
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
         builder.setView(view);
 
-        builder.setPositiveButton("Route Stoppen", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton("Route Starten", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
 
-                Steps.getInstance().stepsArrayList = new ArrayList<>();
-
-                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("CheckActivity", dialogFragment).getSelectedSights();
-                sights.clear();
-
-                getActivity().finish();
+                Intent intent = new Intent(getActivity(), CheckActivity.class);
+                getActivity().startActivity(intent);
             }
         });
 

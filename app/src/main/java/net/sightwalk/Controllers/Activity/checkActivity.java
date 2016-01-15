@@ -56,9 +56,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CheckActivity extends PermissionActivity implements SightsInterface{
+public class CheckActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface, Button.OnClickListener{
 
     private GoogleMap googleMap;
+    private GPSTracker gpsTracker;
+    private Location userLocation;
+
+    public Date startTime;
+    public Date endTime;
 
     private Steps step;
     private Polyline line;
@@ -82,12 +87,28 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
         setContentView(R.layout.activity_route);
 
         googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.routeMapView)).getMap();
+        gpsTracker = new GPSTracker(this, this);
+        startTime = new Date();
 
+        selectionStore = SightSelectionStore.getSharedInstance("CheckActivity", this);
+        storeSight = selectionStore.getSelectedSights();
+        selectedSights = new ArrayList<>();
+        for(Sight sight : storeSight){
+            selectedSights.add(sight);
+        }
 
-        Bundle intentValues = getIntent().getExtras();
-        String routeJson = intentValues.getString("ROUTE_JSON");
+        ArrayList<Steps> stepsArrayList = Steps.getInstance().stepsArrayList;
+        RouteStepsAdapter routeStepsAdapter = new RouteStepsAdapter(this, stepsArrayList);
+        routeStepListView = (ListView) findViewById(R.id.routeStepListView);
+        routeStepListView.setAdapter(routeStepsAdapter);
 
-        getRouteData(routeJson);
+        directionsButton = (Button) findViewById(R.id.directionsButton);
+        nextSightButton = (Button) findViewById(R.id.nextSightButton);
+        nextSightLayout = (LinearLayout) findViewById(R.id.nextSightLayout);
+
+        directionsButton.setOnClickListener(this);
+        nextSightButton.setOnClickListener(this);
+
         RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
 
         // Create polyline route
@@ -97,102 +118,13 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
     @Override
     public void onResume() {
         super.onResume();
-    }
-
-    public void getRouteData(String response){
-        try {
-            Legs.getInstance().routeJson = response;
-
-            JSONObject directionsObject = new JSONObject(response);
-
-            JSONArray routesObject = directionsObject.getJSONArray("routes");
-
-            for (int i = 0; i < routesObject.length(); i++) {
-                JSONObject overview = routesObject.getJSONObject(i);
-
-                JSONObject polyline = overview.getJSONObject("overview_polyline");
-
-                line = Polyline.getInstance();
-
-                line.polyline = polyline.getString("points");
-
-                JSONArray legsObject = overview.getJSONArray("legs");
-
-                int routedis = 0;
-                int routedur = 0;
-
-                for(int l = 0; l < legsObject.length(); l++) {
-                    JSONObject stepsobject = legsObject.getJSONObject(l);
-
-                    JSONObject routeDistance = stepsobject.getJSONObject("distance");
-                    JSONObject routeDuration = stepsobject.getJSONObject("duration");
-                    JSONObject startroute = stepsobject.getJSONObject("start_location");
-                    JSONObject endroute = stepsobject.getJSONObject("end_location");
-
-                    routedis += routeDistance.getInt("value");
-                    routedur += routeDuration.getInt("value");
-
-                    LatLng startroutelatlng = new LatLng(startroute.getDouble("lat"), startroute.getDouble("lng"));
-                    LatLng endroutelatlng = new LatLng(endroute.getDouble("lat"), endroute.getDouble("lng"));
-
-                    leg = Legs.getInstance();
-
-                    leg.duration = routedur;
-                    leg.distance = routedis;
-                    leg.startroute = startroutelatlng;
-                    leg.endroute = endroutelatlng;
-
-                    JSONArray steps = stepsobject.getJSONArray("steps");
-
-                    for (int s = 0; s < steps.length(); s++) {
-                        JSONObject route = steps.getJSONObject(s);
-
-                        String in = route.getString("html_instructions");
-
-                        String man = null;
-
-                        if(route.isNull("maneuver")) { }
-                        else {
-                            man = route.getString("maneuver");
-                        }
-
-                        String mode = route.getString("travel_mode");
-
-                        JSONObject distance = route.getJSONObject("distance");
-                        JSONObject duration = route.getJSONObject("duration");
-                        JSONObject line = route.getJSONObject("polyline");
-
-                        String dis = distance.getString("text");
-                        String dur = duration.getString("text");
-                        String linepoly = line.getString("points");
-
-                        JSONObject start = route.getJSONObject("start_location");
-                        JSONObject end = route.getJSONObject("end_location");
-
-                        LatLng startlatlng = new LatLng(start.getDouble("lat"), start.getDouble("lng"));
-                        LatLng endlatlng = new LatLng(end.getDouble("lat"), end.getDouble("lng"));
-
-                        step = new Steps();
-                        step.setDistance(dis);
-                        step.setDuration(dur);
-                        step.setHtml_instructions(in);
-                        step.setManeuver(man);
-                        step.setStart_location(startlatlng);
-                        step.setEnd_location(endlatlng);
-                        step.setTravel_mode(mode);
-                        step.setPolyline(linepoly);
-
-                        step.stepsArrayList.add(step);
-                    }
-                }
-            }
-        } catch (JSONException ex) {
-            Log.e("ERROR_", ex.getLocalizedMessage());
-        }
+        gpsTracker.getLocation();
     }
 
     public void setRoute() {
         Steps step = Steps.stepsArrayList.get(0);
+
+        setNextSightInfo(selectedSights.get(0));
 
         googleMap.addPolyline(new PolylineOptions()
                 .addAll(PolyUtil.decode(step.getPolyline()))
@@ -212,6 +144,7 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
 
         switch(id){
             case R.id.action_stop:
+                showStopDialog();
                 return true;
         }
 
@@ -226,7 +159,7 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
     public void clearDataRouteActivity(){
         Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
 
-        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("CheckActivity", this).getSelectedSights();
         sights.clear();
 
         this.finish();
@@ -241,9 +174,9 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
                 Log.e("ERROR_", e.getLocalizedMessage());
             }
 
-            ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+            ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("CheckActivity", this).getSelectedSights();
 
-            /* TODO PLACE MARKERS
+
             for(int i = 0; i < sights.size(); i++) {
                 Double latitude = sights.get(i).latitude;
                 Double longitude = sights.get(i).longitude;
@@ -251,13 +184,146 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
                 Marker m = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                 m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
             }
-            */
+
 
             googleMap.addPolyline(new PolylineOptions()
                     .addAll(PolyUtil.decode(poly))
                     .width(10)
                     .color(Color.parseColor("#AAAAAA")));
         }
+    }
+
+    public void updatedLocation(Location location) {
+        userLocation = location;
+
+        if(location == null) {
+            errorDialog("Locatie niet gevonden");
+        } else {
+
+            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+            CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
+
+            googleMap.moveCamera(center);
+            googleMap.animateCamera(zoom);
+        }
+
+        if(!Steps.stepsArrayList.isEmpty()) {
+            Steps step = Steps.stepsArrayList.get(0);
+
+            List<LatLng> latLngs;
+            latLngs = new ArrayList<>();
+            latLngs.add(new LatLng(step.getStart_location().latitude, step.getStart_location().longitude));
+            latLngs.add(new LatLng(step.getEnd_location().latitude, step.getEnd_location().longitude));
+
+            boolean range = PolyUtil.isLocationOnEdge(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true, 30);
+
+            if (range) {
+
+                if(!Steps.stepsArrayList.isEmpty()) {
+                    Steps stepupdate = Steps.stepsArrayList.get(0);
+
+                    googleMap.addPolyline(new PolylineOptions()
+                            .addAll(PolyUtil.decode(stepupdate.getPolyline()))
+                            .width(10)
+                            .color(Color.parseColor("#0088FF")));
+                }
+            }
+        }
+
+        if(selectedSights.size() > 0) {
+
+            float[] results = new float[1];
+            Location.distanceBetween(location.getLatitude(), location.getLongitude(), selectedSights.get(0).latitude, selectedSights.get(0).longitude, results);
+
+            if (results[0] < 30) {
+
+                selectionStore.AddVisited(selectedSights.get(0));
+
+                if(storeSight.size() > 0) {
+                    gpsTracker.stopUsingGPS();
+                    selectionStore.setActiveSight(storeSight.get(0));
+                    storeSight.remove(0);
+                }
+
+                selectedSights.remove(0);
+                if(selectedSights.size() == 0){
+                    endTime = new Date();
+                    showFinishDialog();
+                    Toast.makeText(getBaseContext(), "Route afgerond!", Toast.LENGTH_SHORT).show();
+                } else {
+                    setNextSightInfo(selectedSights.get(0));
+
+                    Intent i = new Intent(getApplicationContext(), SightActivity.class);
+
+                    startActivity(i);
+                }
+            }
+        }
+    }
+
+    public void setNextSightInfo(Sight sight){
+
+        TextView nextSightTitle = (TextView) findViewById(R.id.nextSightTitle);
+        TextView nextSightText = (TextView )findViewById(R.id.nextSightText);
+        ImageView nextSightImage = (ImageView) findViewById(R.id.nextSightImage);
+
+        nextSightTitle.setText(sight.title);
+        nextSightText.setText(sight.shortdesc);
+        Picasso.with(getApplicationContext()).load(sight.image).into(nextSightImage);
+    }
+
+    public void showFinishDialog(){
+        FragmentManager fm = getFragmentManager();
+        FinishedDialogFragment dialogFragment = new FinishedDialogFragment();
+        dialogFragment.show(fm, "Sample Fragment");
+    }
+
+    public void showStopDialog(){
+        FragmentManager fm = getFragmentManager();
+        StopDialogFragment dialogFragment = new StopDialogFragment();
+        dialogFragment.show(fm, "Sample Fragment");
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.nextSightButton:
+                nextSightLayout.setVisibility(View.VISIBLE);
+                nextSightButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                directionsButton.setTextColor(getResources().getColor(R.color.colorDisabled));
+                routeStepListView.setVisibility(View.GONE);
+                break;
+            case R.id.directionsButton:
+                routeStepListView.setVisibility(View.VISIBLE);
+                directionsButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                nextSightButton.setTextColor(getResources().getColor(R.color.colorDisabled));
+                nextSightLayout.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    public void errorDialog(String error) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setMessage("Om deze functie te gebruiken hebben we je locatie nodig. Zet alsjeblieft je internet of GPS modus aan in de locatie opties.")
+                .setTitle(error)
+                .setCancelable(false)
+                .setPositiveButton("Instellingen", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivity(intent);
+                        alert.dismiss();
+                    }
+                })
+                .setNegativeButton("Annuleren", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(getApplicationContext(), DashboardActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                        startActivity(intent);
+                    }
+                });
+        alert = builder.create();
+        alert.show();
     }
 
     @Override

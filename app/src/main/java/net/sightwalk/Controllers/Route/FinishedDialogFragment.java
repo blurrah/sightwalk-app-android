@@ -2,6 +2,7 @@ package net.sightwalk.Controllers.Route;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -13,14 +14,24 @@ import android.widget.Toast;
 
 import net.sightwalk.Controllers.Route.RouteActivity;
 import net.sightwalk.Models.Legs;
+import net.sightwalk.Models.Sight;
+import net.sightwalk.Models.Steps;
 import net.sightwalk.R;
+import net.sightwalk.Stores.SightSelectionStore;
+import net.sightwalk.Stores.SightsInterface;
 import net.sightwalk.Tasks.PasswordTask;
 
+import java.util.ArrayList;
 import java.util.Date;
 
-public class FinishedDialogFragment extends DialogFragment {
+public class FinishedDialogFragment extends DialogFragment implements SightsInterface {
 
     RouteActivity activity;
+    FinishedDialogFragment dialogFragment;
+
+    public FinishedDialogFragment(){
+        dialogFragment = this;
+    }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -31,7 +42,6 @@ public class FinishedDialogFragment extends DialogFragment {
 
         builder.setView(view);
 
-        activity = (RouteActivity) getActivity();
         Integer distance =  Legs.getInstance().distance;
         String a = distanceConverter(distance);
         String b = elapsedTime(activity.startTime, activity.endTime);
@@ -43,7 +53,12 @@ public class FinishedDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int id) {
 
-                activity.clearDataRouteActivity();
+                Steps.getInstance().stepsArrayList = new ArrayList<>();
+
+                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("CheckActivity", dialogFragment).getSelectedSights();
+                sights.clear();
+
+                getActivity().finish();
             }
         });
 
@@ -84,5 +99,25 @@ public class FinishedDialogFragment extends DialogFragment {
 
 
         return " | Tijd: " + elapsedHours + " uur " + elapsedMinutes + " min.";
+    }
+
+    @Override
+    public void addedSight(Sight sight) {
+
+    }
+
+    @Override
+    public void removedSight(Sight sight) {
+
+    }
+
+    @Override
+    public void updatedSight(Sight oldSight, Sight newSight) {
+
+    }
+
+    @Override
+    public Context getApplicationContext() {
+        return null;
     }
 }

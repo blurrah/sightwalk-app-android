@@ -255,6 +255,8 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
             if (results[0] < 30) {
 
+                selectionStore.AddVisited(selectedSights.get(0));
+
                 if(storeSight.size() > 0) {
                     gpsTracker.stopUsingGPS();
                     selectionStore.setActiveSight(storeSight.get(0));

@@ -262,7 +262,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         Date timeEnd = new Date();
         String routejson = Legs.getInstance().routeJson;
 
-        Route route = new Route(routeName, distance, timeStart, timeEnd, routejson);
+        Route route = new Route(routeName, distance, timeStart, timeEnd, routejson, selectedSights);
 
         RouteStore routeStore = RouteStore.getSharedInstance(getApplicationContext());
         routeStore.addRoute(route);

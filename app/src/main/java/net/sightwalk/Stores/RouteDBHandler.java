@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.readystatesoftware.sqliteasset.SQLiteAssetHelper;
 
 import net.sightwalk.Models.Route;
+import net.sightwalk.Models.Sight;
 
 import java.text.SimpleDateFormat;
 
@@ -34,6 +35,17 @@ public class RouteDBHandler extends SQLiteAssetHelper {
         return c;
     }
 
+    public Cursor getActivitySights(Integer id){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT * FROM sights JOIN activitySights ON sights.id = activitySights.sightId WHERE activitySights.activityId = "+ id;
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+
+        return c;
+    }
+
     public void addActivity(Route route){
         SQLiteDatabase db = getWritableDatabase();
 
@@ -45,6 +57,30 @@ public class RouteDBHandler extends SQLiteAssetHelper {
         records.put("routeJson", route.routeJson);
 
         db.insert("activities", null, records);
+
+        ContentValues records2 = new ContentValues();
+        for(Sight sight : route.sights) {
+            records2.put("activityId", getLastActivity());
+            records2.put("sightId", sight.id);
+            db.insert("activitySights", null, records2);
+        }
+
+
         db.close();
+    }
+
+    public Integer getLastActivity(){
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT id FROM activities ORDER BY id DESC LIMIT 1";
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        int result = 1;
+
+        result = c.getInt(c.getColumnIndex("id"));
+
+
+        return result;
     }
 }

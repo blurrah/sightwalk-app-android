@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 
 import net.sightwalk.Models.Route;
+import net.sightwalk.Models.Sight;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -49,13 +50,43 @@ public class RouteStore {
         }
     }
 
-    private Route parseRoute(Cursor cursor) {
+    public Route parseRoute(Cursor cursor) {
         String name = cursor.getString(cursor.getColumnIndex("name"));
         int distance = cursor.getInt(cursor.getColumnIndex("distance"));
         Date startTime = formatDateString(cursor.getString(cursor.getColumnIndex("startTime")));
         Date endTime = formatDateString(cursor.getString(cursor.getColumnIndex("endTime")));
         String routeJson = cursor.getString(cursor.getColumnIndex("routeJson"));
-        return new Route(name, distance, startTime, endTime, routeJson);
+
+        ArrayList<Sight> activitySights = getActivitySights(cursor.getInt(cursor.getColumnIndex("id")));
+
+        return new Route(name, distance, startTime, endTime, routeJson, activitySights);
+    }
+
+    private ArrayList<Sight> getActivitySights(Integer id){
+        ArrayList<Sight> result = new ArrayList<>();
+
+        Cursor cursor2 = db.getActivitySights(id);
+        cursor2.moveToFirst();
+
+        while (!cursor2.isAfterLast()) {
+            result.add(parseSight(cursor2));
+            cursor2.moveToNext();
+        }
+
+        return result;
+    }
+
+    private Sight parseSight(Cursor cursor) {
+        int id = cursor.getInt(cursor.getColumnIndex("id"));
+        String type = cursor.getString(cursor.getColumnIndex("type"));
+        double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));
+        double lon = cursor.getDouble(cursor.getColumnIndex("longitude"));
+        String name = cursor.getString(cursor.getColumnIndex("name"));
+        String title = cursor.getString(cursor.getColumnIndex("title"));
+        String text = cursor.getString(cursor.getColumnIndex("text"));
+        String image = cursor.getString(cursor.getColumnIndex("imgurl"));
+        String shortDesc = cursor.getString(cursor.getColumnIndex("short_desc"));
+        return new Sight(id, type, lat, lon, name, title, text, image, shortDesc);
     }
 
     public void addRoute(Route route){
