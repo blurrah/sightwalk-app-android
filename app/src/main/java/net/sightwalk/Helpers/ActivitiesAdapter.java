@@ -67,17 +67,9 @@ public class ActivitiesAdapter extends CursorAdapter {
 
     private Date formatDateString(String timeString){
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyy HH:mm:ss", Locale.getDefault());
 
-        Date dt = null;
-        try {
-            dt = sdf.parse(timeString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        Date result = dt;
 
-        return result;
+        return new Date();
     }
 
     private String elapsedTime(Date startDate, Date endDate){

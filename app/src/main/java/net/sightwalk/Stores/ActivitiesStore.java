@@ -41,8 +41,7 @@ public class ActivitiesStore {
         String starttijd = cursor.getString(cursor.getColumnIndex("startTime"));
         String eindtijd = cursor.getString(cursor.getColumnIndex("endTime"));
         String json = cursor.getString(cursor.getColumnIndex("routeJson"));
-        String datum = cursor.getString(cursor.getColumnIndex("activityDate"));
 
-        return new Activities(id, name, distance, starttijd, eindtijd, json, datum);
+        return new Activities(id, name, distance, starttijd, eindtijd, json);
     }
 }
