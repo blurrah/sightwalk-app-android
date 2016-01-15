@@ -10,6 +10,7 @@ public class Legs {
     public static Integer distance = 0;
     public static LatLng startroute = new LatLng(0,0);
     public static LatLng endroute = new LatLng(0,0);
+    public static String routeJson = "";
 
     public static Legs getInstance() {
         return instance;

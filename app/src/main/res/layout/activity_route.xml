@@ -11,33 +11,80 @@
         android:layout_height="wrap_content"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:id="@+id/routeMapView"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:layout_gravity="top" />
 
     <LinearLayout
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/routeMapView"
         android:padding="10dp"
-        android:background="#ffffff" >
+        android:background="#ffffff">
 
-        <ImageView
-            android:id="@+id/maneuverImageView"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_gravity="center" />
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="63dp">
 
-        <TextView
-            android:id="@+id/routeTextView"
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Directions"
+                android:id="@+id/directionsButton"
+                style="?android:attr/borderlessButtonStyle"
+                android:textColor="@color/colorPrimary" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Volgende Sight"
+                android:id="@+id/nextSightButton"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_alignParentEnd="true"
+                android:textColor="@color/colorDisabled" />
+        </RelativeLayout>
+
+        <ListView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18dp"
-            android:text="Ga in zuidwestelijke richting op Domein naar Sille"
-            android:paddingLeft="10dp" />
+            android:layout_height="136dp"
+            android:id="@+id/routeStepListView" />
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="136dp"
+            android:visibility="gone"
+            android:id="@+id/nextSightLayout">
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="125dp"
+                android:id="@+id/nextSightImage"
+                android:padding="10dp" />
+
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="40dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="New Text"
+                    android:id="@+id/nextSightTitle"
+                    android:padding="10dp"
+                    android:textSize="16dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="New Text"
+                    android:id="@+id/nextSightText"
+                    android:padding="10dp" />
+
+            </LinearLayout>
+        </LinearLayout>
     </LinearLayout>
-
 </LinearLayout>
