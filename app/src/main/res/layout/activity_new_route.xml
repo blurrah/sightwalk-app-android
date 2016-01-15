@@ -34,10 +34,21 @@
         android:textAlignment="textStart"
         android:layout_below="@+id/textView4" />
 
+    <Switch
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Start route vanaf eerste Sight"
+        android:id="@+id/startSight"
+        android:layout_alignParentStart="false"
+        android:layout_alignParentEnd="false"
+        android:layout_below="@+id/chooseRouteButton"
+        android:padding="16dp"
+        android:textColor="@color/colorPrimary" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/chooseRouteButton"
+        android:layout_below="@+id/startSight"
         android:id="@+id/relativeLayout"
         android:padding="16dp">
 

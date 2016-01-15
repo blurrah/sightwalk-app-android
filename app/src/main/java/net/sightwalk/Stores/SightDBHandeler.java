@@ -42,6 +42,17 @@ public class SightDBHandeler extends SQLiteAssetHelper {
         return c;
     }
 
+    public Cursor getStatsData() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT * FROM activities";
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+
+        return c;
+    }
+
     public void createSight(Sight sight) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -82,17 +93,6 @@ public class SightDBHandeler extends SQLiteAssetHelper {
         return c;
     }
 
-    public Cursor getFavouritesPerSight(Sight sight) {
-        SQLiteDatabase db = getReadableDatabase();
-
-        String query = "SELECT * FROM favourites WHERE sightId = '"+ sight.id +"'";
-
-        Cursor c = db.rawQuery(query, null);
-        c.moveToFirst();
-
-        return c;
-    }
-
     public void addFavourite(Sight sight){
         SQLiteDatabase db = getWritableDatabase();
 
@@ -107,5 +107,30 @@ public class SightDBHandeler extends SQLiteAssetHelper {
         SQLiteDatabase db = getWritableDatabase();
         db.delete("favourites", "sightId="+sight.id, null);
         db.close();
+    }
+
+    public Cursor getVisited() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT id as _id, * FROM sights JOIN visited ON sights.id = visited.sightId";
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+
+        return c;
+    }
+
+    public void addVisited(Sight sight){
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues records = new ContentValues();
+        records.put("sightId", sight.id);
+
+        db.insert("visited", null, records);
+        db.close();
+    }
+
+    public void addRoute(){
+
     }
 }
