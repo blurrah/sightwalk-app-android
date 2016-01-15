@@ -77,7 +77,7 @@ public class MonthFragment extends Fragment {
 
     private void checkDate(Activities activities) {
         DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy");
-        LocalDate date = format.parseLocalDate(activities.getActivityDate());
+        LocalDate date = format.parseLocalDate(activities.getStarttijd());
         int month = date.getMonthOfYear();
 
         int dateOne = DateTime.now().getMonthOfYear();
