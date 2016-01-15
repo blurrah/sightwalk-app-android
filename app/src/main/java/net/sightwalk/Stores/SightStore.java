@@ -1,5 +1,6 @@
 package net.sightwalk.Stores;
 
+import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
@@ -22,8 +23,17 @@ public class SightStore implements SightSyncerInterface {
 
     public static SightStore getSharedInstance(String slot, SightsInterface client) {
         if (!(sharedInstance instanceof SightStore)) {
-            sharedInstance = new SightStore(slot, client);
+            sharedInstance = new SightStore(client);
         }
+        SightStore.subscribe(slot, client);
+        return sharedInstance;
+    }
+
+    public static SightStore getSharedInstance(Context context) {
+        if (!(sharedInstance instanceof SightStore)) {
+            sharedInstance = new SightStore(context);
+        }
+
         return sharedInstance;
     }
 
@@ -31,32 +41,41 @@ public class SightStore implements SightSyncerInterface {
         clients.remove(slot);
     }
 
+    public static void subscribe(String slot, SightsInterface client) {
+        clients.put(slot, client);
+    }
+
     private static SightDBHandeler db;
     private ArrayList<Sight> sights;
     private static HashMap<String, SightsInterface> clients = new HashMap<>();
+    private ArrayList<Integer> favourites;
+    private ArrayList<Integer> visiteds;
 
-    protected SightStore(String slot, SightsInterface client) {
-        // add subscriber
-        clients.put(slot, client);
+    protected SightStore(SightsInterface client) {
+        this(client.getApplicationContext());
+    }
 
+    protected SightStore(Context context) {
         // set database handler
         if (!(db instanceof SightDBHandeler)) {
-            db = new SightDBHandeler(client.getApplicationContext());
+            db = new SightDBHandeler(context);
         }
 
         readSights();
+        readFavourites();
     }
 
     public ArrayList<Sight> getAll() {
         return sights;
     }
+    public ArrayList<Integer> getFavourites() {return favourites;}
 
-    public void sync(Location location) {
-        SightSyncer.SyncForLocation(location, this);
+    public void sync(Location location, Context context) {
+        SightSyncer.SyncForLocation(location, this, context);
     }
 
-    public void sync(GPSTracker gpsTracker) {
-        sync(gpsTracker.getLocation());
+    public void sync(GPSTracker gpsTracker, Context context) {
+        sync(gpsTracker.getLocation(), context);
     }
 
     private void readSights() {
@@ -67,6 +86,30 @@ public class SightStore implements SightSyncerInterface {
 
         while (!cursor.isAfterLast()) {
             sights.add(parseSight(cursor));
+            cursor.moveToNext();
+        }
+    }
+
+    private void readFavourites() {
+        favourites = new ArrayList<>();
+
+        Cursor cursor = db.getFavourites();
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            favourites.add(cursor.getInt(cursor.getColumnIndex("sightId")));
+            cursor.moveToNext();
+        }
+    }
+
+    private void readVisiteds() {
+        visiteds = new ArrayList<>();
+
+        Cursor cursor = db.getVisited();
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            visiteds.add(cursor.getInt(cursor.getColumnIndex("sightId")));
             cursor.moveToNext();
         }
     }
@@ -132,5 +175,36 @@ public class SightStore implements SightSyncerInterface {
         Log.d("SightStore", "trigger update");
 
         oldSight.commit(newSight);
+    }
+
+    public void AddFavourite(Sight sight) {
+        // commit changes
+        favourites.add(sight.id);
+        db.addFavourite(sight);
+    }
+
+    public boolean isFavourited(Sight sight) {
+        return favourites.contains(sight.id);
+    }
+
+    public void RemoveFavourite(Sight sight) {
+
+        for(int i = 0; i < favourites.size();i++){
+            if(favourites.get(i) == sight.id){
+                favourites.remove(i);
+            }
+        }
+
+        db.deleteFavourite(sight);
+    }
+
+    public void AddVisited(Sight sight) {
+        // commit changes
+        visiteds.add(sight.id);
+        db.addVisited(sight);
+    }
+
+    public boolean isVisited(Sight sight) {
+        return visiteds.contains(sight.id);
     }
 }
