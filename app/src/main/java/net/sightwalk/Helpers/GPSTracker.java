@@ -135,8 +135,6 @@ public class GPSTracker implements LocationListener {
     /**
      * Stop using GPS listener
      * Calling this function will stop using GPS in your app
-     *
-     * @TargetApi(Build.VERSION_CODES.M)
      */
     public void stopUsingGPS() {
         if (locationManager != null) {
