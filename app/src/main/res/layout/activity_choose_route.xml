@@ -50,6 +50,42 @@
         app:backgroundTint="#ff151b"
         android:visibility="invisible" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabRemoveFavourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_above="@+id/fragment_sight"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="false"
+        android:layout_marginBottom="-28dp"
+        android:src="@drawable/ic_star_white_18dp"
+        style="@style/Widget.Design.FloatingActionButton"
+        android:adjustViewBounds="false"
+        app:backgroundTint="#fed813"
+        android:visibility="invisible"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAddFavourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_above="@+id/fragment_sight"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="false"
+        android:layout_marginBottom="-28dp"
+        android:src="@drawable/ic_star_border_white_18dp"
+        style="@style/Widget.Design.FloatingActionButton"
+        android:adjustViewBounds="false"
+        app:backgroundTint="#fed813"
+        android:visibility="invisible"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
     <fragment
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -1,42 +1,65 @@
 package net.sightwalk.Controllers.Route;
 
 import android.app.AlertDialog;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.NavUtils;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
 import com.google.maps.android.PolyUtil;
+import com.squareup.picasso.Picasso;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
 import net.sightwalk.Controllers.SettingsActivity;
+import net.sightwalk.Helpers.GPSTracker;
+import net.sightwalk.Helpers.GPSTrackerInterface;
+import net.sightwalk.Helpers.PermissionActivity;
+import net.sightwalk.Helpers.RouteStepsAdapter;
 import net.sightwalk.Models.*;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.R;
+import net.sightwalk.Stores.SightSelectionStore;
+import net.sightwalk.Stores.SightsInterface;
 
 import java.util.*;
 
-public class RouteActivity extends AppCompatActivity {
+public class RouteActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface, Button.OnClickListener {
 
     private GoogleMap googleMap;
-    private locationListener listener;
-    private LocationManager mLocationManager;
-    private UserLocation mLocation;
-    private TextView steps;
-    private ImageView imageView;
+    private GPSTracker gpsTracker;
+    private Location userLocation;
+
+    public Date startTime;
+    public Date endTime;
+
+    private ArrayList<Sight> selectedSights;
+    private ArrayList<Sight> storeSight;
+    private Boolean finishSight;
+    private Boolean startSight;
+
+    private ListView routeStepListView;
+    private LinearLayout nextSightLayout;
+    private Button directionsButton;
+    private Button nextSightButton;
+
+    private SightSelectionStore selectionStore;
 
     private static AlertDialog alert;
 
@@ -46,36 +69,65 @@ public class RouteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_route);
 
         googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.routeMapView)).getMap();
+        gpsTracker = new GPSTracker(this, this);
+        startTime = new Date();
 
-        steps = (TextView) findViewById(R.id.routeTextView);
-        imageView = (ImageView) findViewById(R.id.maneuverImageView);
+        selectionStore = SightSelectionStore.getSharedInstance("RouteActivity", this);
+        storeSight = selectionStore.getSelectedSights();
+        selectedSights = new ArrayList<>();
+        for(Sight sight : storeSight){
+            selectedSights.add(sight);
+        }
 
-        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        listener = new locationListener();
+        // If the route ends at beginning add Sight
+        Bundle intentValues = getIntent().getExtras();
+        finishSight = intentValues.getBoolean("FINISH_SIGHT");
+        startSight = intentValues.getBoolean("START_SIGHT");
+        if(finishSight) {
+            Sight k = new Sight(-1, null, UserLocation.getInstance().userlocation.latitude, UserLocation.getInstance().userlocation.longitude, null, null, null, null, null);
+            selectedSights.add(k);
+        }
 
-        locationManager();
+        // Set directions list
+        ArrayList<Steps> stepsArrayList = Steps.getInstance().stepsArrayList;
+        RouteStepsAdapter routeStepsAdapter = new RouteStepsAdapter(this, stepsArrayList);
+        routeStepListView = (ListView) findViewById(R.id.routeStepListView);
+        routeStepListView.setAdapter(routeStepsAdapter);
+
+        directionsButton = (Button) findViewById(R.id.directionsButton);
+        nextSightButton = (Button) findViewById(R.id.nextSightButton);
+        nextSightLayout = (LinearLayout) findViewById(R.id.nextSightLayout);
+
+        directionsButton.setOnClickListener(this);
+        nextSightButton.setOnClickListener(this);
+
 
         RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
 
+        // Create polyline route
         setRoute();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        gpsTracker.getLocation();
     }
 
     public void setRoute() {
         Steps step = Steps.stepsArrayList.get(0);
 
-        steps.setText(Html.fromHtml(step.getHtml_instructions()));
-
-        imageView.setImageResource(R.drawable.ic_walking);
+        setNextSightInfo(selectedSights.get(0));
 
         googleMap.addPolyline(new PolylineOptions()
                 .addAll(PolyUtil.decode(step.getPolyline()))
                 .width(10)
-                .color(Color.RED));
+                .color(Color.parseColor("#0088FF")));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_route, menu);
         return true;
     }
 
@@ -83,13 +135,28 @@ public class RouteActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
+        switch(id){
+            case R.id.action_stop:
+                showStopDialog();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed(){
+        clearDataRouteActivity();
+    }
+
+    public void clearDataRouteActivity(){
+        gpsTracker.stopUsingGPS();
+        Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
+
+        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+        sights.clear();
+
+        this.finish();
     }
 
     public void RetrievePolyline(String poly, ArrayList<Steps> steps) {
@@ -111,9 +178,11 @@ public class RouteActivity extends AppCompatActivity {
                 googleMap.animateCamera(zoom);
             }
 
-            for(int i = 0; i < Sights.getInstance().mSightList.size(); i++) {
-                Double latitude = Sights.getInstance().mSightList.get(i).getDouble(Sights.getInstance().mSightList.get(i).getColumnIndex("latitude"));
-                Double longitude = Sights.getInstance().mSightList.get(i).getDouble(Sights.getInstance().mSightList.get(i).getColumnIndex("longitude"));
+            ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
+
+            for(int i = 0; i < sights.size(); i++) {
+                Double latitude = sights.get(i).latitude;
+                Double longitude = sights.get(i).longitude;
 
                 Marker m = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                 m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
@@ -122,100 +191,115 @@ public class RouteActivity extends AppCompatActivity {
             googleMap.addPolyline(new PolylineOptions()
                     .addAll(PolyUtil.decode(poly))
                     .width(10)
-                    .color(Color.parseColor("#0088FF")));
-        }
-
-    }
-
-    public void locationManager() {
-        boolean gpsIsEnabled = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        boolean networkIsEnabled = mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-
-        if(gpsIsEnabled) {
-            try {
-                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1, listener);
-            } catch (SecurityException e) {
-                Log.e("ERROR_", e.getLocalizedMessage());
-            }
-        }
-        else {
-            errorDialog("GPS locatie niet gevonden");
-        }
-        if (networkIsEnabled) {
-            try {
-                mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1, 1, listener);
-            } catch (SecurityException e) {
-                Log.e("ERROR_", e.getLocalizedMessage());
-            }
-        }
-        else {
-            errorDialog("Netwerklocatie niet gevonden");
+                    .color(Color.parseColor("#AAAAAA")));
         }
     }
 
-    private class locationListener implements LocationListener {
-        @Override
-        public void onLocationChanged(Location location) {
-            if(location == null) {
-                errorDialog("Locatie niet gevonden");
-            }
-            else {
-                mLocation = UserLocation.getInstance();
-                mLocation.userlocation = new LatLng(location.getLatitude(), location.getLongitude());
+    @Override
+    public void addedSight(Sight sight) {
 
-                CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-                CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
+    }
 
-                googleMap.moveCamera(center);
-                googleMap.animateCamera(zoom);
-            }
+    @Override
+    public void removedSight(Sight sight) {
 
-            if(!Steps.stepsArrayList.isEmpty()) {
-                Steps step = Steps.stepsArrayList.get(0);
+    }
 
-                List<LatLng> latLngs;
-                latLngs = new ArrayList<>();
-                latLngs.add(new LatLng(step.getStart_location().latitude, step.getStart_location().longitude));
-                latLngs.add(new LatLng(step.getEnd_location().latitude, step.getEnd_location().longitude));
+    @Override
+    public void updatedSight(Sight oldSight, Sight newSight) {
 
-                boolean range = PolyUtil.isLocationOnPath(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true);
+    }
 
-                if (range) {
-                    Steps.stepsArrayList.remove(0);
+    @Override
+    public void updatedLocation(Location location) {
+        userLocation = location;
 
+        if(location == null) {
+            errorDialog("Locatie niet gevonden");
+        } else {
+
+            CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+            CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
+
+            googleMap.moveCamera(center);
+            googleMap.animateCamera(zoom);
+        }
+
+        if(!Steps.stepsArrayList.isEmpty()) {
+            Steps step = Steps.stepsArrayList.get(0);
+
+            List<LatLng> latLngs;
+            latLngs = new ArrayList<>();
+            latLngs.add(new LatLng(step.getStart_location().latitude, step.getStart_location().longitude));
+            latLngs.add(new LatLng(step.getEnd_location().latitude, step.getEnd_location().longitude));
+
+            boolean range = PolyUtil.isLocationOnEdge(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true, 30);
+
+            if (range) {
+
+                if(!Steps.stepsArrayList.isEmpty()) {
                     Steps stepupdate = Steps.stepsArrayList.get(0);
-
-                    steps.setText(Html.fromHtml(stepupdate.getHtml_instructions()));
-
-                    if(stepupdate.getHtml_instructions().contains("linksaf")) {
-                        imageView.setImageResource(R.drawable.ic_left);
-                    }
-                    else if(stepupdate.getHtml_instructions().contains("rechtsaf")) {
-                        imageView.setImageResource(R.drawable.ic_right);
-                    }
-                    else if(stepupdate.getHtml_instructions().contains("rechtdoor") || stepupdate.getHtml_instructions().contains("vervolgen")) {
-                        imageView.setImageResource(R.drawable.ic_arrow);
-                    }
-                    else {
-                        imageView.setImageResource(R.drawable.ic_walking);
-                    }
 
                     googleMap.addPolyline(new PolylineOptions()
                             .addAll(PolyUtil.decode(stepupdate.getPolyline()))
                             .width(10)
-                            .color(Color.RED));
+                            .color(Color.parseColor("#0088FF")));
                 }
             }
         }
 
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) { }
+        if(selectedSights.size() > 0) {
 
-        @Override
-        public void onProviderEnabled(String provider) { }
+            float[] results = new float[1];
+            Location.distanceBetween(location.getLatitude(), location.getLongitude(), selectedSights.get(0).latitude, selectedSights.get(0).longitude, results);
 
-        @Override
-        public void onProviderDisabled(String provider) { }
+            if (results[0] < 30) {
+
+                selectionStore.AddVisited(selectedSights.get(0));
+
+                if(storeSight.size() > 0) {
+                    gpsTracker.stopUsingGPS();
+                    selectionStore.setActiveSight(storeSight.get(0));
+                    storeSight.remove(0);
+                }
+
+                selectedSights.remove(0);
+                if(selectedSights.size() == 0){
+                    endTime = new Date();
+                    showFinishDialog();
+                    Toast.makeText(getBaseContext(), "Route afgerond!", Toast.LENGTH_SHORT).show();
+                } else {
+                    setNextSightInfo(selectedSights.get(0));
+
+                    Intent i = new Intent(getApplicationContext(), SightActivity.class);
+
+                    startActivity(i);
+                }
+            }
+        }
+    }
+
+    public void setNextSightInfo(Sight sight){
+
+        TextView nextSightTitle = (TextView) findViewById(R.id.nextSightTitle);
+        TextView nextSightText = (TextView )findViewById(R.id.nextSightText);
+        ImageView nextSightImage = (ImageView) findViewById(R.id.nextSightImage);
+
+        nextSightTitle.setText(sight.title);
+        nextSightText.setText(sight.shortdesc);
+        Picasso.with(getApplicationContext()).load(sight.image).into(nextSightImage);
+    }
+
+    public void showFinishDialog(){
+        FragmentManager fm = getFragmentManager();
+        FinishedDialogFragment dialogFragment = new FinishedDialogFragment();
+        dialogFragment.show(fm, "Sample Fragment");
+    }
+
+    public void showStopDialog(){
+        FragmentManager fm = getFragmentManager();
+        StopDialogFragment dialogFragment = new StopDialogFragment();
+        dialogFragment.show(fm, "Sample Fragment");
     }
 
     public void errorDialog(String error) {
@@ -240,5 +324,23 @@ public class RouteActivity extends AppCompatActivity {
                 });
         alert = builder.create();
         alert.show();
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.nextSightButton:
+                nextSightLayout.setVisibility(View.VISIBLE);
+                nextSightButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                directionsButton.setTextColor(getResources().getColor(R.color.colorDisabled));
+                routeStepListView.setVisibility(View.GONE);
+                break;
+            case R.id.directionsButton:
+                routeStepListView.setVisibility(View.VISIBLE);
+                directionsButton.setTextColor(getResources().getColor(R.color.colorPrimary));
+                nextSightButton.setTextColor(getResources().getColor(R.color.colorDisabled));
+                nextSightLayout.setVisibility(View.GONE);
+                break;
+        }
     }
 }

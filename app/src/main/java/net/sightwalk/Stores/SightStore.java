@@ -48,6 +48,8 @@ public class SightStore implements SightSyncerInterface {
     private static SightDBHandeler db;
     private ArrayList<Sight> sights;
     private static HashMap<String, SightsInterface> clients = new HashMap<>();
+    private ArrayList<Integer> favourites;
+    private ArrayList<Integer> visiteds;
 
     protected SightStore(SightsInterface client) {
         this(client.getApplicationContext());
@@ -60,18 +62,20 @@ public class SightStore implements SightSyncerInterface {
         }
 
         readSights();
+        readFavourites();
     }
 
     public ArrayList<Sight> getAll() {
         return sights;
     }
+    public ArrayList<Integer> getFavourites() {return favourites;}
 
-    public void sync(Location location) {
-        SightSyncer.SyncForLocation(location, this);
+    public void sync(Location location, Context context) {
+        SightSyncer.SyncForLocation(location, this, context);
     }
 
-    public void sync(GPSTracker gpsTracker) {
-        sync(gpsTracker.getLocation());
+    public void sync(GPSTracker gpsTracker, Context context) {
+        sync(gpsTracker.getLocation(), context);
     }
 
     private void readSights() {
@@ -82,6 +86,30 @@ public class SightStore implements SightSyncerInterface {
 
         while (!cursor.isAfterLast()) {
             sights.add(parseSight(cursor));
+            cursor.moveToNext();
+        }
+    }
+
+    private void readFavourites() {
+        favourites = new ArrayList<>();
+
+        Cursor cursor = db.getFavourites();
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            favourites.add(cursor.getInt(cursor.getColumnIndex("sightId")));
+            cursor.moveToNext();
+        }
+    }
+
+    private void readVisiteds() {
+        visiteds = new ArrayList<>();
+
+        Cursor cursor = db.getVisited();
+        cursor.moveToFirst();
+
+        while (!cursor.isAfterLast()) {
+            visiteds.add(cursor.getInt(cursor.getColumnIndex("sightId")));
             cursor.moveToNext();
         }
     }
@@ -147,5 +175,36 @@ public class SightStore implements SightSyncerInterface {
         Log.d("SightStore", "trigger update");
 
         oldSight.commit(newSight);
+    }
+
+    public void AddFavourite(Sight sight) {
+        // commit changes
+        favourites.add(sight.id);
+        db.addFavourite(sight);
+    }
+
+    public boolean isFavourited(Sight sight) {
+        return favourites.contains(sight.id);
+    }
+
+    public void RemoveFavourite(Sight sight) {
+
+        for(int i = 0; i < favourites.size();i++){
+            if(favourites.get(i) == sight.id){
+                favourites.remove(i);
+            }
+        }
+
+        db.deleteFavourite(sight);
+    }
+
+    public void AddVisited(Sight sight) {
+        // commit changes
+        visiteds.add(sight.id);
+        db.addVisited(sight);
+    }
+
+    public boolean isVisited(Sight sight) {
+        return visiteds.contains(sight.id);
     }
 }

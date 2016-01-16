@@ -8,7 +8,7 @@ public class Steps {
 
     private static final Steps instance = new Steps();
 
-    public static final ArrayList<Steps> stepsArrayList = new ArrayList<Steps>();
+    public static ArrayList<Steps> stepsArrayList = new ArrayList<Steps>();
 
     public Steps() {}
 
