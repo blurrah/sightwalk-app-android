@@ -10,14 +10,13 @@ public class Activities {
     public String json;
     public String activityDate;
 
-    public Activities(int id, String name, int distance, String starttijd, String eindtijd, String json, String activityDate) {
+    public Activities(int id, String name, int distance, String starttijd, String eindtijd, String json) {
         this.id = id;
         this.name = name;
         this.distance = distance;
         this.starttijd = starttijd;
         this.eindtijd = eindtijd;
         this.json = json;
-        this.activityDate = activityDate;
     }
 
     public int getId() {
@@ -66,13 +65,5 @@ public class Activities {
 
     public void setJson(String json) {
         this.json = json;
-    }
-
-    public String getActivityDate() {
-        return activityDate;
-    }
-
-    public void setActivityDate(String activityDate) {
-        this.activityDate = activityDate;
     }
 }

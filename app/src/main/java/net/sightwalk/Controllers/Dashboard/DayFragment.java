@@ -27,7 +27,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DayFragment extends Fragment {
 
@@ -77,11 +80,21 @@ public class DayFragment extends Fragment {
         return view;
     }
 
-    private void checkDate(Activities activities) {
+    private void checkDate(Activities activities){
         LocalDate localDate = new LocalDate();
 
-        DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy");
-        LocalDate date = format.parseLocalDate(activities.getStarttijd());
+        SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date day = null;
+
+        try {
+            day = dtf.parse(activities.getStarttijd());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+        String date = format.format(day);
+
 
         String dateOne = localDate.toString("dd/MM/yyyy");
         String dateTwo = localDate.minusDays(1).toString("dd/MM/yyyy");
@@ -90,6 +103,7 @@ public class DayFragment extends Fragment {
         String dateFive = localDate.minusDays(4).toString("dd/MM/yyyy");
         String dateSix = localDate.minusDays(5).toString("dd/MM/yyyy");
         String dateSeven = localDate.minusDays(6).toString("dd/MM/yyyy");
+
 
         if(date.equals(dateOne)) {
             valueOne.add(getDistance(activities.getJson()));
