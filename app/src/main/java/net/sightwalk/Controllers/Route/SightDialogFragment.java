@@ -55,6 +55,13 @@ public class SightDialogFragment extends Fragment {
     public void setScope(Sight sight) {
         sightTitle.setText(sight.name);
         sightDesc.setText(sight.shortdesc);
-        Picasso.with(getContext()).load(sight.image).into(sightImg);
+
+        if (sight.image.length() > 1) {
+            Picasso.with(getContext()).load(sight.image).into(sightImg);
+        } else {
+            sightImg.setImageResource(R.drawable._splash_logo);
+        }
+
+
     }
 }

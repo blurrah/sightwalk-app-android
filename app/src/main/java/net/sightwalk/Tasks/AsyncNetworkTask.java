@@ -20,7 +20,7 @@ import java.net.URL;
  * Created by Frank on 12/27/2015.
  */
 abstract public class AsyncNetworkTask extends AsyncTask<JSONObject, Void, JSONObject> {
-    private static String SERVER = "https://sightwalk.net/";
+    public final static String SERVER = "https://sightwalk.net/";
 
     protected static String METHOD_GET = "GET";
     protected static String METHOD_POST = "POST";

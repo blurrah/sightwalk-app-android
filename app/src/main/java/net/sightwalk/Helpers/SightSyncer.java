@@ -45,6 +45,11 @@ public class SightSyncer implements TaskInterface {
         baseContext = context;
     }
 
+    public static void SyncLastLocation(SightStore store, Context context) {
+        getSharedInstance(store).sync();
+        baseContext = context;
+    }
+
     private Location lastLocation;
     private LatLng lastSyncLocation;
     private long lastTime;
@@ -53,6 +58,16 @@ public class SightSyncer implements TaskInterface {
 
     protected SightSyncer(SightStore store) {
         this.store = store;
+    }
+
+    public void sync() {
+        if (lastLocation == null) {
+            Log.d("SightSyncer", "No position determined, sync not possible");
+            return;
+        }
+
+        lastTime = new Date().getTime();
+        performSync();
     }
 
     public void sync(Location location) {
@@ -82,7 +97,6 @@ public class SightSyncer implements TaskInterface {
                 Sight newSight = new Sight(sightArray.getJSONObject(i));
                 sights.put(newSight.id, newSight);
             }
-            Toast.makeText(baseContext, "Nieuwe Sights beschikbaar", Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -100,27 +114,31 @@ public class SightSyncer implements TaskInterface {
         ArrayList<Sight> toRemove = new ArrayList<>();
         HashMap<Sight, Sight> toUpdate = new HashMap<>();
 
-        for (Sight sight : store.getAll()) {
-            if (sight.isInRange(lastSyncLocation, syncDistance)) {
+        for (Sight currentSight : store.getAll()) {
+            if (currentSight.isInRange(lastSyncLocation, syncDistance)) {
 
-                if (!sights.containsKey(sight.id)) {
+                if (!sights.containsKey(currentSight.id)) {
                     // removed sight
-                    toRemove.add(sight);
+                    toRemove.add(currentSight);
                     continue;
                 }
 
-                Sight cSight = sights.get(sight.id);
-                sights.remove(sight.id);
+                Sight newSight = sights.get(currentSight.id);
+                sights.remove(currentSight.id);
 
-                if (sight.id == cSight.id && !sight.equals(cSight)) {
-                    toUpdate.put(sight, cSight);
+                if (!currentSight.equals(newSight)) {
+                    toUpdate.put(currentSight, newSight);
                 }
-
             }
         }
 
         for (Sight remove : toRemove) {
             store.triggerRemoveSight(remove);
+        }
+
+        if(sights.size() > 0) {
+            // new sights found
+            Toast.makeText(baseContext, "Nieuwe Sights beschikbaar", Toast.LENGTH_LONG).show();
         }
 
         Iterator it = sights.entrySet().iterator();

@@ -79,6 +79,10 @@ public class SightStore implements SightSyncerInterface {
         sync(gpsTracker.getLocation(), context);
     }
 
+    public void sync(Context context) {
+        SightSyncer.SyncLastLocation(this, context);
+    }
+
     private void readSights() {
         sights = new ArrayList<>();
 
