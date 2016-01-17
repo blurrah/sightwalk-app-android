@@ -15,7 +15,9 @@ public class SightImageTask extends FileUploadTask {
     private String identifier;
     private Context context;
 
-    public SightImageTask(Context context, String identifier) {
+    public SightImageTask(Context context, String identifier, TaskInterface callback) {
+        super(callback);
+
         this.context = context;
         this.identifier = identifier;
     }

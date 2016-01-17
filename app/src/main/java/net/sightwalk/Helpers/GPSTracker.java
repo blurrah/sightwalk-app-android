@@ -53,23 +53,27 @@ public class GPSTracker implements LocationListener {
      */
     public Location getLocation() {
         try {
-            if (!canGetLocation) {
-                // no network provider is enabled
-            } else {
-                if (isNetworkEnabled) {
-                    startNetworkLocator();
-                }
-                // if GPS Enabled get lat/long using GPS Services
-                if (isGPSEnabled && location == null) {
-                    startGPSLocator();
-                }
-            }
+            startLocator();
         } catch (SecurityException e) {
 
         } catch (Exception e) {
             e.printStackTrace();
         }
         return location;
+    }
+
+    private void startLocator() throws SecurityException {
+        if (!canGetLocation) {
+            // no network provider is enabled
+        } else {
+            if (isNetworkEnabled) {
+                startNetworkLocator();
+            }
+            // if GPS Enabled get lat/long using GPS Services
+            if (isGPSEnabled && location == null) {
+                startGPSLocator();
+            }
+        }
     }
 
     private void startNetworkLocator() throws SecurityException {
@@ -144,6 +148,10 @@ public class GPSTracker implements LocationListener {
 
             }
         }
+    }
+
+    public void resumeUsingGPS() {
+        startLocator();
     }
 
     /**

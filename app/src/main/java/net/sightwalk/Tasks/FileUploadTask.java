@@ -15,8 +15,10 @@ import java.net.URL;
 import java.io.DataOutputStream;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+
 import android.os.AsyncTask;
 import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,12 +29,17 @@ abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
     String Description;
     byte[] dataToServer;
     FileInputStream fileInputStream = null;
+    private TaskInterface callback;
 
     abstract protected String getPath();
 
     abstract protected String getTitle();
 
     abstract protected String getDescription();
+
+    protected FileUploadTask(TaskInterface cb) {
+        callback = cb;
+    }
 
     @Override
     protected void onPreExecute() {
@@ -62,9 +69,24 @@ abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
         return new JSONObject();
     }
 
+    final protected void onPostExecute(JSONObject data) {
+        int errorCode = -1;
+        try {
+            if (data.getBoolean("success") == true) {
+                callback.onSuccess(data);
+                return;
+            }
+            errorCode = data.getInt("error");
+        } catch (JSONException e) {
+            // invalid json
+        }
+        callback.onFailure(errorCode);
+    }
+
     private JSONObject sendFile(FileInputStream fStream) {
         fileInputStream = fStream;
-        return performSending();
+        JSONObject data = performSending();
+        return data;
     }
 
     private JSONObject performSending() {

@@ -1,6 +1,7 @@
 package net.sightwalk.Controllers.Sight;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -27,9 +28,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PermissionInterface;
+import net.sightwalk.Helpers.SightSyncer;
 import net.sightwalk.R;
 import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Stores.SightImageStore;
+import net.sightwalk.Stores.SightStore;
 import net.sightwalk.Tasks.CreateSightTask;
 import net.sightwalk.Tasks.FileUploadTask;
 import net.sightwalk.Tasks.SightImageTask;
@@ -197,10 +200,21 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
 
         try {
             Integer id = data.getInt("sight_id");
+            final Context self = this;
             //if (hasImageChosen) {
             // upload the image (move it first)
             File file = SightImageStore.getSingleInstance(this).scaleAndCompressImage("_", Integer.toString(id) + "compressed");
-            SightImageTask sit = new SightImageTask(this, Integer.toString(id));
+            SightImageTask sit = new SightImageTask(this, Integer.toString(id), new TaskInterface() {
+                @Override
+                public void onSuccess(JSONObject data) {
+                    SightStore.getSharedInstance(self).sync(self);
+                }
+
+                @Override
+                public void onFailure(int errorCode) {
+                    Log.d("CreateSightActivity", "photo adding failed" + String.valueOf(errorCode));
+                }
+            });
             sit.execute(file);
             //}
         } catch (JSONException e) {
