@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+import net.sightwalk.Controllers.Dashboard.ActivitiesFragment;
 import net.sightwalk.Models.Sight;
 import net.sightwalk.Models.Steps;
 import net.sightwalk.R;
@@ -49,7 +50,8 @@ public class StartDialogFragment extends DialogFragment implements SightsInterfa
             public void onClick(DialogInterface dialog, int id) {
 
                 Intent intent = new Intent(getActivity(), CheckActivity.class);
-                getActivity().startActivity(intent);
+                startActivity(intent);
+
             }
         });
 

@@ -30,7 +30,7 @@ import java.util.Map;
 public class SightSyncer implements TaskInterface {
 
     private static SightSyncer sharedInstance;
-    private static int syncDistance = 10;
+    private static int syncDistance = 500;
     private static Context baseContext;
 
     public static SightSyncer getSharedInstance(SightStore store) {

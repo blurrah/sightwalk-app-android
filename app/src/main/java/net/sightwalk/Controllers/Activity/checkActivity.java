@@ -65,10 +65,6 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
     public Date startTime;
     public Date endTime;
 
-    private Steps step;
-    private Polyline line;
-    private Legs leg;
-
     private ArrayList<Sight> selectedSights;
     private ArrayList<Sight> storeSight;
 

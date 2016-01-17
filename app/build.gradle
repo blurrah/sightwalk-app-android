@@ -32,7 +32,6 @@ dependencies {
     compile 'com.android.support:support-v4:23.1.1'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
-    compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.jakewharton:butterknife:7.0.1'
     compile 'com.mobsandgeeks:android-saripaar:2.0.3'
     compile 'com.google.maps.android:android-maps-utils:0.4'
@@ -41,6 +40,9 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.6'
     compile 'net.danlew:android.joda:2.9.1'
+
+    compile 'com.google.android.gms:play-services-maps:8.4.0'
+    compile 'com.google.android.gms:play-services-gcm:8.4.0'
 }
 
 allprojects {

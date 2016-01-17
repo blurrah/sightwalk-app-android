@@ -28,13 +28,20 @@ import net.sightwalk.Controllers.Activity.StartDialogFragment;
 import net.sightwalk.Controllers.Introduction.MainActivity;
 import net.sightwalk.Controllers.Route.NewRouteActivity;
 import net.sightwalk.Helpers.ActivitiesAdapter;
+import net.sightwalk.Models.Legs;
+import net.sightwalk.Models.Polyline;
 import net.sightwalk.Models.Route;
 import net.sightwalk.Models.Sight;
+import net.sightwalk.Models.Steps;
 import net.sightwalk.R;
 import net.sightwalk.Stores.RouteDBHandler;
 import net.sightwalk.Stores.RouteStore;
 import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Tasks.RouteTask;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -54,6 +61,11 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
     boolean GPS;
     boolean internetGPS;
     boolean internet = false;
+    private String activeActivityJson;
+
+    private Steps step;
+    private Polyline line;
+    private Legs leg;
 
 
     @Override
@@ -83,12 +95,10 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         Cursor cursor = (Cursor) activityList.getItemAtPosition(i);
-        String json = cursor.getString(cursor.getColumnIndex("routeJson"));
+        activeActivityJson = cursor.getString(cursor.getColumnIndex("routeJson"));
 
         routeStore = RouteStore.getSharedInstance(getContext());
         Route route = routeStore.parseRoute(cursor);
-        LatLng startPosition = new LatLng(route.sights.get(0).latitude, route.sights.get(0).longitude);
-        LatLng endPosition = new LatLng(route.sights.get(route.sights.size() -1).latitude, route.sights.get(route.sights.size() -1).longitude);
 
         SightSelectionStore sightSelectionStore = SightSelectionStore.getSharedInstance(getContext());
 
@@ -96,10 +106,7 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
             sightSelectionStore.setSelected(sight);
         }
 
-        String waypoint = selectedWaypoints(route.sights);
-
-        final RouteTask routeTask = new RouteTask(startPosition, endPosition.latitude + "," + endPosition.longitude, waypoint, "walking", "nl", getContext(), getActivity());
-        routeTask.execute();
+        getRouteData(activeActivityJson);
 
         showStartDialog();
     }
@@ -108,17 +115,6 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
         //FragmentManager fm = getActivity().getFragmentManager();
         StartDialogFragment dialogFragment = StartDialogFragment.newInstance();
         dialogFragment.show(getActivity().getFragmentManager(), "Sample Fragment");
-    }
-
-    private String selectedWaypoints(ArrayList<Sight> sights){
-        StringBuilder builder = new StringBuilder();
-
-        for (int i = 0; i < sights.size(); i++) {
-            Sight sight = sights.get(i);
-            builder.append(Double.toString(sight.latitude) + "," + Double.toString(sight.longitude) + "|");
-        }
-
-        return builder.toString();
     }
 
     private class routeListener implements Button.OnClickListener {
@@ -137,7 +133,6 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
             if ((internet == true) & (GPS == true | internetGPS == true)) {
                 Intent i = new Intent(view.getContext(), NewRouteActivity.class);
                 startActivity(i);
-                getActivity().finish();
             }
             else if (GPS == false || internetGPS == false) {
                 showGPSSettingsAlert();
@@ -208,6 +203,97 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
         });
 
         alertDialog.show();
+    }
 
+    public void getRouteData(String response){
+        try {
+            Legs.getInstance().routeJson = response;
+
+            JSONObject directionsObject = new JSONObject(response);
+
+            JSONArray routesObject = directionsObject.getJSONArray("routes");
+
+            for (int i = 0; i < routesObject.length(); i++) {
+                JSONObject overview = routesObject.getJSONObject(i);
+
+                JSONObject polyline = overview.getJSONObject("overview_polyline");
+
+                line = Polyline.getInstance();
+
+                line.polyline = polyline.getString("points");
+
+                JSONArray legsObject = overview.getJSONArray("legs");
+
+                int routedis = 0;
+                int routedur = 0;
+
+                for(int l = 0; l < legsObject.length(); l++) {
+                    JSONObject stepsobject = legsObject.getJSONObject(l);
+
+                    JSONObject routeDistance = stepsobject.getJSONObject("distance");
+                    JSONObject routeDuration = stepsobject.getJSONObject("duration");
+                    JSONObject startroute = stepsobject.getJSONObject("start_location");
+                    JSONObject endroute = stepsobject.getJSONObject("end_location");
+
+                    routedis += routeDistance.getInt("value");
+                    routedur += routeDuration.getInt("value");
+
+                    LatLng startroutelatlng = new LatLng(startroute.getDouble("lat"), startroute.getDouble("lng"));
+                    LatLng endroutelatlng = new LatLng(endroute.getDouble("lat"), endroute.getDouble("lng"));
+
+                    leg = Legs.getInstance();
+
+                    leg.duration = routedur;
+                    leg.distance = routedis;
+                    leg.startroute = startroutelatlng;
+                    leg.endroute = endroutelatlng;
+
+                    JSONArray steps = stepsobject.getJSONArray("steps");
+
+                    for (int s = 0; s < steps.length(); s++) {
+                        JSONObject route = steps.getJSONObject(s);
+
+                        String in = route.getString("html_instructions");
+
+                        String man = null;
+
+                        if(route.isNull("maneuver")) { }
+                        else {
+                            man = route.getString("maneuver");
+                        }
+
+                        String mode = route.getString("travel_mode");
+
+                        JSONObject distance = route.getJSONObject("distance");
+                        JSONObject duration = route.getJSONObject("duration");
+                        JSONObject line = route.getJSONObject("polyline");
+
+                        String dis = distance.getString("text");
+                        String dur = duration.getString("text");
+                        String linepoly = line.getString("points");
+
+                        JSONObject start = route.getJSONObject("start_location");
+                        JSONObject end = route.getJSONObject("end_location");
+
+                        LatLng startlatlng = new LatLng(start.getDouble("lat"), start.getDouble("lng"));
+                        LatLng endlatlng = new LatLng(end.getDouble("lat"), end.getDouble("lng"));
+
+                        step = new Steps();
+                        step.setDistance(dis);
+                        step.setDuration(dur);
+                        step.setHtml_instructions(in);
+                        step.setManeuver(man);
+                        step.setStart_location(startlatlng);
+                        step.setEnd_location(endlatlng);
+                        step.setTravel_mode(mode);
+                        step.setPolyline(linepoly);
+
+                        step.stepsArrayList.add(step);
+                    }
+                }
+            }
+        } catch (JSONException ex) {
+            Log.e("ERROR_", ex.getLocalizedMessage());
+        }
     }
 }

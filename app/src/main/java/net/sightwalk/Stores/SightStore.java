@@ -63,6 +63,7 @@ public class SightStore implements SightSyncerInterface {
 
         readSights();
         readFavourites();
+        readVisiteds();
     }
 
     public ArrayList<Sight> getAll() {
@@ -114,7 +115,7 @@ public class SightStore implements SightSyncerInterface {
         }
     }
 
-    private Sight parseSight(Cursor cursor) {
+    public Sight parseSight(Cursor cursor) {
         int id = cursor.getInt(cursor.getColumnIndex("id"));
         String type = cursor.getString(cursor.getColumnIndex("type"));
         double lat = cursor.getDouble(cursor.getColumnIndex("latitude"));

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,12 +20,14 @@ import net.sightwalk.Stores.SightsInterface;
 
 import org.w3c.dom.Text;
 
-public class SightActivity extends AppCompatActivity implements SightsInterface{
+public class SightActivity extends AppCompatActivity implements View.OnClickListener{
 
     private TextView sightTitleTextView;
     private TextView sightDescriptionTextView;
     private ImageView sightImageView;
     private Sight sight;
+    private Button addFavourite;
+    private Button removeFavourite;
 
     private SightSelectionStore selectionStore;
 
@@ -35,9 +39,8 @@ public class SightActivity extends AppCompatActivity implements SightsInterface{
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        selectionStore = SightSelectionStore.getSharedInstance("RouteActivity", this);
+        selectionStore = SightSelectionStore.getSharedInstance(this);
 
-        Bundle intentValues = getIntent().getExtras();
         sight = selectionStore.getActiveSight();
 
         sightTitleTextView = (TextView) findViewById(R.id.sightTitleTextView);
@@ -47,6 +50,19 @@ public class SightActivity extends AppCompatActivity implements SightsInterface{
         sightTitleTextView.setText(sight.title);
         sightDescriptionTextView.setText(sight.text);
         Picasso.with(getApplicationContext()).load(sight.image).into(sightImageView);
+
+        addFavourite = (Button) findViewById(R.id.addFavouriteBtn);
+        removeFavourite = (Button) findViewById(R.id.removeFavouriteBtn);
+        addFavourite.setOnClickListener(this);
+        removeFavourite.setOnClickListener(this);
+
+        if(selectionStore.isFavourited(sight)){
+            addFavourite.setVisibility(View.INVISIBLE);
+            removeFavourite.setVisibility(View.VISIBLE);
+        }else{
+            addFavourite.setVisibility(View.VISIBLE);
+            removeFavourite.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -70,7 +86,6 @@ public class SightActivity extends AppCompatActivity implements SightsInterface{
                 startActivity(intent);
                 return true;
             case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
                 this.finish();
                 return true;
         }
@@ -79,17 +94,18 @@ public class SightActivity extends AppCompatActivity implements SightsInterface{
     }
 
     @Override
-    public void addedSight(Sight sight) {
-
-    }
-
-    @Override
-    public void removedSight(Sight sight) {
-
-    }
-
-    @Override
-    public void updatedSight(Sight oldSight, Sight newSight) {
-
+    public void onClick(View view) {
+        switch(view.getId()){
+            case R.id.addFavouriteBtn:
+                addFavourite.setVisibility(View.INVISIBLE);
+                removeFavourite.setVisibility(View.VISIBLE);
+                selectionStore.AddFavourite(sight);
+                break;
+            case R.id.removeFavouriteBtn:
+                addFavourite.setVisibility(View.VISIBLE);
+                removeFavourite.setVisibility(View.INVISIBLE);
+                selectionStore.RemoveFavourite(sight);
+                break;
+        }
     }
 }
