@@ -1,8 +1,5 @@
 package net.sightwalk.Models;
 
-import android.database.Cursor;
-import android.location.Location;
-
 import com.google.android.gms.maps.model.LatLng;
 
 import net.sightwalk.Helpers.GeoDistanceCalculator;
@@ -59,8 +56,8 @@ public class Sight {
 
     public boolean equals(Sight sight) {
         return type.equals(sight.type)
-                && latitude == sight.latitude
-                && longitude == sight.longitude
+                && Math.abs(latitude - sight.latitude) < 0.00000001
+                && Math.abs(longitude - sight.longitude) < 0.00000001
                 && name.equals(sight.name)
                 && title.equals(sight.title)
                 && text.equals(sight.text)
