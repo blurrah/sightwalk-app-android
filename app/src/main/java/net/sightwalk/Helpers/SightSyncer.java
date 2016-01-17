@@ -97,7 +97,6 @@ public class SightSyncer implements TaskInterface {
                 Sight newSight = new Sight(sightArray.getJSONObject(i));
                 sights.put(newSight.id, newSight);
             }
-            Toast.makeText(baseContext, "Nieuwe Sights beschikbaar", Toast.LENGTH_LONG).show();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -135,6 +134,11 @@ public class SightSyncer implements TaskInterface {
 
         for (Sight remove : toRemove) {
             store.triggerRemoveSight(remove);
+        }
+
+        if(sights.size() > 0) {
+            // new sights found
+            Toast.makeText(baseContext, "Nieuwe Sights beschikbaar", Toast.LENGTH_LONG).show();
         }
 
         Iterator it = sights.entrySet().iterator();
