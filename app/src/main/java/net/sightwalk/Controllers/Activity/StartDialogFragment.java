@@ -9,16 +9,10 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 
-import net.sightwalk.Controllers.Dashboard.ActivitiesFragment;
 import net.sightwalk.Models.Sight;
-import net.sightwalk.Models.Steps;
 import net.sightwalk.R;
-import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Stores.SightsInterface;
-
-import java.util.ArrayList;
 
 public class StartDialogFragment extends DialogFragment implements SightsInterface, DialogInterface.OnClickListener {
 

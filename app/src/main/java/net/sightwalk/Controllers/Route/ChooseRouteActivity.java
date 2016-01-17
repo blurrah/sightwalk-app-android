@@ -89,6 +89,10 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
 
         sights.put(m, sight);
 
+        if(store.isVisited(sight)){
+            m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
+        }
+
         if(store.isFavourited(sight)){
             m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
         }
