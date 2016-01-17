@@ -57,9 +57,6 @@
         <activity
             android:name=".Controllers.Route.ChooseRouteActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".Controllers.Activity.CheckActivity"
-            android:screenOrientation="portrait" />
 
         <receiver
             android:name=".Tasks.AlarmReceiver"

@@ -1,11 +1,9 @@
 package net.sightwalk.Controllers.Dashboard;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.database.Cursor;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -23,9 +21,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import net.sightwalk.Controllers.Activity.CheckActivity;
 import net.sightwalk.Controllers.Activity.StartDialogFragment;
-import net.sightwalk.Controllers.Introduction.MainActivity;
 import net.sightwalk.Controllers.Route.NewRouteActivity;
 import net.sightwalk.Helpers.ActivitiesAdapter;
 import net.sightwalk.Models.Legs;
@@ -37,13 +33,10 @@ import net.sightwalk.R;
 import net.sightwalk.Stores.RouteDBHandler;
 import net.sightwalk.Stores.RouteStore;
 import net.sightwalk.Stores.SightSelectionStore;
-import net.sightwalk.Tasks.RouteTask;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
 
 public class ActivitiesFragment extends Fragment implements AdapterView.OnItemClickListener{
 
