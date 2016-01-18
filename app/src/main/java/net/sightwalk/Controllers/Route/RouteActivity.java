@@ -1,14 +1,21 @@
 package net.sightwalk.Controllers.Route;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.app.TaskStackBuilder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NavUtils;
+import android.support.v4.app.NotificationCompat;
 import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
@@ -271,12 +278,29 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
                 } else {
                     setNextSightInfo(selectedSights.get(0));
 
-                    Intent i = new Intent(getApplicationContext(), SightActivity.class);
+                    notifyNewSight();
 
+                    Intent i = new Intent(getApplicationContext(), SightActivity.class);
                     startActivity(i);
                 }
             }
         }
+    }
+
+    @TargetApi(16)
+    public void notifyNewSight(){
+        Bitmap icon = BitmapFactory.decodeResource(getResources(), R.drawable.ic_launcher);
+
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
+                .setLargeIcon(icon)
+                .setSmallIcon(R.drawable.ic_walking)
+                .setContentTitle("Sightwalk")
+                .setContentText("Er is een sight in de buurt");
+
+
+        NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
+
+        mNotificationManager.notify(2, mBuilder.build());
     }
 
     public void setNextSightInfo(Sight sight){

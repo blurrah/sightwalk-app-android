@@ -2,15 +2,12 @@ package net.sightwalk.Tasks;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import net.sightwalk.Controllers.Activity.CheckActivity;
-import net.sightwalk.Controllers.Dashboard.ActivitiesFragment;
 import net.sightwalk.Models.Legs;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.Models.Steps;

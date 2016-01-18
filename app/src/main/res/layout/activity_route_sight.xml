@@ -1,31 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:layout_width="100dp"
-        android:layout_height="125dp"
-        android:id="@+id/sightImageView"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="16dp" />
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/scrollView"
+        android:layout_above="@+id/addFavouriteBtn">
 
-    <TextView
-        android:layout_width="wrap_content"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_above="@+id/addFavouriteBtn">
+
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="250dp"
+                android:id="@+id/sightImageView"
+                android:layout_gravity="center_horizontal" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:id="@+id/sightTitleTextView"
+                android:layout_gravity="center_horizontal"
+                android:textColor="@color/colorPrimary"
+                android:textStyle="bold"
+                android:textSize="20dp"
+                android:padding="16dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Description"
+                android:id="@+id/sightDescriptionTextView"
+                android:layout_gravity="center_horizontal"
+                android:textSize="16dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Title"
-        android:id="@+id/sightTitleTextView"
-        android:layout_gravity="center_horizontal"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
-        android:textSize="20dp"
+        android:id="@+id/addFavouriteBtn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="#27b764"
+        android:textColor="#ffffff"
+        android:text="Voeg toe aan favorieten"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
         android:padding="16dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <Button
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Description"
-        android:id="@+id/sightDescriptionTextView"
-        android:layout_gravity="center_horizontal"
-        android:textSize="16dp" />
-</LinearLayout>
+        android:id="@+id/removeFavouriteBtn"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:background="#ff151b"
+        android:textColor="#ffffff"
+        android:text="Verwijder uit favorieten"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="10dp"
+        android:padding="16dp" />
+</RelativeLayout>
