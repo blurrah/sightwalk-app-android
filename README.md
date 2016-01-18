@@ -1,1 +1,1 @@
-# sightwalk-app-android
+# SightWalk for Android
