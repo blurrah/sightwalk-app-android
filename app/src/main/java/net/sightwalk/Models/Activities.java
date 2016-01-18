@@ -8,7 +8,6 @@ public class Activities {
     public String starttijd;
     public String eindtijd;
     public String json;
-    public String activityDate;
 
     public Activities(int id, String name, int distance, String starttijd, String eindtijd, String json) {
         this.id = id;

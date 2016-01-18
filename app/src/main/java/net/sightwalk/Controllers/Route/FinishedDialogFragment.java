@@ -8,18 +8,14 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import net.sightwalk.Controllers.Route.RouteActivity;
 import net.sightwalk.Models.Legs;
 import net.sightwalk.Models.Sight;
 import net.sightwalk.Models.Steps;
 import net.sightwalk.R;
 import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Stores.SightsInterface;
-import net.sightwalk.Tasks.PasswordTask;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,7 +51,7 @@ public class FinishedDialogFragment extends DialogFragment implements SightsInte
 
                 Steps.getInstance().stepsArrayList = new ArrayList<>();
 
-                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("CheckActivity", dialogFragment).getSelectedSights();
+                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("WalkActivity", dialogFragment).getSelectedSights();
                 sights.clear();
 
                 getActivity().finish();
@@ -96,7 +92,6 @@ public class FinishedDialogFragment extends DialogFragment implements SightsInte
         different = different % hoursInMilli;
 
         long elapsedMinutes = different / minutesInMilli;
-
 
         return " | Tijd: " + elapsedHours + " uur " + elapsedMinutes + " min.";
     }

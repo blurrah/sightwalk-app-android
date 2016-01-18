@@ -4,8 +4,6 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -14,9 +12,7 @@ import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.support.v4.app.NavUtils;
 import android.support.v4.app.NotificationCompat;
-import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,7 +30,6 @@ import com.google.maps.android.PolyUtil;
 import com.squareup.picasso.Picasso;
 
 import net.sightwalk.Controllers.Dashboard.DashboardActivity;
-import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PermissionActivity;
@@ -82,6 +77,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         selectionStore = SightSelectionStore.getSharedInstance("RouteActivity", this);
         storeSight = selectionStore.getSelectedSights();
         selectedSights = new ArrayList<>();
+
         for(Sight sight : storeSight){
             selectedSights.add(sight);
         }
@@ -90,6 +86,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         Bundle intentValues = getIntent().getExtras();
         finishSight = intentValues.getBoolean("FINISH_SIGHT");
         startSight = intentValues.getBoolean("START_SIGHT");
+
         if(finishSight) {
             Sight k = new Sight(-1, null, UserLocation.getInstance().userlocation.latitude, UserLocation.getInstance().userlocation.longitude, null, null, null, null, null);
             selectedSights.add(k);
@@ -107,7 +104,6 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
 
         directionsButton.setOnClickListener(this);
         nextSightButton.setOnClickListener(this);
-
 
         RetrievePolyline(Polyline.getInstance().polyline, Steps.getInstance().stepsArrayList);
 
@@ -294,9 +290,8 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this)
                 .setLargeIcon(icon)
                 .setSmallIcon(R.drawable.ic_walking)
-                .setContentTitle("Sightwalk")
-                .setContentText("Er is een sight in de buurt");
-
+                .setContentTitle("SightWalk")
+                .setContentText("Er is een sight in de buurt!");
 
         NotificationManager mNotificationManager = (NotificationManager) this.getSystemService(this.NOTIFICATION_SERVICE);
 
@@ -304,7 +299,6 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
     }
 
     public void setNextSightInfo(Sight sight){
-
         TextView nextSightTitle = (TextView) findViewById(R.id.nextSightTitle);
         TextView nextSightText = (TextView )findViewById(R.id.nextSightText);
         ImageView nextSightImage = (ImageView) findViewById(R.id.nextSightImage);

@@ -12,9 +12,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Created by Ruben on 07/01/2016.
- */
 public class RouteStore {
 
     private static RouteStore sharedInstance;
@@ -94,7 +91,6 @@ public class RouteStore {
     }
 
     private Date formatDateString(String timeString){
-
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyy HH:mm:ss", Locale.getDefault());
 
         Date dt = null;

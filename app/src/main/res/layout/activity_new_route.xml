@@ -43,7 +43,8 @@
         android:layout_alignParentEnd="false"
         android:layout_below="@+id/chooseRouteButton"
         android:padding="16dp"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/colorPrimary"
+        android:visibility="gone" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -73,6 +74,7 @@
             android:layout_alignParentStart="false"
             android:singleLine="true"
             android:layout_centerVertical="true" />
+
     </RelativeLayout>
 
     <fragment android:name="net.sightwalk.Controllers.Route.ListViewDraggingAnimation"

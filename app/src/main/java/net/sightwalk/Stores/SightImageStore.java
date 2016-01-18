@@ -1,6 +1,5 @@
 package net.sightwalk.Stores;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,12 +13,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
-/**
- * Created by Frank on 1/14/2016.
- */
 public class SightImageStore {
 
     private static SightImageStore singleInstance;
@@ -69,10 +63,12 @@ public class SightImageStore {
 
     public File storeImage(Bitmap image, String identifier) {
         File pictureFile = getOutputMediaFile(identifier);
+
         if (pictureFile == null) {
             Log.d("SightImageStore", "Error creating media file, check storage permissions: ");
             return null;
         }
+
         try {
             FileOutputStream fos = new FileOutputStream(pictureFile);
             image.compress(Bitmap.CompressFormat.JPEG, 70, fos);
@@ -83,11 +79,13 @@ public class SightImageStore {
         } catch (IOException e) {
             Log.d("SightImageStore", "Error accessing file: " + e.getMessage());
         }
+
         return null;
     }
 
     public FileInputStream readImage(String identifier) {
         File file = getOutputMediaFile(identifier);
+
         if (file != null) {
             try {
                 return new FileInputStream(file);

@@ -3,22 +3,16 @@ package net.sightwalk.Helpers;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import net.sightwalk.R;
-
-import java.io.InputStream;
-import java.net.URL;
 
 public class FavouritesAdapter extends CursorAdapter {
 
@@ -51,5 +45,4 @@ public class FavouritesAdapter extends CursorAdapter {
         favDescription.setText(outputDescription);
         Picasso.with(context).load(cursor.getString(cursor.getColumnIndex("imgurl"))).into(favImage);
     }
-
 }

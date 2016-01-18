@@ -1,6 +1,5 @@
 package net.sightwalk.Controllers.Dashboard;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -17,19 +16,17 @@ import net.sightwalk.Models.Sight;
 import net.sightwalk.R;
 import net.sightwalk.Stores.SightDBHandeler;
 import net.sightwalk.Stores.SightSelectionStore;
-import net.sightwalk.Stores.SightsInterface;
 
 public class FavouritesFragment extends Fragment implements AdapterView.OnItemClickListener{
 
     private FavouritesAdapter favouriteAdapter;
     private SightDBHandeler db;
-    ListView favouriteList;
+    private ListView favouriteList;
     private SightSelectionStore selectionStore;
     private View rootView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         rootView = inflater.inflate(R.layout.fragment_favourites, container, false);
         populateFavouriteList(rootView);
         return rootView;
@@ -37,7 +34,6 @@ public class FavouritesFragment extends Fragment implements AdapterView.OnItemCl
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         selectionStore = SightSelectionStore.getSharedInstance(getContext());
     }
@@ -49,7 +45,6 @@ public class FavouritesFragment extends Fragment implements AdapterView.OnItemCl
     }
 
     public Cursor getFavouriteCursor(){
-
         //Set database in this activity
         db = new SightDBHandeler(getActivity().getApplicationContext());
         Cursor cursor = db.getFavourites();
@@ -75,5 +70,4 @@ public class FavouritesFragment extends Fragment implements AdapterView.OnItemCl
         Intent intent = new Intent(getContext(), SightActivity.class);
         startActivity(intent);
     }
-
 }

@@ -21,8 +21,6 @@ import net.sightwalk.Stores.ActivitiesStore;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,7 +93,6 @@ public class DayFragment extends Fragment {
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
         String date = format.format(day);
 
-
         String dateOne = localDate.toString("dd/MM/yyyy");
         String dateTwo = localDate.minusDays(1).toString("dd/MM/yyyy");
         String dateThree = localDate.minusDays(2).toString("dd/MM/yyyy");
@@ -103,7 +100,6 @@ public class DayFragment extends Fragment {
         String dateFive = localDate.minusDays(4).toString("dd/MM/yyyy");
         String dateSix = localDate.minusDays(5).toString("dd/MM/yyyy");
         String dateSeven = localDate.minusDays(6).toString("dd/MM/yyyy");
-
 
         if(date.equals(dateOne)) {
             valueOne.add(getDistance(activities.getJson()));

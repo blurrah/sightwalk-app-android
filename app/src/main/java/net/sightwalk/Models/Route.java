@@ -3,9 +3,6 @@ package net.sightwalk.Models;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * Created by Ruben on 07/01/2016.
- */
 public class Route {
 
     public Integer id;

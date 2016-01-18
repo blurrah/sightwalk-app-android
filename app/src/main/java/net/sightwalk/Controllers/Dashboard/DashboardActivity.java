@@ -2,7 +2,6 @@ package net.sightwalk.Controllers.Dashboard;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -13,8 +12,6 @@ import android.view.MenuItem;
 
 import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.Controllers.Sight.CreateSightActivity;
-import net.sightwalk.Helpers.GPSTracker;
-import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PagerAdapter;
 import net.sightwalk.R;
 import net.sightwalk.Tasks.AlarmReceiver;

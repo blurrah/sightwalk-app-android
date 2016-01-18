@@ -1,8 +1,5 @@
 package net.sightwalk.Models;
 
-/**
- * Created by Ruben on 12/01/2016.
- */
 public class Step {
 
     public String direction;

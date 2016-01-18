@@ -4,9 +4,6 @@ import android.content.Context;
 
 import net.sightwalk.Models.Sight;
 
-/**
- * Created by Frank on 12/26/2015.
- */
 public interface SightsInterface {
     void addedSight(Sight sight);
 

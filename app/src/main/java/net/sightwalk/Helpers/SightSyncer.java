@@ -3,12 +3,10 @@ package net.sightwalk.Helpers;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
-import android.util.Pair;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import net.sightwalk.Controllers.Introduction.MainActivity;
 import net.sightwalk.Models.Sight;
 import net.sightwalk.Stores.SightStore;
 import net.sightwalk.Tasks.SightGeoLoadTask;
@@ -24,9 +22,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Created by Frank on 12/26/2015.
- */
 public class SightSyncer implements TaskInterface {
 
     private static SightSyncer sharedInstance;
@@ -54,7 +49,6 @@ public class SightSyncer implements TaskInterface {
     private LatLng lastSyncLocation;
     private long lastTime;
     private SightStore store;
-
 
     protected SightSyncer(SightStore store) {
         this.store = store;
@@ -93,6 +87,7 @@ public class SightSyncer implements TaskInterface {
         HashMap<Integer, Sight> sights = new HashMap<>();
         try {
             JSONArray sightArray = data.getJSONArray("sights");
+
             for (int i = 0; i < sightArray.length(); i++) {
                 Sight newSight = new Sight(sightArray.getJSONObject(i));
                 sights.put(newSight.id, newSight);
@@ -110,13 +105,11 @@ public class SightSyncer implements TaskInterface {
     }
 
     private void processSights(HashMap<Integer, Sight> sights) {
-
         ArrayList<Sight> toRemove = new ArrayList<>();
         HashMap<Sight, Sight> toUpdate = new HashMap<>();
 
         for (Sight currentSight : store.getAll()) {
             if (currentSight.isInRange(lastSyncLocation, syncDistance)) {
-
                 if (!sights.containsKey(currentSight.id)) {
                     // removed sight
                     toRemove.add(currentSight);
@@ -142,12 +135,14 @@ public class SightSyncer implements TaskInterface {
         }
 
         Iterator it = sights.entrySet().iterator();
+
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             store.triggerAddSight((Sight) pair.getValue());
         }
 
         it = toUpdate.entrySet().iterator();
+
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             store.triggerUpdateSight((Sight) pair.getKey(), (Sight) pair.getValue());

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -15,19 +16,18 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Helpers.PermissionInterface;
 import net.sightwalk.Models.Sight;
 import net.sightwalk.R;
 import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Stores.SightsInterface;
+
 import java.util.HashMap;
 
 public class ChooseRouteActivity extends PermissionActivity implements SightsInterface, View.OnClickListener, GoogleMap.OnMarkerClickListener {
 
-    /**
-     * View elements
-     */
     private SightDialogFragment sdfInfo;
     private FloatingActionButton fabAddSight;
     private FloatingActionButton fabRemoveSight;
@@ -72,7 +72,6 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
 
         switch (id) {
             case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
                 this.finish();
                 overridePendingTransition(R.anim.activity_return_in, R.anim.activity_return_out);
                 return true;
@@ -139,13 +138,11 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
             selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
         } else {
             selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
+            selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
 
-            //if(store.isVisited(sight)) {
-                selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE));
-                if (store.isFavourited(sight)) {
-                    selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
-                }
-            //}
+            if (store.isFavourited(sight)) {
+                selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
+            }
         }
 
         // update view
@@ -166,12 +163,14 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
 
         if(state){
             store.RemoveFavourite(sight);
+
             if(!store.isSelected(sight)) {
                 selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker());
             }
             state = false;
         } else {
             store.AddFavourite(sight);
+
             if(!store.isSelected(sight)) {
                 selectedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW));
             }
@@ -210,6 +209,7 @@ public class ChooseRouteActivity extends PermissionActivity implements SightsInt
         sdfInfo.setScope(sights.get(marker));
 
         boolean state = false;
+
         for (Integer sightId : store.getFavourites()) {
             if(sightId == sights.get(marker).id){
                 state = true;

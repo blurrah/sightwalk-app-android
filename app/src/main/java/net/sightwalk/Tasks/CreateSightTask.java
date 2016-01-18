@@ -2,20 +2,16 @@ package net.sightwalk.Tasks;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import net.sightwalk.Models.Sight;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Frank on 12/27/2015.
- */
 public class CreateSightTask extends AuthenticatedAsyncNetworkTask {
 
     private JSONObject params;
 
     public CreateSightTask(LatLng location, String title, String type, String description, TaskInterface callback) throws JSONException {
         super(callback);
+
         params = new JSONObject();
 
         params.put("longitude", location.longitude);

@@ -49,17 +49,15 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
     private LocationManager locationManager;
     private ConnectivityManager connectivityManager;
     private NetworkInfo[] activeNetworkInfo;
-    private Settings setting = new Settings();
 
-    boolean GPS;
-    boolean internetGPS;
-    boolean internet = false;
+    private boolean GPS;
+    private boolean internetGPS;
+    private boolean internet = false;
     private String activeActivityJson;
 
     private Steps step;
     private Polyline line;
     private Legs leg;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -70,11 +68,9 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
 
         populateActivityList(view);
 
-
         locationManager = (LocationManager) getContext().getSystemService(getContext().LOCATION_SERVICE);
         connectivityManager = (ConnectivityManager) getContext().getSystemService(getContext().CONNECTIVITY_SERVICE);
         activeNetworkInfo = connectivityManager.getAllNetworkInfo();
-
 
         return view;
     }
@@ -105,7 +101,6 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
     }
 
     public void showStartDialog(){
-        //FragmentManager fm = getActivity().getFragmentManager();
         StartDialogFragment dialogFragment = StartDialogFragment.newInstance();
         dialogFragment.show(getActivity().getFragmentManager(), "Sample Fragment");
     }
@@ -139,9 +134,7 @@ public class ActivitiesFragment extends Fragment implements AdapterView.OnItemCl
         }
     }
 
-
     public Cursor getActivityCursor(){
-
         //Set database in this activity
         db = new RouteDBHandler(getActivity().getApplicationContext());
         Cursor cursor = db.getActivities();

@@ -1,6 +1,5 @@
 package net.sightwalk.Stores;
 
-import android.app.Activity;
 import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
@@ -15,16 +14,15 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Created by Frank on 12/26/2015.
- */
 public class SightStore implements SightSyncerInterface {
+
     private static SightStore sharedInstance;
 
     public static SightStore getSharedInstance(String slot, SightsInterface client) {
         if (!(sharedInstance instanceof SightStore)) {
             sharedInstance = new SightStore(client);
         }
+
         SightStore.subscribe(slot, client);
         return sharedInstance;
     }
@@ -69,6 +67,7 @@ public class SightStore implements SightSyncerInterface {
     public ArrayList<Sight> getAll() {
         return sights;
     }
+
     public ArrayList<Integer> getFavourites() {return favourites;}
 
     public void sync(Location location, Context context) {

@@ -1,9 +1,5 @@
 package net.sightwalk.Tasks;
 
-/**
- * Copied by Frank on 1/14/2016.
- */
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,12 +19,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
-    URL connectURL;
-    String responseString;
-    String Title;
-    String Description;
-    byte[] dataToServer;
-    FileInputStream fileInputStream = null;
+
+    private URL connectURL;
+    private String responseString;
+    private String Title;
+    private String Description;
+    private byte[] dataToServer;
+    private FileInputStream fileInputStream = null;
     private TaskInterface callback;
 
     abstract protected String getPath();
@@ -61,6 +58,7 @@ abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
         if (params.length > 0) {
             File file1 = params[0];
             FileInputStream fis = readImage(file1);
+
             if (fis != null) {
                 return sendFile(fis);
             }
@@ -71,6 +69,7 @@ abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
 
     final protected void onPostExecute(JSONObject data) {
         int errorCode = -1;
+
         try {
             if (data.getBoolean("success") == true) {
                 callback.onSuccess(data);
@@ -80,6 +79,7 @@ abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
         } catch (JSONException e) {
             // invalid json
         }
+
         callback.onFailure(errorCode);
     }
 
@@ -95,6 +95,7 @@ abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
         String twoHyphens = "--";
         String boundary = "*****";
         String Tag = "fSnd";
+
         try {
             Log.e(Tag, "Starting Http File Sending to URL");
             HttpURLConnection conn = (HttpURLConnection) connectURL.openConnection();
@@ -140,6 +141,7 @@ abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
                 bufferSize = Math.min(bytesAvailable, maxBufferSize);
                 bytesRead = fileInputStream.read(buffer, 0, bufferSize);
             }
+
             dos.writeBytes(lineEnd);
             dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
@@ -162,7 +164,6 @@ abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
         return new JSONObject();
     }
 
-
     private JSONObject readInputStreamJSON(HttpURLConnection connection) throws IOException, JSONException {
         return new JSONObject(readInputStream(connection));
     }
@@ -170,6 +171,7 @@ abstract public class FileUploadTask extends AsyncTask<File, Void, JSONObject> {
     private String readInputStream(HttpURLConnection connection) {
         BufferedReader in;
         String result = "{\"success\":false}";
+
         try {
             int responseCode = connection.getResponseCode();
 

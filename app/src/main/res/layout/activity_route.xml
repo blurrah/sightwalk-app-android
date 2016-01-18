@@ -42,6 +42,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_alignParentEnd="true"
                 android:textColor="@color/colorDisabled" />
+
         </RelativeLayout>
 
         <ListView
@@ -85,6 +86,9 @@
                     android:padding="10dp" />
 
             </LinearLayout>
+
         </LinearLayout>
+
     </LinearLayout>
+
 </LinearLayout>

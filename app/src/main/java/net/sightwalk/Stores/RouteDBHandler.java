@@ -12,9 +12,6 @@ import net.sightwalk.Models.Sight;
 
 import java.text.SimpleDateFormat;
 
-/**
- * Created by Ruben on 07/01/2016.
- */
 public class RouteDBHandler extends SQLiteAssetHelper {
 
     private static final String DATABASE_NAME = "Sights Breda.sqlite";
@@ -65,7 +62,6 @@ public class RouteDBHandler extends SQLiteAssetHelper {
             db.insert("activitySights", null, records2);
         }
 
-
         db.close();
     }
 
@@ -79,7 +75,6 @@ public class RouteDBHandler extends SQLiteAssetHelper {
         int result = 1;
 
         result = c.getInt(c.getColumnIndex("id"));
-
 
         return result;
     }

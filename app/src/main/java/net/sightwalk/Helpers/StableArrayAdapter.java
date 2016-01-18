@@ -1,7 +1,6 @@
 package net.sightwalk.Helpers;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +11,6 @@ import net.sightwalk.Models.Sight;
 import net.sightwalk.R;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class StableArrayAdapter extends ArrayAdapter<Sight> {
 
@@ -40,6 +37,7 @@ public class StableArrayAdapter extends ArrayAdapter<Sight> {
         if (position < 0 || position >= getCount()) {
             return INVALID_ID;
         }
+
         Sight item = getItem(position);
         return item.id;
     }

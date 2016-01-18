@@ -43,6 +43,7 @@
                 android:paddingRight="16dp" />
 
         </LinearLayout>
+
     </ScrollView>
 
     <Button
@@ -74,4 +75,5 @@
         android:layout_alignParentBottom="true"
         android:layout_margin="10dp"
         android:padding="16dp" />
+
 </RelativeLayout>

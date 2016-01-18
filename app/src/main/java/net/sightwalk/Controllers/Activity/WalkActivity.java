@@ -39,24 +39,18 @@ import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Helpers.RouteStepsAdapter;
-import net.sightwalk.Models.Legs;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.Models.Sight;
 import net.sightwalk.Models.Steps;
-import net.sightwalk.Models.UserLocation;
 import net.sightwalk.R;
 import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Stores.SightsInterface;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CheckActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface, Button.OnClickListener{
+public class WalkActivity extends PermissionActivity implements SightsInterface, GPSTrackerInterface, Button.OnClickListener{
 
     private GoogleMap googleMap;
     private GPSTracker gpsTracker;
@@ -83,17 +77,20 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
         setContentView(R.layout.activity_route);
 
         googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.routeMapView)).getMap();
+
         gpsTracker = new GPSTracker(this, this);
         startTime = new Date();
 
-        selectionStore = SightSelectionStore.getSharedInstance("CheckActivity", this);
+        selectionStore = SightSelectionStore.getSharedInstance("WalkActivity", this);
         storeSight = selectionStore.getSelectedSights();
         selectedSights = new ArrayList<>();
+
         for(Sight sight : storeSight){
             selectedSights.add(sight);
         }
 
         ArrayList<Steps> stepsArrayList = Steps.getInstance().stepsArrayList;
+
         RouteStepsAdapter routeStepsAdapter = new RouteStepsAdapter(this, stepsArrayList);
         routeStepListView = (ListView) findViewById(R.id.routeStepListView);
         routeStepListView.setAdapter(routeStepsAdapter);
@@ -155,7 +152,7 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
     public void clearDataRouteActivity(){
         Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
 
-        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("CheckActivity", this).getSelectedSights();
+        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("WalkActivity", this).getSelectedSights();
         sights.clear();
 
         this.finish();
@@ -170,8 +167,7 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
                 Log.e("ERROR_", e.getLocalizedMessage());
             }
 
-            ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("CheckActivity", this).getSelectedSights();
-
+            ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("WalkActivity", this).getSelectedSights();
 
             for(int i = 0; i < sights.size(); i++) {
                 Double latitude = sights.get(i).latitude;
@@ -180,7 +176,6 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
                 Marker m = googleMap.addMarker(new MarkerOptions().position(new LatLng(latitude, longitude)));
                 m.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN));
             }
-
 
             googleMap.addPolyline(new PolylineOptions()
                     .addAll(PolyUtil.decode(poly))
@@ -195,7 +190,6 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
         if(location == null) {
             errorDialog("Locatie niet gevonden");
         } else {
-
             CameraUpdate center = CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
             CameraUpdate zoom = CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 17);
 
@@ -214,7 +208,6 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
             boolean range = PolyUtil.isLocationOnEdge(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true, 30);
 
             if (range) {
-
                 if(!Steps.stepsArrayList.isEmpty()) {
                     Steps stepupdate = Steps.stepsArrayList.get(0);
 
@@ -227,12 +220,10 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
         }
 
         if(selectedSights.size() > 0) {
-
             float[] results = new float[1];
             Location.distanceBetween(location.getLatitude(), location.getLongitude(), selectedSights.get(0).latitude, selectedSights.get(0).longitude, results);
 
             if (results[0] < 30) {
-
                 selectionStore.AddVisited(selectedSights.get(0));
 
                 if(storeSight.size() > 0) {
@@ -258,7 +249,6 @@ public class CheckActivity extends PermissionActivity implements SightsInterface
     }
 
     public void setNextSightInfo(Sight sight){
-
         TextView nextSightTitle = (TextView) findViewById(R.id.nextSightTitle);
         TextView nextSightText = (TextView )findViewById(R.id.nextSightText);
         ImageView nextSightImage = (ImageView) findViewById(R.id.nextSightImage);

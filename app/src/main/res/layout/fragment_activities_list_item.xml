@@ -31,6 +31,7 @@
             android:layout_height="wrap_content"
             android:text="Time"
             android:id="@+id/activityTime" />
+
     </LinearLayout>
 
 </LinearLayout>

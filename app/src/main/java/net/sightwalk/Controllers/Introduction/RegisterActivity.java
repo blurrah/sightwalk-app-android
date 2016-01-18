@@ -23,9 +23,9 @@ import butterknife.ButterKnife;
 
 public class RegisterActivity extends AppCompatActivity implements Validator.ValidationListener {
 
-    Validator validator;
+    private Validator validator;
 
-    String instanceId;
+    private String instanceId;
 
     @NotEmpty(message = "Verplicht veld")
     @Email(message = "Ongeldige email")
@@ -68,7 +68,6 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
 
         switch (id) {
             case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
                 this.finish();
                 overridePendingTransition(R.anim.activity_return_in, R.anim.activity_return_out);
                 return true;

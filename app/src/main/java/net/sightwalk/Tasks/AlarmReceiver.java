@@ -24,8 +24,8 @@ public class AlarmReceiver extends BroadcastReceiver {
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context)
                 .setLargeIcon(icon)
                 .setSmallIcon(R.drawable.ic_walking)
-                .setContentTitle("Sightwalk")
-                .setContentText("Er zijn nieuwe Sights beschikbaar!");
+                .setContentTitle("SightWalk")
+                .setContentText("Tijd om te Sightwalken!");
 
         Intent resultIntent = new Intent(context, NewRouteActivity.class);
 

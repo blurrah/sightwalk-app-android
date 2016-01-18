@@ -10,13 +10,9 @@ import android.widget.TextView;
 
 import net.sightwalk.R;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class ActivitiesAdapter extends CursorAdapter {
-
 
     private TextView activityName;
     private TextView activityDistance;
@@ -34,7 +30,6 @@ public class ActivitiesAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-
         activityName = (TextView) view.findViewById(R.id.activityName);
         activityDistance = (TextView) view.findViewById(R.id.activityDistance);
         activityTime = (TextView) view.findViewById(R.id.activityTime);
@@ -53,7 +48,6 @@ public class ActivitiesAdapter extends CursorAdapter {
     }
 
     private String distanceConverter(Integer distance){
-
         String outputString;
 
         if(distance > 1000){
@@ -66,14 +60,10 @@ public class ActivitiesAdapter extends CursorAdapter {
     }
 
     private Date formatDateString(String timeString){
-
-
-
         return new Date();
     }
 
     private String elapsedTime(Date startDate, Date endDate){
-
         long different = endDate.getTime() - startDate.getTime();
 
         long secondsInMilli = 1000;
@@ -83,7 +73,6 @@ public class ActivitiesAdapter extends CursorAdapter {
         different = different % hoursInMilli;
 
         long elapsedMinutes = different / minutesInMilli;
-
 
         return " | Tijd: " + elapsedHours + " uur " + elapsedMinutes + " min.";
     }

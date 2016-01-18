@@ -15,7 +15,7 @@ import net.sightwalk.Tasks.PasswordTask;
 
 public class PasswordDialogFragment extends DialogFragment {
 
-    EditText emailField;
+    private EditText emailField;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

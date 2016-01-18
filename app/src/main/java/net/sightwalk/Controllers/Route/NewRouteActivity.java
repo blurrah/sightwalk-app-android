@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -219,10 +218,9 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
 
         if(startSight.isChecked()){
             if(selectedSights.size() > 1){
-
                 return new LatLng(selectedSights.get(0).latitude, selectedSights.get(0).longitude);
             }
-        }else{
+        } else {
             if (deviceLocation instanceof Location) {
                 UserLocation.getInstance().userlocation = new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
                 return new LatLng(deviceLocation.getLatitude(), deviceLocation.getLongitude());
@@ -262,7 +260,6 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     }
 
     public void saveRoute(String routeName){
-
         Intent i = new Intent(getApplicationContext(), RouteActivity.class);
 
         i.putExtra("FINISH_SIGHT",checkBox.isChecked());

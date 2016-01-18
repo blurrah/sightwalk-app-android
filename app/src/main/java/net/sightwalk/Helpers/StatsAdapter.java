@@ -8,7 +8,7 @@ import net.sightwalk.Controllers.Dashboard.*;;
 
 public class StatsAdapter extends FragmentStatePagerAdapter {
 
-    int mNumOfTabs;
+    private int mNumOfTabs;
 
     public StatsAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);

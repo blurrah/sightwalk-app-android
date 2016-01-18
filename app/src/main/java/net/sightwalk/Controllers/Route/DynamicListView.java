@@ -6,7 +6,6 @@ import android.animation.ObjectAnimator;
 import android.animation.TypeEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
-import android.widget.CheckBox;
 import android.widget.ListView;
 
 import net.sightwalk.Helpers.StableArrayAdapter;
@@ -230,7 +228,6 @@ public class DynamicListView extends ListView {
                     handleCellSwitch();
 
                     mIsMobileScrolling = false;
-                    //handleMobileCellScroll();
 
                     return false;
                 }

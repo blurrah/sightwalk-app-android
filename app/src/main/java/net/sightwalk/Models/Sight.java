@@ -7,9 +7,6 @@ import net.sightwalk.Helpers.GeoDistanceCalculator;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-/**
- * Created by Frank on 12/26/2015.
- */
 public class Sight {
 
     public int id;
@@ -75,5 +72,4 @@ public class Sight {
         image = sight.image;
         shortdesc = sight.shortdesc;
     }
-
 }

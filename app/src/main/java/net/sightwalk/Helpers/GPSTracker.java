@@ -7,33 +7,36 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 
-/**
- * Created by Frank on 12/26/2015.
- */
 public class GPSTracker implements LocationListener {
 
     private static int PERMISSION_GPS = 1;
 
     private final PermissionActivity client;
     private final GPSTrackerInterface listener;
+
     // flag for GPS status
     boolean isGPSEnabled = false;
+
     // flag for network status
     boolean isNetworkEnabled = false;
+
     // flag for GPS status
     boolean canGetLocation = false;
+
     Location location; // location
     double latitude; // latitude
     double longitude; // longitude
+
     // The minimum distance to change Updates in meters
     private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0; // 10 meters
+
     // The minimum time between updates in milliseconds
     private static final long MIN_TIME_BW_UPDATES = 1000 * 10 * 1; // 1 minute
+
     // Declaring a Location Manager
     protected LocationManager locationManager;
 
@@ -135,7 +138,6 @@ public class GPSTracker implements LocationListener {
         }
     }
 
-
     /**
      * Stop using GPS listener
      * Calling this function will stop using GPS in your app
@@ -214,7 +216,6 @@ public class GPSTracker implements LocationListener {
 
     @Override
     public void onLocationChanged(Location currentLocation) {
-// TODO Auto-generated method stub
         this.location = currentLocation;
 
         // update
@@ -236,11 +237,10 @@ public class GPSTracker implements LocationListener {
     @Override
     public void onProviderEnabled(String provider) {
         this.updateDeviceCapabilities();
-
     }
 
     @Override
     public void onStatusChanged(String provider, int status, Bundle extras) {
-// TODO Auto-generated method stub
+
     }
 }

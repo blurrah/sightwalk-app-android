@@ -2,14 +2,6 @@ package net.sightwalk.Tasks;
 
 import android.content.Context;
 
-import net.sightwalk.Stores.SightImageStore;
-
-import java.io.File;
-import java.io.FileInputStream;
-
-/**
- * Created by Frank on 1/14/2016.
- */
 public class SightImageTask extends FileUploadTask {
 
     private String identifier;

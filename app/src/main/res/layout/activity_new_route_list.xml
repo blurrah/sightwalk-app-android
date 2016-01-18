@@ -11,5 +11,4 @@
             android:id="@+id/listview"
             android:background="#0000" />
 
-
 </RelativeLayout>

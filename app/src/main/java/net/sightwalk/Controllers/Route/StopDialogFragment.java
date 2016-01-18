@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
 
 import net.sightwalk.Models.Sight;
 import net.sightwalk.Models.Steps;
@@ -28,7 +27,6 @@ public class StopDialogFragment extends DialogFragment implements SightsInterfac
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         final View view = inflater.inflate(R.layout.fragment_stoproute_dialog, null);
@@ -40,10 +38,9 @@ public class StopDialogFragment extends DialogFragment implements SightsInterfac
         builder.setPositiveButton("Route Stoppen", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-
                 Steps.getInstance().stepsArrayList = new ArrayList<>();
 
-                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("CheckActivity", dialogFragment).getSelectedSights();
+                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("WalkActivity", dialogFragment).getSelectedSights();
                 sights.clear();
 
                 getActivity().finish();

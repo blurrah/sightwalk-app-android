@@ -4,11 +4,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
-import net.sightwalk.Controllers.Tutorial.TutorialFragment;
+import net.sightwalk.Controllers.Tutorial.*;
 
 public class TutorialAdapter extends FragmentStatePagerAdapter {
 
-    int mNumOfTabs;
+    private int mNumOfTabs;
 
     public TutorialAdapter(FragmentManager fm, int NumOfTabs) {
         super(fm);
@@ -20,13 +20,14 @@ public class TutorialAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                TutorialFragment frag1 = new TutorialFragment();
-
-                return frag1;
+                TutorialFragmentOne one = new TutorialFragmentOne();
+                return one;
             case 1:
-                TutorialFragment frag2 = new TutorialFragment();
-
-                return frag2;
+                TutorialFragmentTwo two = new TutorialFragmentTwo();
+                return two;
+            case 2:
+                TutorialFragmentThree three = new TutorialFragmentThree();
+                return three;
             default:
                 return null;
         }

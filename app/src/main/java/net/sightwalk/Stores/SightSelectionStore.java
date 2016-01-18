@@ -1,17 +1,11 @@
 package net.sightwalk.Stores;
 
 import android.content.Context;
-import android.util.Log;
 
 import net.sightwalk.Models.Sight;
 
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Map;
 
-/**
- * Created by Frank on 12/26/2015.
- */
 public class SightSelectionStore extends SightStore {
 
     private static SightSelectionStore sharedInstance;
@@ -20,6 +14,7 @@ public class SightSelectionStore extends SightStore {
         if (!(sharedInstance instanceof SightSelectionStore)) {
             sharedInstance = new SightSelectionStore(client);
         }
+
         SightStore.subscribe(slot, client);
         return sharedInstance;
     }
@@ -72,7 +67,6 @@ public class SightSelectionStore extends SightStore {
     public void setSelected(Sight sight) {
         setSelected(sight, true);
     }
-
 
     private Sight activeSight;
 

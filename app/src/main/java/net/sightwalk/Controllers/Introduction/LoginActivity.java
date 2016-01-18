@@ -16,9 +16,9 @@ import net.sightwalk.Tasks.LoginTask;
 
 public class LoginActivity extends AppCompatActivity {
 
-    EditText usernameField;
-    EditText passwordField;
-    String instanceId;
+    private EditText usernameField;
+    private EditText passwordField;
+    private String instanceId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,7 +44,6 @@ public class LoginActivity extends AppCompatActivity {
 
         switch (id) {
             case android.R.id.home:
-                // app icon in action bar clicked; goto parent activity.
                 this.finish();
                 overridePendingTransition(R.anim.activity_return_in, R.anim.activity_return_out);
                 return true;
@@ -70,18 +69,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void postLogin(){
-        //get message from message box
         String username = usernameField.getText().toString();
         String password = passwordField.getText().toString();
 
-        //check whether the msg empty or not
         if(username.length()>0 && password.length()>0) {
-
             LoginTask loginTask = new LoginTask(getApplicationContext(),username, password, instanceId);
             loginTask.execute();
             finish();
         } else {
-            //display message if text field is empty
             Toast.makeText(getBaseContext(), "Alle velden moeten worden ingevuld!", Toast.LENGTH_SHORT).show();
         }
     }

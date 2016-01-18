@@ -2,13 +2,6 @@ package net.sightwalk.Tasks;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import net.sightwalk.Models.Sight;
-
-import org.json.JSONObject;
-
-/**
- * Created by Frank on 12/27/2015.
- */
 public class SightGeoLoadTask extends AuthenticatedAsyncNetworkTask {
 
     private LatLng location;

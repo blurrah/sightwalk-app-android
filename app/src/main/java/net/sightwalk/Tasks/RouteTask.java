@@ -31,11 +31,11 @@ public class RouteTask extends AsyncTask<String, Void, String> {
     private Polyline line;
     private Legs leg;
 
-    Context context;
-    Activity activity;
+    private Context context;
+    private Activity activity;
 
-    URL url;
-    HttpURLConnection urlConn;
+    private URL url;
+    private HttpURLConnection urlConn;
     private String result = null;
 
     private LatLng origin;

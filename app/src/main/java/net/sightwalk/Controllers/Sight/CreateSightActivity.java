@@ -3,8 +3,6 @@ package net.sightwalk.Controllers.Sight;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -14,7 +12,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.hardware.Camera;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,13 +25,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PermissionInterface;
-import net.sightwalk.Helpers.SightSyncer;
 import net.sightwalk.R;
 import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Stores.SightImageStore;
 import net.sightwalk.Stores.SightStore;
 import net.sightwalk.Tasks.CreateSightTask;
-import net.sightwalk.Tasks.FileUploadTask;
 import net.sightwalk.Tasks.SightImageTask;
 import net.sightwalk.Tasks.TaskInterface;
 
@@ -42,7 +37,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.io.IOException;
 
 public class CreateSightActivity extends PermissionActivity implements GoogleMap.OnMapClickListener, GPSTrackerInterface, OnMapReadyCallback, View.OnClickListener, TaskInterface {
 
@@ -55,12 +49,12 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
 
     private Marker selectedMarker;
     private LatLng selectedLocation;
-    //  private Boolean hasImageChosen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_sight);
+
         bindUIControls();
         enableCamera();
     }
@@ -77,10 +71,12 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
 
     private void openCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = SightImageStore.getSingleInstance(this).getOutputMediaFile("_");
+
             // Continue only if the File was successfully created
             if (photoFile != null) {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -88,9 +84,6 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
-
-//        Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-//        startActivityForResult(intent, 0);
     }
 
     private void bindGoogleMaps() {
@@ -181,6 +174,7 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
 
         String title = etTitle.getText().toString();
         String description = etDescription.getText().toString();
+
         if (title.length() == 0 || description.length() == 0) {
             Toast.makeText(this.getApplicationContext(), "Voer een title en beschrijving in", Toast.LENGTH_SHORT).show();
             return;
@@ -201,8 +195,7 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
         try {
             Integer id = data.getInt("sight_id");
             final Context self = this;
-            //if (hasImageChosen) {
-            // upload the image (move it first)
+
             File file = SightImageStore.getSingleInstance(this).scaleAndCompressImage("_", Integer.toString(id) + "compressed");
             SightImageTask sit = new SightImageTask(this, Integer.toString(id), new TaskInterface() {
                 @Override
@@ -216,7 +209,6 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
                 }
             });
             sit.execute(file);
-            //}
         } catch (JSONException e) {
             Log.d("CreateSightActivity", "malformed onsuccess");
         }

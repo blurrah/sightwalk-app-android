@@ -16,9 +16,6 @@ import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.Models.Sight;
 import net.sightwalk.R;
 import net.sightwalk.Stores.SightSelectionStore;
-import net.sightwalk.Stores.SightsInterface;
-
-import org.w3c.dom.Text;
 
 public class SightActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -30,7 +27,6 @@ public class SightActivity extends AppCompatActivity implements View.OnClickList
     private Button removeFavourite;
 
     private SightSelectionStore selectionStore;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +55,7 @@ public class SightActivity extends AppCompatActivity implements View.OnClickList
         if(selectionStore.isFavourited(sight)){
             addFavourite.setVisibility(View.INVISIBLE);
             removeFavourite.setVisibility(View.VISIBLE);
-        }else{
+        } else {
             addFavourite.setVisibility(View.VISIBLE);
             removeFavourite.setVisibility(View.INVISIBLE);
         }

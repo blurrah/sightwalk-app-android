@@ -27,10 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class WeekFragment extends Fragment {
 
@@ -75,12 +72,8 @@ public class WeekFragment extends Fragment {
     }
 
     private void checkDate(Activities activities) {
-
-        DateTimeFormatter  dtf = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-        //DateTime day = dtf.parseDateTime(activities.getStarttijd());
-        DateTimeFormatter  format = DateTimeFormat.forPattern("dd/MM/yyyy");
-        LocalDate date = dtf.parseLocalDate(activities.getStarttijd());
-
+        DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+        LocalDate date = format.parseLocalDate(activities.getStarttijd());
 
         int week = date.getWeekOfWeekyear();
 

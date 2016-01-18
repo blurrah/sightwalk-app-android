@@ -1,7 +1,6 @@
 package net.sightwalk.Tasks;
 
 import android.os.AsyncTask;
-import android.util.Log;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,10 +15,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-/**
- * Created by Frank on 12/27/2015.
- */
 abstract public class AsyncNetworkTask extends AsyncTask<JSONObject, Void, JSONObject> {
+
     public final static String SERVER = "https://sightwalk.net/";
 
     protected static String METHOD_GET = "GET";
@@ -34,6 +31,7 @@ abstract public class AsyncNetworkTask extends AsyncTask<JSONObject, Void, JSONO
     }
 
     protected void appendOutputStream(OutputStream stream) {
+
     }
 
     private TaskInterface callback;
@@ -58,9 +56,11 @@ abstract public class AsyncNetworkTask extends AsyncTask<JSONObject, Void, JSONO
             URL url = new URL(path);
             String method = getMethod();
             HttpURLConnection connection = openConnection(url, method);
+
             if (!method.equals(METHOD_GET)) {
                 openStream(connection);
             }
+
             data = readInputStreamJSON(connection);
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -80,6 +80,7 @@ abstract public class AsyncNetworkTask extends AsyncTask<JSONObject, Void, JSONO
                 callback.onSuccess(data);
                 return;
             }
+
             errorCode = data.getInt("error");
         } catch (JSONException e) {
             // invalid json
@@ -90,9 +91,11 @@ abstract public class AsyncNetworkTask extends AsyncTask<JSONObject, Void, JSONO
     protected HttpURLConnection openConnection(URL url, String method) throws IOException {
         HttpURLConnection urlConn = (HttpURLConnection) url.openConnection();
         urlConn.setDoInput(true);
+
         if (method.equals(METHOD_POST)) {
             urlConn.setDoOutput(true);
         }
+
         urlConn.setUseCaches(false);
         urlConn.setRequestMethod(method);
         urlConn.setRequestProperty("Content-Type", "application/json");
@@ -114,6 +117,7 @@ abstract public class AsyncNetworkTask extends AsyncTask<JSONObject, Void, JSONO
 
     private void writeParameters(OutputStream stream, String method) throws IOException {
         JSONObject parameters = getParams();
+
         if (!method.equals(METHOD_GET) && parameters.length() > 0) {
             // dont write stream on get connections
             stream.write(parameters.toString().getBytes("UTF-8"));

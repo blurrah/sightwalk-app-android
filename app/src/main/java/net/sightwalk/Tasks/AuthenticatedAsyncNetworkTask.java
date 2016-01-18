@@ -3,15 +3,10 @@ package net.sightwalk.Tasks;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.google.android.gms.auth.api.Auth;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-/**
- * Created by Frank on 12/27/2015.
- */
 abstract public class AuthenticatedAsyncNetworkTask extends AsyncNetworkTask {
 
     private static String AuthenticationToken;
@@ -40,5 +35,4 @@ abstract public class AuthenticatedAsyncNetworkTask extends AsyncNetworkTask {
 
         return connection;
     }
-
 }

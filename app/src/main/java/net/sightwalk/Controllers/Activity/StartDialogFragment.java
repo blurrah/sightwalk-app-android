@@ -25,7 +25,7 @@ public class StartDialogFragment extends DialogFragment implements SightsInterfa
     public static StartDialogFragment newInstance(){
         StartDialogFragment startDialogFragment = new StartDialogFragment();
 
-        return  startDialogFragment;
+        return startDialogFragment;
     }
 
     @Override
@@ -42,10 +42,8 @@ public class StartDialogFragment extends DialogFragment implements SightsInterfa
         builder.setPositiveButton("Route Starten", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
-
-                Intent intent = new Intent(getActivity(), CheckActivity.class);
+                Intent intent = new Intent(getActivity(), WalkActivity.class);
                 startActivity(intent);
-
             }
         });
 

@@ -1,19 +1,13 @@
 package net.sightwalk.Helpers;
 
-import android.Manifest;
-import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
-import java.security.Permission;
 import java.util.ArrayList;
 
-/**
- * Created by Frank on 12/26/2015.
- */
 abstract public class PermissionActivity extends AppCompatActivity {
+
     private static final int PERMISSION_GPS_FINE = 1;
     private static final int PERMISSION_GPS_COARSE = 2;
 
@@ -79,5 +73,4 @@ abstract public class PermissionActivity extends AppCompatActivity {
             transaction.denied(permissions);
         }
     }
-
 }
