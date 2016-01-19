@@ -11,8 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import net.sightwalk.Models.Sight;
+import net.sightwalk.Models.Steps;
 import net.sightwalk.R;
+import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Stores.SightsInterface;
+
+import java.util.ArrayList;
 
 public class StartDialogFragment extends DialogFragment implements SightsInterface, DialogInterface.OnClickListener {
 
@@ -50,12 +54,27 @@ public class StartDialogFragment extends DialogFragment implements SightsInterfa
         builder.setNegativeButton("Annuleren", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int id) {
+                clearDataRouteActivity();
+
                 dismiss();
             }
         });
 
         return builder.create();
     }
+
+    public void clearDataRouteActivity(){
+        Steps.getInstance().stepsArrayList = new ArrayList<>();
+
+        SightSelectionStore.getSharedInstance("WalkActivity", this).clearSelection();
+
+    }
+
+    @Override
+    public void onCancel(DialogInterface dialog) {
+        clearDataRouteActivity();
+    }
+
 
     @Override
     public void addedSight(Sight sight) {
