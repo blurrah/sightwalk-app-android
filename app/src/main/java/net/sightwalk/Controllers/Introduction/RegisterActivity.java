@@ -116,7 +116,5 @@ public class RegisterActivity extends AppCompatActivity implements Validator.Val
                 instanceId);
 
         registerTask.execute();
-
-        finish();
     }
 }
