@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewConfiguration;
 
 import net.sightwalk.Controllers.SettingsActivity;
 import net.sightwalk.Controllers.Sight.CreateSightActivity;
@@ -16,6 +17,7 @@ import net.sightwalk.Helpers.PagerAdapter;
 import net.sightwalk.R;
 import net.sightwalk.Tasks.AlarmReceiver;
 
+import java.lang.reflect.Field;
 import java.util.Calendar;
 
 public class DashboardActivity extends AppCompatActivity {
@@ -46,6 +48,17 @@ public class DashboardActivity extends AppCompatActivity {
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.setOnTabSelectedListener(new tabListener());
+
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if(menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception ex) {
+            // Ignore
+        }
     }
 
     @Override
