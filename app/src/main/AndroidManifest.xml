@@ -78,16 +78,16 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <!-- Android Release Key
+        <!-- Android Release Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyAiKKjzTJeuvWz6n8vC3vKGp3Wr36W6DU4" />
-        -->
 
-        <!-- Android Debug Key -->
+        <!-- Android Debug Key
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="AIzaSyBlNmn10oMnI22BAUUopRSiZ6kjZbckcLQ" />
+        -->
 
     </application>
 

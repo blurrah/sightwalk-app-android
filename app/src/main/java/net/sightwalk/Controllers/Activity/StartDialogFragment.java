@@ -34,7 +34,6 @@ public class StartDialogFragment extends DialogFragment implements SightsInterfa
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         final View view = inflater.inflate(R.layout.fragment_startroute_dialog, null);
@@ -65,9 +64,7 @@ public class StartDialogFragment extends DialogFragment implements SightsInterfa
 
     public void clearDataRouteActivity(){
         Steps.getInstance().stepsArrayList = new ArrayList<>();
-
         SightSelectionStore.getSharedInstance("WalkActivity", this).clearSelection();
-
     }
 
     @Override
