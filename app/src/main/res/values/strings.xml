@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Sightwalk</string>
+    <string name="action_settings">Instellingen</string>
+    <string name="action_report_sight">Sight toevoegen</string>
+    <string name="permissions_request_gps">We want to collect sights which might be interesting for you. Therefore we need your current location.</string>
+    <string name="tutorial_skip">Overslaan</string>
+</resources>

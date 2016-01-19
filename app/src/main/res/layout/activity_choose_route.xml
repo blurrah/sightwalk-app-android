@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="net.sightwalk.Controllers.Route.ChooseRouteActivity">
+
+    <fragment
+        android:layout_width="fill_parent"
+        android:layout_height="300dp"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:id="@+id/chooseMapView"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAddSight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_above="@+id/fragment_sight"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-28dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_add_white_24dp"
+        style="@style/Widget.Design.FloatingActionButton"
+        android:adjustViewBounds="false"
+        app:backgroundTint="@color/colorPrimary"
+        android:visibility="invisible" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabRemoveSight"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_above="@+id/fragment_sight"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginBottom="-28dp"
+        android:layout_marginRight="16dp"
+        android:src="@drawable/ic_clear_white_24dp"
+        style="@style/Widget.Design.FloatingActionButton"
+        android:adjustViewBounds="false"
+        app:backgroundTint="#ff151b"
+        android:visibility="invisible" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabRemoveFavourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_above="@+id/fragment_sight"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="false"
+        android:layout_marginBottom="-28dp"
+        android:src="@drawable/ic_star_white_18dp"
+        style="@style/Widget.Design.FloatingActionButton"
+        android:adjustViewBounds="false"
+        app:backgroundTint="#fed813"
+        android:visibility="invisible"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAddFavourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_above="@+id/fragment_sight"
+        android:layout_alignParentRight="false"
+        android:layout_alignParentEnd="false"
+        android:layout_marginBottom="-28dp"
+        android:src="@drawable/ic_star_border_white_18dp"
+        style="@style/Widget.Design.FloatingActionButton"
+        android:adjustViewBounds="false"
+        app:backgroundTint="#fed813"
+        android:visibility="invisible"
+        android:layout_marginLeft="16dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <fragment
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:name="net.sightwalk.Controllers.Route.SightDialogFragment"
+        android:id="@+id/fragment_sight"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>
