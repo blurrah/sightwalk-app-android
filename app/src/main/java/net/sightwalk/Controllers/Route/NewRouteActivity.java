@@ -44,6 +44,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     private ArrayList<Sight> selectedSights;
     private SightSelectionStore sightStore;
     private Switch startSight;
+    private Sight tempStartLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,10 +159,8 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     public void onBackPressed(){
         Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
 
-        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("newRouteActivity", this).getSelectedSights();
-        for(Sight sight : sights){
-            SightSelectionStore.getSharedInstance("newRouteActivity", this).triggerRemoveSight(sight);
-        }
+
+        SightSelectionStore.getSharedInstance("newRouteActivity", this).clearSelection();
 
         this.finish();
     }

@@ -152,8 +152,7 @@ public class WalkActivity extends PermissionActivity implements SightsInterface,
     public void clearDataRouteActivity(){
         Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
 
-        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("WalkActivity", this).getSelectedSights();
-        sights.clear();
+        SightSelectionStore.getSharedInstance("WalkActivity", this).clearSelection();
 
         this.finish();
     }

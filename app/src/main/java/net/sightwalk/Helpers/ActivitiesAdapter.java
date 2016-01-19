@@ -10,6 +10,12 @@ import android.widget.TextView;
 
 import net.sightwalk.R;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ActivitiesAdapter extends CursorAdapter {
@@ -37,10 +43,10 @@ public class ActivitiesAdapter extends CursorAdapter {
         String outputName = cursor.getString(cursor.getColumnIndex("name"));
         String outputDistance = distanceConverter(cursor.getInt(cursor.getColumnIndex("distance")));
 
-        Date startTime = formatDateString(cursor.getString(cursor.getColumnIndex("startTime")));
-        Date endTime = formatDateString(cursor.getString(cursor.getColumnIndex("endTime")));
+        String startTime = formatDateString(cursor.getString(cursor.getColumnIndex("startTime")));
+        //Date endTime = formatDateString(cursor.getString(cursor.getColumnIndex("endTime")));
 
-        String outputTime = elapsedTime(startTime, endTime);
+        String outputTime = ", gelopen op "+startTime;
 
         activityName.setText(outputName);
         activityDistance.setText(outputDistance);
@@ -51,16 +57,26 @@ public class ActivitiesAdapter extends CursorAdapter {
         String outputString;
 
         if(distance > 1000){
-            outputString = distance / 1000 + " km";
+            outputString = distance / 1000 + "km";
         }else {
-            outputString = distance + " m";
+            outputString = distance + "m";
         }
 
         return "Afstand: " + outputString;
     }
 
-    private Date formatDateString(String timeString){
-        return new Date();
+    private String formatDateString(String timeString){
+
+        String dateTime = timeString;
+
+        DateTimeFormatter dtf = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+
+        DateTime jodatime = dtf.parseDateTime(dateTime);
+
+        DateTimeFormatter dtfOut = DateTimeFormat.forPattern("dd/MM/yyyy");
+
+
+        return dtfOut.print(jodatime);
     }
 
     private String elapsedTime(Date startDate, Date endDate){

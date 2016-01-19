@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 
 public class RouteTask extends AsyncTask<String, Void, String> {
 
@@ -52,6 +53,8 @@ public class RouteTask extends AsyncTask<String, Void, String> {
         this.language = language;
         this.context = context;
         this.activity = activity;
+
+        step.stepsArrayList = new ArrayList<>();
     }
 
     @Override

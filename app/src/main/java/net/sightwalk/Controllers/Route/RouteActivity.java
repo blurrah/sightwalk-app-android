@@ -156,8 +156,7 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         gpsTracker.stopUsingGPS();
         Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
 
-        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("RouteActivity", this).getSelectedSights();
-        sights.clear();
+        SightSelectionStore.getSharedInstance("RouteActivity", this).clearSelection();
 
         this.finish();
     }
