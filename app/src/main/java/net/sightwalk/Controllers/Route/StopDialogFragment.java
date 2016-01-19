@@ -17,7 +17,7 @@ import net.sightwalk.Stores.SightsInterface;
 
 import java.util.ArrayList;
 
-public class StopDialogFragment extends DialogFragment implements SightsInterface, DialogInterface.OnClickListener {
+public class StopDialogFragment extends DialogFragment implements DialogInterface.OnClickListener, SightsInterface {
 
     StopDialogFragment dialogFragment;
 
@@ -40,8 +40,7 @@ public class StopDialogFragment extends DialogFragment implements SightsInterfac
             public void onClick(DialogInterface dialog, int id) {
                 Steps.getInstance().stepsArrayList = new ArrayList<>();
 
-                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("WalkActivity", dialogFragment).getSelectedSights();
-                sights.clear();
+                SightSelectionStore.getSharedInstance(getActivity()).clearSelection();
 
                 getActivity().finish();
             }

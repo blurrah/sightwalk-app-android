@@ -44,7 +44,7 @@
         android:layout_below="@+id/chooseRouteButton"
         android:padding="16dp"
         android:textColor="@color/colorPrimary"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <RelativeLayout
         android:layout_width="match_parent"
