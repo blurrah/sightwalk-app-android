@@ -48,7 +48,11 @@ public class Sight {
     }
 
     public boolean isInRange(LatLng to, double range) {
-        return GeoDistanceCalculator.distance(getCoordinates(), to) <= range;
+        return distanceTo(to) <= range;
+    }
+
+    public double distanceTo(LatLng to) {
+        return GeoDistanceCalculator.distance(getCoordinates(), to);
     }
 
     public boolean equals(Sight sight) {
