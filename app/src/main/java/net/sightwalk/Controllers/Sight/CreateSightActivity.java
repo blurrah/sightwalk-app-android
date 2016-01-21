@@ -50,6 +50,8 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
     private Marker selectedMarker;
     private LatLng selectedLocation;
 
+    private Boolean withPhoto;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +59,16 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
 
         bindUIControls();
         enableCamera();
+
+        withPhoto = false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            // we've captured an image!
+            withPhoto = true;
+        }
     }
 
     private void bindUIControls() {
@@ -191,6 +203,12 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
     @Override
     public void onSuccess(JSONObject data) {
         Toast.makeText(this.getApplicationContext(), "Sight is toegevoegd", Toast.LENGTH_SHORT).show();
+
+        if (!withPhoto) {
+            // no photo selected, just return
+            this.finish();
+            return;
+        }
 
         try {
             Integer id = data.getInt("sight_id");

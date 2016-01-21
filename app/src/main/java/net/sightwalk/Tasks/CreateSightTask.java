@@ -20,9 +20,9 @@ public class CreateSightTask extends AuthenticatedAsyncNetworkTask {
         params.put("name", title);
         params.put("type", type);
         params.put("short_description", description.substring(0, description.length() > 100 ? 100 : description.length()));
-        params.put("image_url", "https://pbs.twimg.com/profile_images/588458393444167680/jqP97Xwo.jpg");
+        params.put("image_url", "-");
         params.put("description", description);
-        params.put("external_photo", "https://pbs.twimg.com/profile_images/588458393444167680/jqP97Xwo.jpg");
+        params.put("external_photo", "-");
     }
 
     @Override
