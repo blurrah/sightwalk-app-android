@@ -171,7 +171,7 @@ public class SightStore implements SightSyncerInterface {
             SightsInterface client = (SightsInterface) pair.getValue();
             client.updatedSight(oldSight, newSight);
         }
-        
+
         oldSight.commit(newSight);
     }
 
