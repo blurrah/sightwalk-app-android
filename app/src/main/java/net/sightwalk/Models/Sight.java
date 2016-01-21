@@ -76,4 +76,20 @@ public class Sight {
         image = sight.image;
         shortdesc = sight.shortdesc;
     }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject params = new JSONObject();
+
+        params.put("longitude", longitude);
+        params.put("latitude", latitude);
+        params.put("precision", 1);
+        params.put("name", title);
+        params.put("type", type);
+        params.put("short_description", text.substring(0, text.length() > 100 ? 100 : text.length()));
+        params.put("image_url", image);
+        params.put("description", text);
+        params.put("external_photo", image);
+
+        return params;
+    }
 }

@@ -34,7 +34,7 @@ abstract public class AsyncNetworkTask extends AsyncTask<JSONObject, Void, JSONO
 
     }
 
-    private TaskInterface callback;
+    private final TaskInterface callback;
 
     HttpURLConnection urlConn;
     private String result = null;
