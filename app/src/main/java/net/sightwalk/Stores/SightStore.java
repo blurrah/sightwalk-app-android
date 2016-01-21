@@ -137,8 +137,6 @@ public class SightStore implements SightSyncerInterface {
         sights.add(sight);
         db.createSight(sight);
 
-        Log.d("SightStore", "trigger add");
-
         // communicate clients
         Iterator it = clients.entrySet().iterator();
         while (it.hasNext()) {
@@ -150,8 +148,6 @@ public class SightStore implements SightSyncerInterface {
 
     @Override
     public void triggerRemoveSight(Sight sight) {
-        Log.d("SightStore", "trigger remove");
-
         // communicate clients
         Iterator it = clients.entrySet().iterator();
         while (it.hasNext()) {
@@ -175,8 +171,6 @@ public class SightStore implements SightSyncerInterface {
             SightsInterface client = (SightsInterface) pair.getValue();
             client.updatedSight(oldSight, newSight);
         }
-
-        Log.d("SightStore", "trigger update");
 
         oldSight.commit(newSight);
     }

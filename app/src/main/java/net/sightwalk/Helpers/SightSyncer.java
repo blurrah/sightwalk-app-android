@@ -109,19 +109,20 @@ public class SightSyncer implements TaskInterface {
         HashMap<Sight, Sight> toUpdate = new HashMap<>();
 
         for (Sight currentSight : store.getAll()) {
-            if (currentSight.isInRange(lastSyncLocation, syncDistance)) {
-                if (!sights.containsKey(currentSight.id)) {
-                    // removed sight
-                    toRemove.add(currentSight);
-                    continue;
-                }
+            Boolean inRange = currentSight.isInRange(lastSyncLocation, syncDistance);
 
-                Sight newSight = sights.get(currentSight.id);
-                sights.remove(currentSight.id);
+            // only remove the sight if it is in sync range
+            if (inRange && !sights.containsKey(currentSight.id)) {
+                // removed sight
+                toRemove.add(currentSight);
+                continue;
+            }
 
-                if (!currentSight.equals(newSight)) {
-                    toUpdate.put(currentSight, newSight);
-                }
+            Sight newSight = sights.get(currentSight.id);
+            sights.remove(currentSight.id);
+
+            if (!currentSight.equals(newSight)) {
+                toUpdate.put(currentSight, newSight);
             }
         }
 
@@ -129,7 +130,7 @@ public class SightSyncer implements TaskInterface {
             store.triggerRemoveSight(remove);
         }
 
-        if(sights.size() > 0) {
+        if (sights.size() > 0) {
             // new sights found
             Toast.makeText(baseContext, "Nieuwe Sights beschikbaar", Toast.LENGTH_LONG).show();
         }

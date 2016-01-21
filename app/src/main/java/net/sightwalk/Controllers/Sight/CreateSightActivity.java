@@ -25,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.GPSTrackerInterface;
 import net.sightwalk.Helpers.PermissionInterface;
+import net.sightwalk.Models.Sight;
 import net.sightwalk.R;
 import net.sightwalk.Helpers.PermissionActivity;
 import net.sightwalk.Stores.SightImageStore;
@@ -50,6 +51,10 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
     private Marker selectedMarker;
     private LatLng selectedLocation;
 
+    private Boolean withPhoto;
+
+    private Sight newSight;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +62,17 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
 
         bindUIControls();
         enableCamera();
+
+        withPhoto = false;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            // we've captured an image!
+            withPhoto = true;
+        }
+        enableGPSTracking();
     }
 
     private void bindUIControls() {
@@ -174,6 +190,7 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
 
         String title = etTitle.getText().toString();
         String description = etDescription.getText().toString();
+        String shortDescription = description.substring(0, description.length() > 100 ? 100 : description.length());
 
         if (title.length() == 0 || description.length() == 0) {
             Toast.makeText(this.getApplicationContext(), "Voer een title en beschrijving in", Toast.LENGTH_SHORT).show();
@@ -181,7 +198,11 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
         }
 
         try {
-            CreateSightTask task = new CreateSightTask(selectedLocation, title, "monument", description, this);
+            // create the new sight
+            newSight = new Sight(0, "monument", selectedLocation.latitude, selectedLocation.longitude, title, title, description, "-", shortDescription);
+
+
+            CreateSightTask task = new CreateSightTask(newSight, this);
             task.execute();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -194,13 +215,24 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
 
         try {
             Integer id = data.getInt("sight_id");
+            newSight.id = id;
+            SightStore.getSharedInstance(this).triggerAddSight(newSight);
+
+            if (!withPhoto) {
+                // no photo selected, just return
+                SightStore.getSharedInstance(this).sync(this);
+                this.finish();
+                return;
+            }
+
             final Context self = this;
 
             File file = SightImageStore.getSingleInstance(this).scaleAndCompressImage("_", Integer.toString(id) + "compressed");
             SightImageTask sit = new SightImageTask(this, Integer.toString(id), new TaskInterface() {
                 @Override
                 public void onSuccess(JSONObject data) {
-                    SightStore.getSharedInstance(self).sync(self);
+                    newSight.image = "https://sightwalk.net/sight/" + newSight.id + "/photo";
+                    SightStore.getSharedInstance(self).triggerUpdateSight(newSight, newSight);
                 }
 
                 @Override

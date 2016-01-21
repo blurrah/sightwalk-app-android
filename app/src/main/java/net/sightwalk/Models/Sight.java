@@ -48,7 +48,11 @@ public class Sight {
     }
 
     public boolean isInRange(LatLng to, double range) {
-        return GeoDistanceCalculator.distance(getCoordinates(), to) <= range;
+        return distanceTo(to) <= range;
+    }
+
+    public double distanceTo(LatLng to) {
+        return GeoDistanceCalculator.distance(getCoordinates(), to);
     }
 
     public boolean equals(Sight sight) {
@@ -71,5 +75,21 @@ public class Sight {
         text = sight.text;
         image = sight.image;
         shortdesc = sight.shortdesc;
+    }
+
+    public JSONObject toJSON() throws JSONException {
+        JSONObject params = new JSONObject();
+
+        params.put("longitude", longitude);
+        params.put("latitude", latitude);
+        params.put("precision", 1);
+        params.put("name", title);
+        params.put("type", type);
+        params.put("short_description", text.substring(0, text.length() > 100 ? 100 : text.length()));
+        params.put("image_url", image);
+        params.put("description", text);
+        params.put("external_photo", image);
+
+        return params;
     }
 }
