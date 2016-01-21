@@ -49,7 +49,7 @@ public class SightDialogFragment extends Fragment {
         sightTitle.setText(sight.name);
         sightDesc.setText(sight.shortdesc);
 
-        if (sight.image.length() > 1) {
+        if (sight.image != null && sight.image.length() > 1) {
             Picasso.with(getContext()).load(sight.image).into(sightImg);
         } else {
             sightImg.setImageResource(R.drawable.tut1);
