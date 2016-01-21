@@ -3,7 +3,6 @@ package net.sightwalk.Stores;
 import android.content.Context;
 import android.database.Cursor;
 import android.location.Location;
-import android.util.Log;
 
 import net.sightwalk.Helpers.GPSTracker;
 import net.sightwalk.Helpers.SightSyncer;

@@ -45,7 +45,14 @@ public class SightActivity extends AppCompatActivity implements View.OnClickList
 
         sightTitleTextView.setText(sight.title);
         sightDescriptionTextView.setText(sight.text);
-        Picasso.with(getApplicationContext()).load(sight.image).into(sightImageView);
+
+        if (sight.image != null && sight.image.length() > 1) {
+            Picasso.with(getApplicationContext()).load(sight.image).into(sightImageView);
+        } else {
+            sightImageView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            sightImageView.setImageResource(R.drawable.tut1);
+            sightImageView.setPadding(40,40,40,40);
+        }
 
         addFavourite = (Button) findViewById(R.id.addFavouriteBtn);
         removeFavourite = (Button) findViewById(R.id.removeFavouriteBtn);

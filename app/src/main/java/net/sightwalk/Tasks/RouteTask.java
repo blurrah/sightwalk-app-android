@@ -1,10 +1,8 @@
 package net.sightwalk.Tasks;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -12,7 +10,6 @@ import net.sightwalk.Controllers.Route.NewRouteActivity;
 import net.sightwalk.Models.Legs;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.Models.Steps;
-import net.sightwalk.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -182,10 +179,7 @@ public class RouteTask extends AsyncTask<String, Void, String> {
                         step.stepsArrayList.add(step);
                     }
                 }
-
                 activity.onRouteCalculated(routedis, routedur);
-
-
             }
         } catch (JSONException ex) {
             Log.e("ERROR_", ex.getLocalizedMessage());

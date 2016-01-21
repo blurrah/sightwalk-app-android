@@ -43,7 +43,7 @@ public class ActivitiesAdapter extends CursorAdapter {
 
         String startTime = formatDateString(cursor.getString(cursor.getColumnIndex("startTime")));
 
-        String outputTime = ", gelopen op "+startTime;
+        String outputTime = "| Gelopen op: "+startTime;
 
         activityName.setText(outputName);
         activityDistance.setText(outputDistance);

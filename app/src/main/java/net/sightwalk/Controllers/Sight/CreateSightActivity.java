@@ -201,7 +201,6 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
             // create the new sight
             newSight = new Sight(0, "monument", selectedLocation.latitude, selectedLocation.longitude, title, title, description, "-", shortDescription);
 
-
             CreateSightTask task = new CreateSightTask(newSight, this);
             task.execute();
         } catch (JSONException e) {

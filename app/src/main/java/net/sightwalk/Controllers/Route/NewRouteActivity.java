@@ -180,7 +180,6 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     public void onBackPressed() {
         Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
 
-
         SightSelectionStore.getSharedInstance("newRouteActivity", this).clearSelection();
 
         this.finish();

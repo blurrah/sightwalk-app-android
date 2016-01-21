@@ -2,7 +2,6 @@ package net.sightwalk.Helpers;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import net.sightwalk.R;
 
 public class FavouritesAdapter extends CursorAdapter {
 
-    private Bitmap bitmap;
     private TextView favName;
     private TextView favDescription;
     private ImageView favImage;
@@ -33,7 +31,6 @@ public class FavouritesAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-
         favName = (TextView) view.findViewById(R.id.favouriteText);
         favDescription = (TextView) view.findViewById(R.id.favouriteDesc);
         favImage = (ImageView) view.findViewById(R.id.favouriteImage);
@@ -43,6 +40,13 @@ public class FavouritesAdapter extends CursorAdapter {
 
         favName.setText(outputName);
         favDescription.setText(outputDescription);
-        Picasso.with(context).load(cursor.getString(cursor.getColumnIndex("imgurl"))).into(favImage);
+
+        String image = cursor.getString(cursor.getColumnIndex("imgurl"));
+
+        if (image != null && image.length() > 1) {
+            Picasso.with(context).load(image).into(favImage);
+        } else {
+            favImage.setImageResource(R.drawable.ic_launcher);
+        }
     }
 }
