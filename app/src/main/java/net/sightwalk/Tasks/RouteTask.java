@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import net.sightwalk.Controllers.Route.NewRouteActivity;
 import net.sightwalk.Models.Legs;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.Models.Steps;
@@ -33,7 +34,7 @@ public class RouteTask extends AsyncTask<String, Void, String> {
     private Legs leg;
 
     private Context context;
-    private Activity activity;
+    private NewRouteActivity activity;
 
     private URL url;
     private HttpURLConnection urlConn;
@@ -45,7 +46,7 @@ public class RouteTask extends AsyncTask<String, Void, String> {
     private String mode;
     private String language;
 
-    public RouteTask(LatLng origin, String destination, String waypoints, String mode, String language, Context context, Activity activity) {
+    public RouteTask(LatLng origin, String destination, String waypoints, String mode, String language, Context context, NewRouteActivity activity) {
         this.origin = origin;
         this.destination = destination;
         this.waypoints = waypoints;
@@ -182,13 +183,9 @@ public class RouteTask extends AsyncTask<String, Void, String> {
                     }
                 }
 
-                int minutes = routedur /60 % 60;
-                int hours = routedur / 60 / 60;
+                activity.onRouteCalculated(routedis, routedur);
 
-                if(activity.findViewById(R.id.TATextView) != null) {
-                    TextView textView = (TextView) activity.findViewById(R.id.TATextView);
-                    textView.setText("Afstand: " + routedis / 1000 + " km" + " | Duur: " + hours + " uur " + minutes + " min.");
-                }
+
             }
         } catch (JSONException ex) {
             Log.e("ERROR_", ex.getLocalizedMessage());
