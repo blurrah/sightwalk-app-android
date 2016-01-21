@@ -52,7 +52,7 @@ public class SightDialogFragment extends Fragment {
         if (sight.image != null && sight.image.length() > 1) {
             Picasso.with(getContext()).load(sight.image).into(sightImg);
         } else {
-            sightImg.setImageResource(R.drawable.tut1);
+            sightImg.setImageResource(R.drawable.ic_launcher);
         }
     }
 }
