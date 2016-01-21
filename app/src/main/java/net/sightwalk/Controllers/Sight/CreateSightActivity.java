@@ -72,6 +72,7 @@ public class CreateSightActivity extends PermissionActivity implements GoogleMap
             // we've captured an image!
             withPhoto = true;
         }
+        enableGPSTracking();
     }
 
     private void bindUIControls() {
