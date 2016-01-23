@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,12 +39,15 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     private long lastGPSTime = 0;
     private Button routeButton;
     private TextView amountSights;
+    private TextView TATextView;
     private Button cButton;
     private ListViewDraggingAnimation lvdaSights;
     private GPSTracker gpsTracker;
     private ArrayList<Sight> selectedSights;
     private SightSelectionStore sightStore;
     private Switch startSight;
+    private Sight tempStartLocation;
+    private Boolean routeReady;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +59,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         amountSights = (TextView) findViewById(R.id.tvAmountSights);
         cButton = (Button) findViewById(R.id.chooseRouteButton);
         startSight = (Switch) findViewById(R.id.startSight);
+        TATextView = (TextView) findViewById(R.id.TATextView);
 
         FragmentManager fm = getSupportFragmentManager();
         lvdaSights = (ListViewDraggingAnimation) fm.findFragmentById(R.id.article_fragment);
@@ -74,6 +79,8 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
                 updateDistance();
             }
         });
+
+        routeReady = false;
     }
 
     @Override
@@ -89,7 +96,7 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     public void onResume() {
         super.onResume();
 
-        if(gpsTracker != null) {
+        if (gpsTracker != null) {
             gpsTracker.resumeUsingGPS();
         }
 
@@ -99,21 +106,37 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     public void updateDistance() {
         amountSights.setText("Totaal " + selectedSights.size() + " sights");
 
-        if (selectedSights.size() == 0) {
-            routeButton.setEnabled(false);
-            routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
-        } else if(startSight.isChecked() && selectedSights.size() < 2){
-            routeButton.setEnabled(false);
-            routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
-        } else {
-            routeButton.setEnabled(true);
-            routeButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        updateStartButton();
 
+        if (canCalculateRoute()) {
             createRoute();
         }
     }
 
+    private void updateStartButton() {
+        if (canStartRoute()) {
+            routeButton.setEnabled(true);
+            routeButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        } else {
+            routeButton.setEnabled(false);
+            routeButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorDisabled));
+        }
+    }
+
+    private Boolean canStartRoute() {
+        return canCalculateRoute() // the ability to calculate the route is required
+                && routeReady; // route should be calculated
+    }
+
+    private Boolean canCalculateRoute() {
+        return selectedSights.size() > 0 // more than zero sights are required
+                && (startSight.isChecked() ? selectedSights.size() > 1 : true); // if startSight is checked, more than one sight is required
+    }
+
     public void createRoute() {
+        routeReady = false;
+        updateStartButton();
+        
         LatLng startPosition = getStartPosition();
         LatLng endPosition = getEndPosition();
 
@@ -155,13 +178,10 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
         Steps.getInstance().stepsArrayList = new ArrayList<Steps>();
 
-        ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("newRouteActivity", this).getSelectedSights();
-        for(Sight sight : sights){
-            SightSelectionStore.getSharedInstance("newRouteActivity", this).triggerRemoveSight(sight);
-        }
+        SightSelectionStore.getSharedInstance("newRouteActivity", this).clearSelection();
 
         this.finish();
     }
@@ -215,9 +235,8 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     }
 
     private LatLng getStartPosition() {
-
-        if(startSight.isChecked()){
-            if(selectedSights.size() > 1){
+        if (startSight.isChecked()) {
+            if (selectedSights.size() > 1) {
                 return new LatLng(selectedSights.get(0).latitude, selectedSights.get(0).longitude);
             }
         } else {
@@ -247,27 +266,26 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     private class chooseListener implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
-
             Intent i = new Intent(getApplicationContext(), ChooseRouteActivity.class);
             startActivity(i);
         }
     }
 
-    public void showFinishDialog(){
+    public void showFinishDialog() {
         android.app.FragmentManager fm = getFragmentManager();
         NameRouteDialogFragment dialogFragment = new NameRouteDialogFragment();
         dialogFragment.show(fm, "Sample Fragment");
     }
 
-    public void saveRoute(String routeName){
+    public void saveRoute(String routeName) {
         Intent i = new Intent(getApplicationContext(), RouteActivity.class);
 
-        i.putExtra("FINISH_SIGHT",checkBox.isChecked());
+        i.putExtra("FINISH_SIGHT", checkBox.isChecked());
         i.putExtra("START_SIGHT", startSight.isChecked());
 
         startActivity(i);
 
-        Integer distance =  Legs.getInstance().distance;
+        Integer distance = Legs.getInstance().distance;
         Date timeStart = new Date();
         Date timeEnd = new Date();
         String routejson = Legs.getInstance().routeJson;
@@ -277,5 +295,15 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
         RouteStore routeStore = RouteStore.getSharedInstance(getApplicationContext());
         routeStore.addRoute(route);
         this.finish();
+    }
+
+    public void onRouteCalculated(int distance, int duration) {
+        routeReady = true;
+        updateStartButton();
+
+        int minutes = duration / 60 % 60;
+        int hours = duration / 60 / 60;
+
+        TATextView.setText("Afstand: " + distance / 1000 + " km" + " | Duur: " + hours + " uur " + minutes + " min.");
     }
 }

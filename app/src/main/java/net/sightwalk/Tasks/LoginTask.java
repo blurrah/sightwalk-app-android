@@ -1,5 +1,6 @@
 package net.sightwalk.Tasks;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -103,7 +104,7 @@ public class LoginTask extends AsyncTask<String, Void, String> {
                     editor.commit();
 
                     Intent i = new Intent(appContext, DashboardActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                     appContext.startActivity(i);
                 } else {
                     int errorCode = jsonObject.getInt("error");

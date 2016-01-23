@@ -76,8 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(getApplicationContext(), RegisterActivity.class);
                 startActivity(i);
 
-                finish();
-
                 overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
             }
             else {
@@ -92,8 +90,6 @@ public class MainActivity extends AppCompatActivity {
             if (internet) {
                 Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                 startActivity(i);
-
-                finish();
 
                 overridePendingTransition(R.anim.activity_slide_in, R.anim.activity_slide_out);
             }

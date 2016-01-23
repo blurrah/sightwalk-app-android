@@ -72,27 +72,26 @@ public class WeekFragment extends Fragment {
     }
 
     private void checkDate(Activities activities) {
-        DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-        LocalDate date = format.parseLocalDate(activities.getStarttijd());
+        if(!activities.getStarttijd().equals(activities.eindtijd)) {
+            DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDate date = format.parseLocalDate(activities.getStarttijd());
 
-        int week = date.getWeekOfWeekyear();
+            int week = date.getWeekOfWeekyear();
 
-        int dateOne = DateTime.now().getWeekOfWeekyear();
-        int dateTwo = DateTime.now().minusMonths(1).getWeekOfWeekyear();
-        int dateThree = DateTime.now().minusMonths(2).getWeekOfWeekyear();
-        int dateFour = DateTime.now().minusMonths(3).getWeekOfWeekyear();
+            int dateOne = DateTime.now().getWeekOfWeekyear();
+            int dateTwo = DateTime.now().minusMonths(1).getWeekOfWeekyear();
+            int dateThree = DateTime.now().minusMonths(2).getWeekOfWeekyear();
+            int dateFour = DateTime.now().minusMonths(3).getWeekOfWeekyear();
 
-        if(week == dateOne) {
-            valueOne.add(getDistance(activities.getJson()));
-        }
-        else if(week == dateTwo) {
-            valueTwo.add(getDistance(activities.getJson()));
-        }
-        else if(week == dateThree) {
-            valueThree.add(getDistance(activities.getJson()));
-        }
-        else if(week == dateFour) {
-            valueFour.add(getDistance(activities.getJson()));
+            if (week == dateOne) {
+                valueOne.add(getDistance(activities.getJson()));
+            } else if (week == dateTwo) {
+                valueTwo.add(getDistance(activities.getJson()));
+            } else if (week == dateThree) {
+                valueThree.add(getDistance(activities.getJson()));
+            } else if (week == dateFour) {
+                valueFour.add(getDistance(activities.getJson()));
+            }
         }
     }
 

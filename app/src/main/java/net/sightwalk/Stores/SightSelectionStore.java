@@ -77,4 +77,8 @@ public class SightSelectionStore extends SightStore {
     public Sight getActiveSight(){
         return activeSight;
     }
+
+    public void clearSelection(){
+        selected = new ArrayList<>();
+    }
 }

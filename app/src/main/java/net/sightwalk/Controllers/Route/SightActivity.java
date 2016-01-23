@@ -2,6 +2,7 @@ package net.sightwalk.Controllers.Route;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -45,7 +46,14 @@ public class SightActivity extends AppCompatActivity implements View.OnClickList
 
         sightTitleTextView.setText(sight.title);
         sightDescriptionTextView.setText(sight.text);
-        Picasso.with(getApplicationContext()).load(sight.image).into(sightImageView);
+
+        if (sight.image != null && sight.image.length() > 1) {
+            Picasso.with(getApplicationContext()).load(sight.image).into(sightImageView);
+        } else {
+            sightImageView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+            sightImageView.setImageResource(R.drawable.tut1);
+            sightImageView.setPadding(40,40,40,40);
+        }
 
         addFavourite = (Button) findViewById(R.id.addFavouriteBtn);
         removeFavourite = (Button) findViewById(R.id.removeFavouriteBtn);

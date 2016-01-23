@@ -75,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
         if(username.length()>0 && password.length()>0) {
             LoginTask loginTask = new LoginTask(getApplicationContext(),username, password, instanceId);
             loginTask.execute();
-            finish();
         } else {
             Toast.makeText(getBaseContext(), "Alle velden moeten worden ingevuld!", Toast.LENGTH_SHORT).show();
         }

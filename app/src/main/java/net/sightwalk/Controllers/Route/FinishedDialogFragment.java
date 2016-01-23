@@ -22,7 +22,6 @@ import java.util.Date;
 
 public class FinishedDialogFragment extends DialogFragment implements SightsInterface {
 
-    RouteActivity activity;
     FinishedDialogFragment dialogFragment;
 
     public FinishedDialogFragment(){
@@ -40,10 +39,9 @@ public class FinishedDialogFragment extends DialogFragment implements SightsInte
 
         Integer distance =  Legs.getInstance().distance;
         String a = distanceConverter(distance);
-        String b = elapsedTime(activity.startTime, activity.endTime);
 
         TextView routeStats = (TextView) view.findViewById(R.id.routeStats);
-        routeStats.setText(a + b);
+        routeStats.setText(a);
 
         builder.setPositiveButton("Route sluiten", new DialogInterface.OnClickListener() {
             @Override
@@ -51,8 +49,7 @@ public class FinishedDialogFragment extends DialogFragment implements SightsInte
 
                 Steps.getInstance().stepsArrayList = new ArrayList<>();
 
-                ArrayList<Sight> sights = SightSelectionStore.getSharedInstance("WalkActivity", dialogFragment).getSelectedSights();
-                sights.clear();
+                SightSelectionStore.getSharedInstance(getActivity()).clearSelection();
 
                 getActivity().finish();
             }

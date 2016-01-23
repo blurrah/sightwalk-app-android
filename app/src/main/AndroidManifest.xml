@@ -77,9 +77,17 @@
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
+
+        <!-- Android Release Key -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyAiKKjzTJeuvWz6n8vC3vKGp3Wr36W6DU4" />
+            android:value="AIzaSyBwpbN6PP1RQf4MOX4VvGx1JNM1jj7au40" />
+
+        <!-- Android Debug Key
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyAyk-KPBtU9sCdSUws6Y-QtYkzWVNr1nVc" />
+        -->
 
     </application>
 
