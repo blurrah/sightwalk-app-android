@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.content.ContextCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -115,10 +116,10 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     private void updateStartButton() {
         if (canStartRoute()) {
             routeButton.setEnabled(true);
-            routeButton.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            routeButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
         } else {
             routeButton.setEnabled(false);
-            routeButton.setBackgroundColor(getResources().getColor(R.color.colorDisabled));
+            routeButton.setBackgroundColor(ContextCompat.getColor(this, R.color.colorDisabled));
         }
     }
 
@@ -266,7 +267,6 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     private class chooseListener implements Button.OnClickListener {
         @Override
         public void onClick(View v) {
-
             Intent i = new Intent(getApplicationContext(), ChooseRouteActivity.class);
             startActivity(i);
         }

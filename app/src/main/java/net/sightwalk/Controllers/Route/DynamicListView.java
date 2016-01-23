@@ -11,6 +11,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -133,7 +134,7 @@ public class DynamicListView extends ListView {
         Paint paint = new Paint();
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeWidth(LINE_THICKNESS);
-        paint.setColor(getResources().getColor(R.color.colorPrimary));
+        paint.setColor(ContextCompat.getColor(getContext(), R.color.colorPrimary));
 
         can.drawBitmap(bitmap, 0, 0, null);
         can.drawRect(rect, paint);

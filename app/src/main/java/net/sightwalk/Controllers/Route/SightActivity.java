@@ -2,6 +2,7 @@ package net.sightwalk.Controllers.Route;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,7 +50,7 @@ public class SightActivity extends AppCompatActivity implements View.OnClickList
         if (sight.image != null && sight.image.length() > 1) {
             Picasso.with(getApplicationContext()).load(sight.image).into(sightImageView);
         } else {
-            sightImageView.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+            sightImageView.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
             sightImageView.setImageResource(R.drawable.tut1);
             sightImageView.setPadding(40,40,40,40);
         }

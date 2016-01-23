@@ -13,6 +13,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -238,7 +239,6 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
             boolean range = PolyUtil.isLocationOnEdge(new LatLng(location.getLatitude(), location.getLongitude()), latLngs, true, 30);
 
             if (range) {
-
                 if(!Steps.stepsArrayList.isEmpty()) {
                     Steps stepupdate = Steps.stepsArrayList.get(0);
 
@@ -348,14 +348,14 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
         switch(view.getId()){
             case R.id.nextSightButton:
                 nextSightLayout.setVisibility(View.VISIBLE);
-                nextSightButton.setTextColor(getResources().getColor(R.color.colorPrimary));
-                directionsButton.setTextColor(getResources().getColor(R.color.colorDisabled));
+                nextSightButton.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+                directionsButton.setTextColor(ContextCompat.getColor(this, R.color.colorDisabled));
                 routeStepListView.setVisibility(View.GONE);
                 break;
             case R.id.directionsButton:
                 routeStepListView.setVisibility(View.VISIBLE);
-                directionsButton.setTextColor(getResources().getColor(R.color.colorPrimary));
-                nextSightButton.setTextColor(getResources().getColor(R.color.colorDisabled));
+                directionsButton.setTextColor(ContextCompat.getColor(this, R.color.colorPrimary));
+                nextSightButton.setTextColor(ContextCompat.getColor(this, R.color.colorDisabled));
                 nextSightLayout.setVisibility(View.GONE);
                 break;
         }
