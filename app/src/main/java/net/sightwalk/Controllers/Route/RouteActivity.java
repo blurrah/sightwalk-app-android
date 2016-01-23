@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -38,6 +39,7 @@ import net.sightwalk.Helpers.RouteStepsAdapter;
 import net.sightwalk.Models.*;
 import net.sightwalk.Models.Polyline;
 import net.sightwalk.R;
+import net.sightwalk.Stores.RouteDBHandler;
 import net.sightwalk.Stores.SightSelectionStore;
 import net.sightwalk.Stores.SightsInterface;
 
@@ -266,10 +268,18 @@ public class RouteActivity extends PermissionActivity implements SightsInterface
                 }
 
                 selectedSights.remove(0);
+
                 if(selectedSights.size() == 0){
                     endTime = new Date();
                     showFinishDialog();
                     Toast.makeText(getBaseContext(), "Route afgerond!", Toast.LENGTH_SHORT).show();
+
+                    RouteDBHandler dbHandler = new RouteDBHandler(this);
+
+                    ContentValues cv = new ContentValues();
+                    cv.put("endTime", endTime.toString());
+
+                    dbHandler.updateRouteEndtime("activities", cv, dbHandler.getLastActivity());
                 } else {
                     setNextSightInfo(selectedSights.get(0));
 

@@ -235,7 +235,6 @@ public class NewRouteActivity extends PermissionActivity implements GPSTrackerIn
     }
 
     private LatLng getStartPosition() {
-
         if (startSight.isChecked()) {
             if (selectedSights.size() > 1) {
                 return new LatLng(selectedSights.get(0).latitude, selectedSights.get(0).longitude);

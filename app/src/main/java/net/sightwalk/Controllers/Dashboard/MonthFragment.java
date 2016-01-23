@@ -76,35 +76,32 @@ public class MonthFragment extends Fragment {
     }
 
     private void checkDate(Activities activities) {
-        DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
-        LocalDate date = format.parseLocalDate(activities.getStarttijd());
+        if(!activities.getStarttijd().equals(activities.eindtijd)) {
+            DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+            LocalDate date = format.parseLocalDate(activities.getStarttijd());
 
-        int month = date.getMonthOfYear();
+            int month = date.getMonthOfYear();
 
-        int dateOne = DateTime.now().getMonthOfYear();
-        int dateTwo = DateTime.now().minusMonths(1).getMonthOfYear();
-        int dateThree = DateTime.now().minusMonths(2).getMonthOfYear();
-        int dateFour = DateTime.now().minusMonths(3).getMonthOfYear();
-        int dateFive = DateTime.now().minusMonths(4).getMonthOfYear();
-        int dateSix = DateTime.now().minusMonths(5).getMonthOfYear();
+            int dateOne = DateTime.now().getMonthOfYear();
+            int dateTwo = DateTime.now().minusMonths(1).getMonthOfYear();
+            int dateThree = DateTime.now().minusMonths(2).getMonthOfYear();
+            int dateFour = DateTime.now().minusMonths(3).getMonthOfYear();
+            int dateFive = DateTime.now().minusMonths(4).getMonthOfYear();
+            int dateSix = DateTime.now().minusMonths(5).getMonthOfYear();
 
-        if(month == dateOne) {
-            valueOne.add(getDistance(activities.getJson()));
-        }
-        else if(month == dateTwo) {
-            valueTwo.add(getDistance(activities.getJson()));
-        }
-        else if(month == dateThree) {
-            valueThree.add(getDistance(activities.getJson()));
-        }
-        else if(month == dateFour) {
-            valueFour.add(getDistance(activities.getJson()));
-        }
-        else if(month == dateFive) {
-            valueFive.add(getDistance(activities.getJson()));
-        }
-        else if(month == dateSix) {
-            valueSix.add(getDistance(activities.getJson()));
+            if (month == dateOne) {
+                valueOne.add(getDistance(activities.getJson()));
+            } else if (month == dateTwo) {
+                valueTwo.add(getDistance(activities.getJson()));
+            } else if (month == dateThree) {
+                valueThree.add(getDistance(activities.getJson()));
+            } else if (month == dateFour) {
+                valueFour.add(getDistance(activities.getJson()));
+            } else if (month == dateFive) {
+                valueFive.add(getDistance(activities.getJson()));
+            } else if (month == dateSix) {
+                valueSix.add(getDistance(activities.getJson()));
+            }
         }
     }
 

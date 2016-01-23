@@ -22,7 +22,6 @@ import java.util.Date;
 
 public class FinishedDialogFragment extends DialogFragment implements SightsInterface {
 
-
     FinishedDialogFragment dialogFragment;
 
     public FinishedDialogFragment(){

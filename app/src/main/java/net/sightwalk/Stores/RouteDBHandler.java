@@ -43,6 +43,12 @@ public class RouteDBHandler extends SQLiteAssetHelper {
         return c;
     }
 
+    public void updateRouteEndtime(String tableName, ContentValues values, int id) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        db.update(tableName, values, "id=" + id, null);
+    }
+
     public void addActivity(Route route){
         SQLiteDatabase db = getWritableDatabase();
 
@@ -69,6 +75,20 @@ public class RouteDBHandler extends SQLiteAssetHelper {
         SQLiteDatabase db = getReadableDatabase();
 
         String query = "SELECT id FROM activities ORDER BY id DESC LIMIT 1";
+
+        Cursor c = db.rawQuery(query, null);
+        c.moveToFirst();
+        int result = 1;
+
+        result = c.getInt(c.getColumnIndex("id"));
+
+        return result;
+    }
+
+    public Integer getActivityID(String Name) {
+        SQLiteDatabase db = getReadableDatabase();
+
+        String query = "SELECT id FROM activities ORDER BY id DESC LIMIT 1 WHERE name =" + Name;
 
         Cursor c = db.rawQuery(query, null);
         c.moveToFirst();

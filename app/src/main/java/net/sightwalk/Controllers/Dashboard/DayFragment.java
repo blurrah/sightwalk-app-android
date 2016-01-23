@@ -79,48 +79,50 @@ public class DayFragment extends Fragment {
     }
 
     private void checkDate(Activities activities){
-        LocalDate localDate = new LocalDate();
+        if(!activities.getStarttijd().equals(activities.eindtijd)) {
+            LocalDate localDate = new LocalDate();
 
-        SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        Date day = null;
+            SimpleDateFormat dtf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+            Date day = null;
 
-        try {
-            day = dtf.parse(activities.getStarttijd());
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+            try {
+                day = dtf.parse(activities.getStarttijd());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
 
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
-        String date = format.format(day);
+            SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy");
+            String date = format.format(day);
 
-        String dateOne = localDate.toString("dd/MM/yyyy");
-        String dateTwo = localDate.minusDays(1).toString("dd/MM/yyyy");
-        String dateThree = localDate.minusDays(2).toString("dd/MM/yyyy");
-        String dateFour = localDate.minusDays(3).toString("dd/MM/yyyy");
-        String dateFive = localDate.minusDays(4).toString("dd/MM/yyyy");
-        String dateSix = localDate.minusDays(5).toString("dd/MM/yyyy");
-        String dateSeven = localDate.minusDays(6).toString("dd/MM/yyyy");
+            String dateOne = localDate.toString("dd/MM/yyyy");
+            String dateTwo = localDate.minusDays(1).toString("dd/MM/yyyy");
+            String dateThree = localDate.minusDays(2).toString("dd/MM/yyyy");
+            String dateFour = localDate.minusDays(3).toString("dd/MM/yyyy");
+            String dateFive = localDate.minusDays(4).toString("dd/MM/yyyy");
+            String dateSix = localDate.minusDays(5).toString("dd/MM/yyyy");
+            String dateSeven = localDate.minusDays(6).toString("dd/MM/yyyy");
 
-        if(date.equals(dateOne)) {
-            valueOne.add(getDistance(activities.getJson()));
-        }
-        else if(date.equals(dateTwo)) {
-            valueTwo.add(getDistance(activities.getJson()));
-        }
-        else if(date.equals(dateThree)) {
-            valueThree.add(getDistance(activities.getJson()));
-        }
-        else if(date.equals(dateFour)) {
-            valueFour.add(getDistance(activities.getJson()));
-        }
-        else if(date.equals(dateFive)) {
-            valueFive.add(getDistance(activities.getJson()));
-        }
-        else if(date.equals(dateSix)) {
-            valueSix.add(getDistance(activities.getJson()));
-        }
-        else if(date.equals(dateSeven)) {
-            valueSeven.add(getDistance(activities.getJson()));
+            if(date.equals(dateOne)) {
+                valueOne.add(getDistance(activities.getJson()));
+            }
+            else if(date.equals(dateTwo)) {
+                valueTwo.add(getDistance(activities.getJson()));
+            }
+            else if(date.equals(dateThree)) {
+                valueThree.add(getDistance(activities.getJson()));
+            }
+            else if(date.equals(dateFour)) {
+                valueFour.add(getDistance(activities.getJson()));
+            }
+            else if(date.equals(dateFive)) {
+                valueFive.add(getDistance(activities.getJson()));
+            }
+            else if(date.equals(dateSix)) {
+                valueSix.add(getDistance(activities.getJson()));
+            }
+            else if(date.equals(dateSeven)) {
+                valueSeven.add(getDistance(activities.getJson()));
+            }
         }
     }
 
